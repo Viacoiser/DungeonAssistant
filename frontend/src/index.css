@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Fantasy color palette */
+  --fantasy-bg: #0d0d0d;
+  --fantasy-card: #1a1a1a;
+  --fantasy-accent: #d9531e;
+  --fantasy-accent-glow: rgba(217, 83, 30, 0.4);
+  --fantasy-gold: #e2d1a6;
+  --fantasy-gold-muted: rgba(226, 209, 166, 0.6);
+  --fantasy-gold-faint: rgba(226, 209, 166, 0.2);
+  --fantasy-border: rgba(255, 255, 255, 0.08);
+
+  /* Legacy vars kept for any older components */
+  --primary: #1a3a5c;
+  --secondary: #c8a84b;
+  --accent: #8b1a1a;
+  --background: #0d0d0d;
+  --dark-bg: #0d0d0d;
+  --text: #e2d1a6;
+  --muted: #6b7280;
+  --success: #2d6a4f;
+  --surface: #1a1a1a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--fantasy-bg);
+  color: var(--fantasy-gold);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--fantasy-bg);
+}
+
+/* Typography */
+.font-serif {
+  font-family: 'Cinzel', serif;
+}
+
+/* ── Glow effects ──────────────────────────────── */
+.fantasy-glow {
+  text-shadow:
+    0 0 10px var(--fantasy-accent-glow),
+    0 0 20px var(--fantasy-accent-glow);
+}
+
+.fantasy-card-glow:hover {
+  box-shadow: 0 0 24px var(--fantasy-accent-glow);
+}
+
+.fantasy-button-glow {
+  box-shadow: 0 0 15px var(--fantasy-accent-glow);
+}
+
+/* ── Custom Scrollbar ──────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--fantasy-accent);
+  border-radius: 4px;
+  opacity: 0.6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e86424;
+}
+
+/* ── Animations ────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.25s ease forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s ease forwards;
+}

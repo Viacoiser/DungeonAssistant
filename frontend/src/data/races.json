@@ -1,0 +1,105 @@
+{
+  "races": [
+    {
+      "index": "dragonborn",
+      "name": "Dragonborn",
+      "description": "Dragonborn look distinctly draconic, with horns, slitted eyes, and massive builds.",
+      "ability_bonuses": {
+        "strength": 2,
+        "charisma": 1
+      },
+      "speed": 30,
+      "languages": ["Common", "Draconic"]
+    },
+    {
+      "index": "dwarf",
+      "name": "Dwarf",
+      "description": "Bold and hardy, dwarves are known as skilled warriors, miners, and workers of stone and metal.",
+      "ability_bonuses": {
+        "constitution": 2,
+        "wisdom": 1
+      },
+      "speed": 25,
+      "languages": ["Common", "Dwarvish"]
+    },
+    {
+      "index": "elf",
+      "name": "Elf",
+      "description": "Elves are a magical people of otherworldly grace, living in the world but not entirely part of it.",
+      "ability_bonuses": {
+        "dexterity": 2
+      },
+      "speed": 30,
+      "languages": ["Common", "Elvish"]
+    },
+    {
+      "index": "gnome",
+      "name": "Gnome",
+      "description": "A gnome's energy and enthusiasm for living shines through every inch of his or her body.",
+      "ability_bonuses": {
+        "intelligence": 2
+      },
+      "speed": 25,
+      "languages": ["Common", "Gnomish"]
+    },
+    {
+      "index": "half-elf",
+      "name": "Half-Elf",
+      "description": "Half-elves' blend of human practicality and elven grace gives them unique perspectives.",
+      "ability_bonuses": {
+        "charisma": 2,
+        "strength": 1,
+        "wisdom": 1
+      },
+      "speed": 30,
+      "languages": ["Common", "Elvish"]
+    },
+    {
+      "index": "half-orc",
+      "name": "Half-Orc",
+      "description": "Half-orcs' grayish pigmentation, sloping foreheads, and protruding teeth make their orcish heritage plain for all to see.",
+      "ability_bonuses": {
+        "strength": 2,
+        "constitution": 1
+      },
+      "speed": 30,
+      "languages": ["Common", "Orc"]
+    },
+    {
+      "index": "halfling",
+      "name": "Halfling",
+      "description": "The diminutive halflings have proven to be resilient to the perils of the world and have adapted to nearly every land.",
+      "ability_bonuses": {
+        "dexterity": 2
+      },
+      "speed": 25,
+      "languages": ["Common", "Halfling"]
+    },
+    {
+      "index": "human",
+      "name": "Human",
+      "description": "Humans are the most adaptable and ambitious people among the common races. Whatever drives them, humans are the innovators, the achievers, and the pioneers of the worlds.",
+      "ability_bonuses": {
+        "strength": 1,
+        "dexterity": 1,
+        "constitution": 1,
+        "intelligence": 1,
+        "wisdom": 1,
+        "charisma": 1
+      },
+      "speed": 30,
+      "languages": ["Common"]
+    },
+    {
+      "index": "tiefling",
+      "name": "Tiefling",
+      "description": "To be greeted with stares and whispers, to suffer violence and insult on the street, to see mistrust and fear in every eye: this is the lot of the tiefling.",
+      "ability_bonuses": {
+        "charisma": 2,
+        "intelligence": 1
+      },
+      "speed": 30,
+      "languages": ["Common", "Infernal"]
+    }
+  ]
+}

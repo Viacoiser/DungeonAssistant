@@ -1,0 +1,76 @@
+{
+  "classes": {
+    "Barbarian": {
+      "hit_die": 12,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Bard": {
+      "hit_die": 8,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Cleric": {
+      "hit_die": 8,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Druid": {
+      "hit_die": 8,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Fighter": {
+      "hit_die": 10,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Monk": {
+      "hit_die": 8,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Paladin": {
+      "hit_die": 10,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Ranger": {
+      "hit_die": 10,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Rogue": {
+      "hit_die": 8,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Sorcerer": {
+      "hit_die": 6,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Warlock": {
+      "hit_die": 8,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    },
+    "Wizard": {
+      "hit_die": 6,
+      "proficiency_bonus_by_level": {
+        "1": 2, "5": 3, "9": 4, "13": 5, "17": 6
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "alignments": [
+    {
+      "index": "chaotic-evil",
+      "name": "Chaotic Evil",
+      "abbreviation": "CE",
+      "description": "A chaotic evil character does whatever his heart desires."
+    },
+    {
+      "index": "chaotic-neutral",
+      "name": "Chaotic Neutral",
+      "abbreviation": "CN",
+      "description": "A chaotic neutral character follows his whims."
+    },
+    {
+      "index": "chaotic-good",
+      "name": "Chaotic Good",
+      "abbreviation": "CG",
+      "description": "A chaotic good character acts as his conscience directs him with little regard for what others expect of him."
+    },
+    {
+      "index": "neutral-evil",
+      "name": "Neutral Evil",
+      "abbreviation": "NE",
+      "description": "A neutral evil villain does whatever she can get away with."
+    },
+    {
+      "index": "true-neutral",
+      "name": "True Neutral",
+      "abbreviation": "N",
+      "description": "A true neutral character does what seems to be a good idea."
+    },
+    {
+      "index": "neutral-good",
+      "name": "Neutral Good",
+      "abbreviation": "NG",
+      "description": "A neutral good character does the best that a good person can do."
+    },
+    {
+      "index": "lawful-evil",
+      "name": "Lawful Evil",
+      "abbreviation": "LE",
+      "description": "A lawful evil villain methodically takes what she wants within the limits of her code of conduct."
+    },
+    {
+      "index": "lawful-neutral",
+      "name": "Lawful Neutral",
+      "abbreviation": "LN",
+      "description": "A lawful neutral character acts as law, tradition, or a personal code directs her."
+    },
+    {
+      "index": "lawful-good",
+      "name": "Lawful Good",
+      "abbreviation": "LG",
+      "description": "A lawful good character combines a commitment to oppose evil with the discipline to fight relentlessly."
+    }
+  ]
+}

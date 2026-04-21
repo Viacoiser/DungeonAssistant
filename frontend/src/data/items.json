@@ -1,0 +1,453 @@
+{
+  "items": [
+    {
+      "name": "Longsword",
+      "type": "weapon",
+      "category": "melee",
+      "damage": "1d8",
+      "rarity": "common"
+    },
+    {
+      "name": "Shortsword",
+      "type": "weapon",
+      "category": "melee",
+      "damage": "1d6",
+      "rarity": "common"
+    },
+    {
+      "name": "Dagger",
+      "type": "weapon",
+      "category": "melee",
+      "damage": "1d4",
+      "rarity": "common"
+    },
+    {
+      "name": "Greataxe",
+      "type": "weapon",
+      "category": "melee",
+      "damage": "1d12",
+      "rarity": "common"
+    },
+    {
+      "name": "Longbow",
+      "type": "weapon",
+      "category": "ranged",
+      "damage": "1d8",
+      "rarity": "common"
+    },
+    {
+      "name": "Crossbow",
+      "type": "weapon",
+      "category": "ranged",
+      "damage": "1d8",
+      "rarity": "common"
+    },
+    {
+      "name": "Spear",
+      "type": "weapon",
+      "category": "melee",
+      "damage": "1d6",
+      "rarity": "common"
+    },
+    {
+      "name": "Mace",
+      "type": "weapon",
+      "category": "melee",
+      "damage": "1d6",
+      "rarity": "common"
+    },
+    {
+      "name": "Leather Armor",
+      "type": "armor",
+      "category": "light",
+      "ac": 11,
+      "weight": 10,
+      "rarity": "common"
+    },
+    {
+      "name": "Chain Mail",
+      "type": "armor",
+      "category": "heavy",
+      "ac": 16,
+      "weight": 55,
+      "rarity": "common"
+    },
+    {
+      "name": "Plate Armor",
+      "type": "armor",
+      "category": "heavy",
+      "ac": 18,
+      "weight": 65,
+      "rarity": "common"
+    },
+    {
+      "name": "Scale Mail",
+      "type": "armor",
+      "category": "medium",
+      "ac": 14,
+      "weight": 45,
+      "rarity": "common"
+    },
+    {
+      "name": "Shield",
+      "type": "armor",
+      "category": "shield",
+      "ac": 2,
+      "weight": 6,
+      "rarity": "common"
+    },
+    {
+      "name": "Helmet",
+      "type": "armor",
+      "category": "accessory",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Potion of Healing",
+      "type": "consumable",
+      "category": "potion",
+      "value": 50,
+      "rarity": "common"
+    },
+    {
+      "name": "Potion of Greater Healing",
+      "type": "consumable",
+      "category": "potion",
+      "value": 100,
+      "rarity": "uncommon"
+    },
+    {
+      "name": "Potion of Strength",
+      "type": "consumable",
+      "category": "potion",
+      "value": 150,
+      "rarity": "uncommon"
+    },
+    {
+      "name": "Potion of Invisibility",
+      "type": "consumable",
+      "category": "potion",
+      "value": 300,
+      "rarity": "rare"
+    },
+    {
+      "name": "Bandages",
+      "type": "medical",
+      "category": "healing",
+      "weight": 0.1,
+      "rarity": "common"
+    },
+    {
+      "name": "Healing Kit",
+      "type": "medical",
+      "category": "healing",
+      "weight": 3,
+      "rarity": "common"
+    },
+    {
+      "name": "Antitoxin",
+      "type": "medical",
+      "category": "healing",
+      "weight": 0,
+      "rarity": "common"
+    },
+    {
+      "name": "Backpack",
+      "type": "gear",
+      "category": "pack",
+      "weight": 5,
+      "capacity": 30,
+      "rarity": "common"
+    },
+    {
+      "name": "Rope (50 ft)",
+      "type": "gear",
+      "category": "utility",
+      "weight": 10,
+      "rarity": "common"
+    },
+    {
+      "name": "Torch",
+      "type": "gear",
+      "category": "light",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Lantern (Hooded)",
+      "type": "gear",
+      "category": "light",
+      "weight": 2,
+      "rarity": "common"
+    },
+    {
+      "name": "Oil (Flask)",
+      "type": "gear",
+      "category": "utility",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Tinderbox",
+      "type": "gear",
+      "category": "utility",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Grappling Hook",
+      "type": "gear",
+      "category": "utility",
+      "weight": 4,
+      "rarity": "common"
+    },
+    {
+      "name": "Piton (10)",
+      "type": "gear",
+      "category": "utility",
+      "weight": 2.5,
+      "rarity": "common"
+    },
+    {
+      "name": "Crowbar",
+      "type": "tool",
+      "category": "utility",
+      "weight": 5,
+      "rarity": "common"
+    },
+    {
+      "name": "Lockpick Set",
+      "type": "tool",
+      "category": "utility",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Thieves' Tools",
+      "type": "tool",
+      "category": "utility",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Smithing Tools",
+      "type": "tool",
+      "category": "craft",
+      "weight": 8,
+      "rarity": "common"
+    },
+    {
+      "name": "Carpenter's Tools",
+      "type": "tool",
+      "category": "craft",
+      "weight": 6,
+      "rarity": "common"
+    },
+    {
+      "name": "Herbalism Kit",
+      "type": "tool",
+      "category": "craft",
+      "weight": 3,
+      "rarity": "common"
+    },
+    {
+      "name": "Waterskin",
+      "type": "gear",
+      "category": "container",
+      "capacity": 4,
+      "weight": 5,
+      "rarity": "common"
+    },
+    {
+      "name": "Bedroll",
+      "type": "gear",
+      "category": "camping",
+      "weight": 5,
+      "rarity": "common"
+    },
+    {
+      "name": "Tent (2-person)",
+      "type": "gear",
+      "category": "camping",
+      "weight": 20,
+      "rarity": "common"
+    },
+    {
+      "name": "Sleeping Bag",
+      "type": "gear",
+      "category": "camping",
+      "weight": 3,
+      "rarity": "common"
+    },
+    {
+      "name": "Map",
+      "type": "gear",
+      "category": "navigation",
+      "weight": 0.1,
+      "rarity": "common"
+    },
+    {
+      "name": "Compass",
+      "type": "gear",
+      "category": "navigation",
+      "weight": 0.1,
+      "rarity": "common"
+    },
+    {
+      "name": "Spellbook",
+      "type": "book",
+      "category": "magic",
+      "weight": 3,
+      "rarity": "common"
+    },
+    {
+      "name": "Journal",
+      "type": "book",
+      "category": "utility",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Dice Set",
+      "type": "game",
+      "category": "entertainment",
+      "weight": 0.1,
+      "rarity": "common"
+    },
+    {
+      "name": "Playing Cards",
+      "type": "game",
+      "category": "entertainment",
+      "weight": 0.1,
+      "rarity": "common"
+    },
+    {
+      "name": "Rations (10 days)",
+      "type": "consumable",
+      "category": "food",
+      "weight": 10,
+      "rarity": "common"
+    },
+    {
+      "name": "Bread",
+      "type": "consumable",
+      "category": "food",
+      "weight": 0.5,
+      "rarity": "common"
+    },
+    {
+      "name": "Wine (bottle)",
+      "type": "consumable",
+      "category": "drink",
+      "weight": 1.5,
+      "rarity": "common"
+    },
+    {
+      "name": "Ale (flagon)",
+      "type": "consumable",
+      "category": "drink",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Chain (10 ft)",
+      "type": "gear",
+      "category": "utility",
+      "weight": 10,
+      "rarity": "common"
+    },
+    {
+      "name": "Manacles",
+      "type": "gear",
+      "category": "utility",
+      "weight": 6,
+      "rarity": "common"
+    },
+    {
+      "name": "Mirror (steel)",
+      "type": "gear",
+      "category": "utility",
+      "weight": 0.5,
+      "rarity": "common"
+    },
+    {
+      "name": "Rope (hempen)",
+      "type": "gear",
+      "category": "utility",
+      "weight": 10,
+      "rarity": "common"
+    },
+    {
+      "name": "Caltrops (bag of 20)",
+      "type": "gear",
+      "category": "utility",
+      "weight": 2,
+      "rarity": "common"
+    },
+    {
+      "name": "Holy Water (flask)",
+      "type": "consumable",
+      "category": "religious",
+      "value": 25,
+      "rarity": "common"
+    },
+    {
+      "name": "Amulet (holy symbol)",
+      "type": "gear",
+      "category": "religious",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Flute",
+      "type": "instrument",
+      "category": "musical",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Lute",
+      "type": "instrument",
+      "category": "musical",
+      "weight": 4,
+      "rarity": "common"
+    },
+    {
+      "name": "Drum",
+      "type": "instrument",
+      "category": "musical",
+      "weight": 3,
+      "rarity": "common"
+    },
+    {
+      "name": "Leather Pouch",
+      "type": "gear",
+      "category": "container",
+      "weight": 1,
+      "rarity": "common"
+    },
+    {
+      "name": "Quiver",
+      "type": "gear",
+      "category": "container",
+      "weight": 1,
+      "capacity": 20,
+      "rarity": "common"
+    },
+    {
+      "name": "Ammunition (20 arrows)",
+      "type": "ammunition",
+      "category": "utility",
+      "weight": 1.5,
+      "rarity": "common"
+    },
+    {
+      "name": "Ammunition (20 crossbow bolts)",
+      "type": "ammunition",
+      "category": "utility",
+      "weight": 1.5,
+      "rarity": "common"
+    }
+  ]
+}
