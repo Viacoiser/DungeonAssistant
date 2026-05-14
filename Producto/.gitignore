@@ -18,3 +18,7 @@ out/
 *.swo
 *~
 .turbo/
+backend/secrets/
+backend/.env
+frontend/.env
+*.json.tmp

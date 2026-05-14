@@ -84,16 +84,14 @@ class GeminiService:
         genai.configure(api_key=api_key)
 
         # Modelos a intentar en orden de preferencia
+        # Modelos confirmados disponibles en la API
         self.available_models = [
-            "gemini-3.1-flash-lite",  # Preferido
-            "gemini-3-flash",         # Alternativa
-            "gemini-2.5-flash",       # Alternativa
-            "gemini-2.5-flash-lite",  # Fallback
-            "gemini-2.0-flash-exp",   # Fallback
-            "gemini-1.5-pro",         # Último recurso
+            "gemini-2.0-flash",
+            "gemini-2.0-flash-lite",
+            "gemini-flash-latest",
+            "gemini-pro-latest",
             "gemini-1.5-flash",
-            "gemini-pro",
-            "gemini-pro-vision"
+            "gemini-1.5-pro",
         ]
         
         # Track exhausted models en esta sesión
@@ -103,90 +101,47 @@ class GeminiService:
         self.vision_model = None
         self.model_name = None
         
-        # Intentar inicializar con cada modelo disponible
-        for model_name in self.available_models:
-            try:
-                test_model = genai.GenerativeModel(model_name)
-                # Hacer una llamada de prueba para verificar que realmente funciona
-                test_response = test_model.generate_content("test")
-                # Si llegamos aquí sin error, el modelo está disponible
-                self.model = test_model
-                self.vision_model = test_model
-                self.model_name = model_name
-                logger.info(f"✓ Gemini Service initialized with {model_name}")
-                break
-            except Exception as e:
-                logger.debug(f"  Model {model_name} not available: {str(e)[:80]}")
-                continue
-        
-        if not self.model:
-            logger.error("❌ No Gemini models available! Check your API key.")
-            logger.error(f"   Available models tried: {', '.join(self.available_models)}")
-            logger.error(f"   Verify your API key works at: https://aistudio.google.com")
-            # Usar un dummy model para que no falle el servidor
-            self.model = genai.GenerativeModel("gemini-2.0-flash-exp")
-            self.vision_model = self.model
-            self.model_name = "UNAVAILABLE"
+        # Inicialización perezosa (se configurará en la primera llamada si es necesario)
+        self._initialize_first_working_model()
 
-    def _rotate_model_on_exhaustion(self):
-        """
-        Cuando un modelo se agota (429 quota exceeded), cambiar al siguiente disponible.
-        Intenta los modelos no marcados como agotados.
-        """
-        logger.warning(f"⚠️ Model {self.model_name} exhausted! Rotating to next available...")
-        
-        # Marcar el modelo actual como agotado
-        self.exhausted_models.add(self.model_name)
-        
-        # Intentar modelos no agotados
+    def _initialize_first_working_model(self):
         for model_name in self.available_models:
             if model_name in self.exhausted_models:
-                logger.debug(f"  Skipping {model_name} (already exhausted)")
                 continue
-            
             try:
-                logger.info(f"  Trying model: {model_name}")
-                test_model = genai.GenerativeModel(model_name)
-                test_response = test_model.generate_content("test")
-                
-                # Éxito! Usar este modelo
-                self.model = test_model
-                self.vision_model = test_model
+                self.model = genai.GenerativeModel(model_name)
+                self.vision_model = self.model
                 self.model_name = model_name
-                logger.info(f"✓ Rotated to {model_name} successfully")
+                logger.info(f"✓ Gemini Service initialized with {model_name}")
                 return True
             except Exception as e:
-                error_msg = str(e)[:100]
-                if "429" in error_msg or "ResourceExhausted" in error_msg or "quota" in error_msg.lower():
-                    logger.warning(f"  Model {model_name} also exhausted")
-                    self.exhausted_models.add(model_name)
-                else:
-                    logger.debug(f"  Model {model_name} not available: {error_msg}")
+                logger.debug(f"  Model {model_name} not available: {e}")
                 continue
-        
-        # Si llegamos aquí, todos los modelos están agotados o no disponibles
-        logger.error("❌ All models exhausted or unavailable!")
-        self.model_name = "UNAVAILABLE"
         return False
 
+    def _rotate_model_on_exhaustion(self):
+        """Cambiar al siguiente modelo disponible."""
+        logger.warning(f"⚠️ Rotating model from {self.model_name}...")
+        self.exhausted_models.add(self.model_name)
+        return self._initialize_first_working_model()
+
     def _handle_quota_error(self, error: Exception, operation: str = "operation") -> bool:
-        """
-        Detectar y manejar errores de cuota automáticamente.
-        Retorna True si se rotó el modelo exitosamente.
-        """
-        error_str = str(error)
-        error_type = str(type(error).__name__)
+        """Manejar errores de cuota (429) y de modelo no encontrado (404)."""
+        error_str = str(error).lower()
         
-        # Detectar error de cuota agotada
-        is_quota_error = (
+        # Detectar error de cuota agotada o modelo no encontrado
+        is_retryable = (
             "429" in error_str or 
-            "ResourceExhausted" in error_type or 
-            "quota" in error_str.lower() or
-            "exceeded" in error_str.lower()
+            "resourceexhausted" in error_str or 
+            "quota" in error_str or
+            "404" in error_str or
+            "not found" in error_str or
+            "not_found" in error_str or
+            "not supported" in error_str
         )
         
-        if is_quota_error:
-            logger.warning(f"⚠️ Quota exceeded on {operation}: {error_str[:100]}")
+        if is_retryable:
+            logger.warning(f"⚠️ Retryable error on {operation}: {error_str[:100]}")
             return self._rotate_model_on_exhaustion()
         
         return False
@@ -566,27 +521,11 @@ Responde en español, de forma concisa (máximo 3 párrafos):"""
             }
         
         except Exception as e:
-            error_str = str(e)
-            
-            # Detectar error de cuota agotada
-            if "429" in error_str or "ResourceExhausted" in str(type(e)) or "quota" in error_str.lower():
-                logger.warning(f"⚠️ Quota exceeded on chat_assistant: {error_str[:100]}")
-                
-                # Intentar rotar a otro modelo
-                if self._rotate_model_on_exhaustion():
-                    logger.info("🔄 Retrying chat_assistant with new model...")
-                    # Recursively retry con el nuevo modelo
-                    return await self.chat_assistant(context, question)
-                else:
-                    logger.error("❌ All models exhausted, cannot retry")
-                    return {
-                        "answer": "Lo siento, los servicios de IA están sobrecargados. Por favor intenta en unos minutos.",
-                        "response_time_ms": int((time.time() - start_time) * 1000),
-                        "rag_entities_total": 0
-                    }
+            if self._handle_quota_error(e, "chat_assistant"):
+                logger.info("🔄 Retrying chat_assistant with new model...")
+                return await self.chat_assistant(context, question)
             
             logger.error(f"Error en chat_assistant: {e}", exc_info=True)
-            # Retornar error en lugar de hacer raise para no romper el endpoint
             return {
                 "answer": f"Error generando respuesta: {str(e)[:100]}",
                 "response_time_ms": int((time.time() - start_time) * 1000),

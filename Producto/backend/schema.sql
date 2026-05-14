@@ -362,6 +362,31 @@ COMMENT ON COLUMN role_change_requests.status IS 'Estado: PENDING, APPROVED, REJ
 COMMENT ON COLUMN role_change_requests.resolved_by IS 'GM que resolvió la solicitud';
 COMMENT ON COLUMN role_change_requests.resolved_at IS 'Timestamp de resolución';
 
+-- Tabla: encyclopedia
+-- Biblioteca centralizada para contenido D&D (Reference Data)
+CREATE TABLE IF NOT EXISTS encyclopedia (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    category TEXT NOT NULL,
+    index TEXT NOT NULL,
+    name TEXT NOT NULL,
+    data JSONB NOT NULL,
+    language TEXT DEFAULT 'es',
+    source_url TEXT,
+    source_system TEXT DEFAULT 'dnd5e',
+    version TEXT DEFAULT '1.0',
+    is_active BOOLEAN DEFAULT true,
+    updated_at TIMESTAMPTZ DEFAULT now(),
+    created_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE(category, index)
+);
+
+COMMENT ON TABLE encyclopedia IS 'Biblioteca centralizada de referencia D&D (spells, monsters, items, traits, etc.).';
+COMMENT ON COLUMN encyclopedia.category IS 'Categoría de contenido: spells, monsters, equipment, traits, feats, backgrounds, proficiencies, rules.';
+COMMENT ON COLUMN encyclopedia.index IS 'Identificador único del recurso dentro de su categoría (ej: fireball, goblin, longsword).';
+COMMENT ON COLUMN encyclopedia.data IS 'Payload JSONB completo del recurso, preservando estructura original de la API.';
+COMMENT ON COLUMN encyclopedia.version IS 'Versión de sincronización para control de cambios en cliente offline.';
+COMMENT ON COLUMN encyclopedia.is_active IS 'Soft-delete lógico para preservar historial sin perder integridad.';
+
 -- ============================================================================
 -- ÍNDICES OPTIMIZADOS
 -- ============================================================================
@@ -395,6 +420,18 @@ CREATE INDEX IF NOT EXISTS idx_npcs_faction_id ON npcs(faction_id);
 CREATE INDEX IF NOT EXISTS idx_character_history_character_id_created_at ON character_history(character_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_role_change_requests_campaign_id_status ON role_change_requests(campaign_id, status);
 
+-- Índices para encyclopedia
+CREATE UNIQUE INDEX IF NOT EXISTS idx_encyclopedia_category_index_active
+ON encyclopedia(category, index)
+WHERE is_active = true;
+
+CREATE INDEX IF NOT EXISTS idx_encyclopedia_category_updated_at
+ON encyclopedia(category, updated_at DESC)
+WHERE is_active = true;
+
+CREATE INDEX IF NOT EXISTS idx_encyclopedia_search_spanish
+ON encyclopedia USING GIN (to_tsvector('spanish', name || ' ' || COALESCE(data::text, '')));
+
 -- ============================================================================
 -- HABILITAR ROW LEVEL SECURITY (RLS)
 -- ============================================================================
@@ -412,6 +449,7 @@ ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE session_notes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE session_npcs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE role_change_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE encyclopedia ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
 -- TRIGGERS - Auto-update updated_at
@@ -551,6 +589,23 @@ DROP POLICY IF EXISTS "NPCs SELECT permissive" ON npcs;
 CREATE POLICY "NPCs SELECT permissive"
 ON npcs FOR SELECT
 USING (true);
+
+-- ENCYCLOPEDIA: Lectura permissive, escritura desde backend autenticado
+DROP POLICY IF EXISTS "Encyclopedia SELECT permissive" ON encyclopedia;
+CREATE POLICY "Encyclopedia SELECT permissive"
+ON encyclopedia FOR SELECT
+USING (is_active = true);
+
+DROP POLICY IF EXISTS "Encyclopedia INSERT authenticated" ON encyclopedia;
+CREATE POLICY "Encyclopedia INSERT authenticated"
+ON encyclopedia FOR INSERT
+WITH CHECK (auth.uid() IS NOT NULL);
+
+DROP POLICY IF EXISTS "Encyclopedia UPDATE authenticated" ON encyclopedia;
+CREATE POLICY "Encyclopedia UPDATE authenticated"
+ON encyclopedia FOR UPDATE
+USING (auth.uid() IS NOT NULL)
+WITH CHECK (auth.uid() IS NOT NULL);
 
 -- ============================================================================
 -- FIN DEL SCRIPT

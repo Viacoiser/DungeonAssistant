@@ -94,73 +94,150 @@ class CampaignMemberResponse(BaseModel):
 # ============================================================================
 
 class StatsModel(BaseModel):
-    """Estadísticas de D&D 5e"""
-    strength: int = Field(..., ge=3, le=20)
-    dexterity: int = Field(..., ge=3, le=20)
-    constitution: int = Field(..., ge=3, le=20)
-    intelligence: int = Field(..., ge=3, le=20)
-    wisdom: int = Field(..., ge=3, le=20)
-    charisma: int = Field(..., ge=3, le=20)
+    """Estadísticas base D&D 5e"""
+    strength: int = Field(default=10, ge=1, le=30)
+    dexterity: int = Field(default=10, ge=1, le=30)
+    constitution: int = Field(default=10, ge=1, le=30)
+    intelligence: int = Field(default=10, ge=1, le=30)
+    wisdom: int = Field(default=10, ge=1, le=30)
+    charisma: int = Field(default=10, ge=1, le=30)
 
 
-class SavingThrowsModel(BaseModel):
-    """Tiros de salvación"""
-    strength: Optional[Dict[str, Any]] = None
-    dexterity: Optional[Dict[str, Any]] = None
-    constitution: Optional[Dict[str, Any]] = None
-    intelligence: Optional[Dict[str, Any]] = None
-    wisdom: Optional[Dict[str, Any]] = None
-    charisma: Optional[Dict[str, Any]] = None
+# ── Defaults JSONB ─────────────────────────────────────────────────────────────
+
+def default_saving_throws() -> Dict[str, Any]:
+    """Estructura canónica de saving throws D&D 5e"""
+    return {
+        stat: {"proficient": False}
+        for stat in ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"]
+    }
 
 
-class SkillsModel(BaseModel):
-    """Habilidades"""
-    acrobatics: Optional[Dict[str, Any]] = None
-    animal_handling: Optional[Dict[str, Any]] = None
-    arcana: Optional[Dict[str, Any]] = None
-    athletics: Optional[Dict[str, Any]] = None
-    deception: Optional[Dict[str, Any]] = None
-    history: Optional[Dict[str, Any]] = None
-    insight: Optional[Dict[str, Any]] = None
-    intimidation: Optional[Dict[str, Any]] = None
-    investigation: Optional[Dict[str, Any]] = None
-    medicine: Optional[Dict[str, Any]] = None
-    nature: Optional[Dict[str, Any]] = None
-    perception: Optional[Dict[str, Any]] = None
-    performance: Optional[Dict[str, Any]] = None
-    persuasion: Optional[Dict[str, Any]] = None
-    religion: Optional[Dict[str, Any]] = None
-    sleight_of_hand: Optional[Dict[str, Any]] = None
-    stealth: Optional[Dict[str, Any]] = None
-    survival: Optional[Dict[str, Any]] = None
+def default_skills() -> Dict[str, Any]:
+    """Estructura canónica de las 18 habilidades D&D 5e"""
+    return {
+        skill: {"proficient": False, "expertise": False}
+        for skill in [
+            "acrobatics", "animal_handling", "arcana", "athletics",
+            "deception", "history", "insight", "intimidation",
+            "investigation", "medicine", "nature", "perception",
+            "performance", "persuasion", "religion", "sleight_of_hand",
+            "stealth", "survival",
+        ]
+    }
+
+
+def default_attacks() -> List[Dict[str, Any]]:
+    """3 filas vacías de ataques (hoja oficial D&D 5e)"""
+    return [
+        {"name": "", "attack_bonus": "+0", "damage": "", "damage_type": ""}
+        for _ in range(3)
+    ]
+
+
+def default_death_saves() -> Dict[str, Any]:
+    return {"successes": 0, "failures": 0}
+
+
+def default_spellcasting() -> Dict[str, Any]:
+    """Estructura completa de spellcasting D&D 5e"""
+    return {
+        "class": "",
+        "ability": "",
+        "save_dc": 0,
+        "attack_bonus": 0,
+        "slots": {
+            str(lvl): {"total": 0, "used": 0} for lvl in range(1, 10)
+        },
+        "cantrips": [],
+        "spells": [],
+    }
+
+
+def default_currency() -> Dict[str, int]:
+    """Monedas D&D 5e: CP / SP / EP / GP / PP"""
+    return {"cp": 0, "sp": 0, "ep": 0, "gp": 0, "pp": 0}
+
+
+def default_allies_organizations() -> Dict[str, Any]:
+    return {"text": "", "symbol": ""}
 
 
 class CharacterCreate(BaseModel):
-    """Crear personaje"""
-    campaign_id: Optional[str] = None  # Opcional - se puede agregar después
+    """Crear personaje — cubre todos los campos de la hoja oficial D&D 5e"""
+
+    # ── Identificación ──────────────────────────────────────────────────────────
+    campaign_id: Optional[str] = None
     name: str = Field(..., min_length=1, max_length=100)
     race: str = Field(..., min_length=1)
     class_: str = Field(..., alias="class", min_length=1)
+    subclass: Optional[str] = None
     level: int = Field(default=1, ge=1, le=20)
     background: Optional[str] = None
     alignment: Optional[str] = None
-    stats: StatsModel
+    experience_points: int = Field(default=0, ge=0)
+    player_name: Optional[str] = None          # Nombre del jugador (no el personaje)
+
+    # ── Estadísticas base ───────────────────────────────────────────────────────
+    stats: StatsModel = Field(default_factory=StatsModel)
+
+    # ── Combate ─────────────────────────────────────────────────────────────────
     hp_max: int = Field(..., ge=1)
     hp_current: int = Field(..., ge=0)
-    armor_class: Optional[int] = None
-    initiative: Optional[int] = None
+    hp_temporary: int = Field(default=0, ge=0)           # Temp HP
+    armor_class: int = Field(default=10)
+    initiative: int = Field(default=0)
     speed: int = Field(default=30)
-    proficiency_bonus: Optional[int] = None
-    hit_dice: Optional[str] = None
-    passive_perception: Optional[int] = None
-    personality_traits: Optional[str] = None
-    ideals: Optional[str] = None
-    bonds: Optional[str] = None
-    flaws: Optional[str] = None
-    other_proficiencies: Optional[str] = None
-    equipment: Optional[str] = None
-    features_traits: Optional[str] = None
-    backstory: Optional[str] = None
+    proficiency_bonus: int = Field(default=2)
+    hit_dice: str = Field(default="1d8")                  # ej: "d8" o "1d8"
+    hit_dice_used: int = Field(default=0, ge=0)           # Dados usados
+    passive_perception: int = Field(default=10)
+    inspiration: bool = Field(default=False)
+
+    # ── Tiradas de salvación y habilidades (JSONB estructurado) ─────────────────
+    saving_throws: Dict[str, Any] = Field(default_factory=default_saving_throws)
+    skills: Dict[str, Any] = Field(default_factory=default_skills)
+
+    # ── Death Saves ─────────────────────────────────────────────────────────────
+    death_saves: Dict[str, Any] = Field(default_factory=default_death_saves)
+
+    # ── Ataques ─────────────────────────────────────────────────────────────────
+    attacks: List[Dict[str, Any]] = Field(default_factory=default_attacks)
+
+    # ── Equipo e inventario ──────────────────────────────────────────────────────
+    equipment: str = Field(default="")
+    currency: Dict[str, Any] = Field(default_factory=default_currency)
+    treasure: Optional[str] = None
+
+    # ── Spellcasting ─────────────────────────────────────────────────────────────
+    spellcasting: Dict[str, Any] = Field(default_factory=default_spellcasting)
+
+    # ── Personalidad ─────────────────────────────────────────────────────────────
+    personality_traits: str = Field(default="")
+    ideals: str = Field(default="")
+    bonds: str = Field(default="")
+    flaws: str = Field(default="")
+
+    # ── Rasgos y características ──────────────────────────────────────────────────
+    features_traits: str = Field(default="")
+    other_proficiencies: str = Field(default="")   # Idiomas, herramientas, etc.
+    additional_features: str = Field(default="")   # Rasgos adicionales (pág 2)
+
+    # ── Trasfondo ────────────────────────────────────────────────────────────────
+    backstory: str = Field(default="")
+    allies_organizations: Dict[str, Any] = Field(default_factory=default_allies_organizations)
+
+    # ── Apariencia física ────────────────────────────────────────────────────────
+    age: Optional[str] = None
+    height: Optional[str] = None
+    weight: Optional[str] = None
+    eyes: Optional[str] = None
+    skin: Optional[str] = None
+    hair: Optional[str] = None
+    appearance: Optional[str] = None              # Descripción libre de apariencia
+
+    # ── Imagen ───────────────────────────────────────────────────────────────────
+    image_url: Optional[str] = None
 
     class Config:
         populate_by_name = True
@@ -178,6 +255,7 @@ class CharacterResponse(BaseModel):
     stats: Dict[str, int]
     hp_max: int
     hp_current: int
+    image_url: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
@@ -192,14 +270,80 @@ class CharacterStatusUpdate(BaseModel):
 
 
 class CharacterUpdate(BaseModel):
-    """Actualizar datos del personaje"""
-    level: Optional[int] = None
-    hp_max: Optional[int] = None
-    hp_current: Optional[int] = None
-    armor_class: Optional[int] = None
-    proficiency_bonus: Optional[int] = None
+    """Actualizar datos del personaje — cubre todos los campos editables"""
+
+    # ── Identificación ──────────────────────────────────────────────────────────
+    name: Optional[str] = None
+    race: Optional[str] = None
+    class_: Optional[str] = Field(None, alias="class")
+    subclass: Optional[str] = None
+    level: Optional[int] = Field(None, ge=1, le=20)
+    background: Optional[str] = None
+    alignment: Optional[str] = None
+    experience_points: Optional[int] = Field(None, ge=0)
+    player_name: Optional[str] = None
+
+    # ── Stats base ───────────────────────────────────────────────────────────────
     stats: Optional[StatsModel] = None
+
+    # ── Combate ──────────────────────────────────────────────────────────────────
+    hp_max: Optional[int] = Field(None, ge=1)
+    hp_current: Optional[int] = Field(None, ge=0)
+    hp_temporary: Optional[int] = Field(None, ge=0)
+    armor_class: Optional[int] = None
+    initiative: Optional[int] = None
+    speed: Optional[int] = None
+    proficiency_bonus: Optional[int] = None
+    hit_dice: Optional[str] = None
+    hit_dice_used: Optional[int] = Field(None, ge=0)
+    passive_perception: Optional[int] = None
+    inspiration: Optional[bool] = None
+
+    # ── Tiradas de salvación y habilidades ────────────────────────────────────────
+    saving_throws: Optional[Dict[str, Any]] = None
+    skills: Optional[Dict[str, Any]] = None
+
+    # ── Death Saves ───────────────────────────────────────────────────────────────
+    death_saves: Optional[Dict[str, Any]] = None
+
+    # ── Ataques ───────────────────────────────────────────────────────────────────
+    attacks: Optional[List[Dict[str, Any]]] = None
+
+    # ── Equipo e inventario ───────────────────────────────────────────────────────
+    equipment: Optional[str] = None
+    currency: Optional[Dict[str, Any]] = None
+    treasure: Optional[str] = None
+
+    # ── Spellcasting ──────────────────────────────────────────────────────────────
+    spellcasting: Optional[Dict[str, Any]] = None
+
+    # ── Personalidad ──────────────────────────────────────────────────────────────
+    personality_traits: Optional[str] = None
+    ideals: Optional[str] = None
+    bonds: Optional[str] = None
+    flaws: Optional[str] = None
+
+    # ── Rasgos ────────────────────────────────────────────────────────────────────
+    features_traits: Optional[str] = None
+    other_proficiencies: Optional[str] = None
+    additional_features: Optional[str] = None
+
+    # ── Trasfondo ─────────────────────────────────────────────────────────────────
+    backstory: Optional[str] = None
+    allies_organizations: Optional[Dict[str, Any]] = None
+
+    # ── Apariencia física ─────────────────────────────────────────────────────────
+    age: Optional[str] = None
+    height: Optional[str] = None
+    weight: Optional[str] = None
+    eyes: Optional[str] = None
+    skin: Optional[str] = None
+    hair: Optional[str] = None
+    appearance: Optional[str] = None
+
+    # ── Estado / imagen ───────────────────────────────────────────────────────────
     is_alive: Optional[bool] = None
+    image_url: Optional[str] = None
 
     class Config:
         populate_by_name = True

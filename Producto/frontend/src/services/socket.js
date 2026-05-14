@@ -1,42 +1,65 @@
 import io from 'socket.io-client'
 import { useSocketStore } from '../store/useSocketStore'
+import { useAuthStore } from '../store/useAuthStore'
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:8000'
 
 let socket = null
 
 export const initSocket = () => {
-  // Por ahora desactivado: Socket.io no está configurado en el backend
-  // if (socket) return socket
+  if (socket) return socket
 
-  // socket = io(SOCKET_URL, {
-  //   reconnection: true,
-  //   reconnectionDelay: 1000,
-  //   reconnectionDelayMax: 5000,
-  //   reconnectionAttempts: 5,
-  // })
+  const token = useAuthStore.getState().token
+  
+  if (!token) {
+    console.warn('⚠️ No se puede inicializar socket sin token')
+    return null
+  }
 
-  // socket.on('connect', () => {
-  //   console.log('✅ Socket conectado:', socket.id)
-  //   useSocketStore.setState({ isConnected: true })
-  // })
+  // Inicializar socket con autenticación
+  socket = io(SOCKET_URL, {
+    auth: { token },
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    reconnectionAttempts: 5,
+  })
 
-  // socket.on('disconnect', () => {
-  //   console.log('❌ Socket desconectado')
-  //   useSocketStore.setState({ isConnected: false })
-  // })
+  socket.on('connect', () => {
+    console.log('✅ Socket conectado:', socket.id)
+    useSocketStore.setState({ isConnected: true })
+  })
 
-  // socket.on('error', (error) => {
-  //   console.error('Socket error:', error)
-  // })
+  socket.on('disconnect', (reason) => {
+    console.log('❌ Socket desconectado:', reason)
+    useSocketStore.setState({ isConnected: false })
+  })
 
-  // useSocketStore.setState({ socket })
-  // return socket
+  socket.on('authenticated', (data) => {
+    console.log('🔐 Socket autenticado correctamente')
+  })
+
+  socket.on('error', (error) => {
+    console.error('Socket error:', error)
+  })
+
+  // Eventos globales
+  socket.on('user_joined', (data) => {
+    console.log('👤 Usuario unido:', data.username)
+  })
+
+  socket.on('message', (data) => {
+    console.log('📩 Nuevo mensaje:', data)
+    // Aquí podrías despachar una notificación al store
+  })
+
+  useSocketStore.setState({ socket })
+  return socket
 }
 
 export const getSocket = () => {
   if (!socket) {
-    initSocket()
+    return initSocket()
   }
   return socket
 }
@@ -49,15 +72,18 @@ export const disconnectSocket = () => {
   }
 }
 
-// Socket event handlers
 export const joinCampaign = (campaignId) => {
   const socket = getSocket()
-  socket.emit('join_campaign', { campaign_id: campaignId })
+  if (socket) {
+    socket.emit('join_campaign', { campaign_id: campaignId })
+  }
 }
 
 export const leaveCampaign = (campaignId) => {
   const socket = getSocket()
-  socket.emit('leave_campaign', { campaign_id: campaignId })
+  if (socket) {
+    socket.emit('leave_campaign', { campaign_id: campaignId })
+  }
 }
 
 export default {

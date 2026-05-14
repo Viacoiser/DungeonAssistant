@@ -163,8 +163,190 @@ async def end_session(
 
 
 # ============================================================================
-# Agregar nota con análisis de IA (Function Calling)
+# Agregar nota con análisis de IA (Background Task)
 # ============================================================================
+
+async def _analyze_and_update_note_task(
+    note_id: str,
+    session_id: str,
+    content: str,
+    user_id: str,
+    username: str
+):
+    """Tarea de background para análisis híbrido y población de RAG"""
+
+    try:
+        supabase = get_supabase()
+        gemini = get_gemini()
+        from services.dnd5e_search import get_dnd5e_searcher
+        searcher = get_dnd5e_searcher()
+        
+        # 1. Obtener contexto (Necesitamos campaign_id)
+        session_res = supabase.client.table("sessions") \
+            .select("campaign_id") \
+            .eq("id", session_id) \
+            .single() \
+            .execute()
+        
+        if not session_res.data:
+            return
+            
+        campaign_id = session_res.data["campaign_id"]
+        
+        # 2. Ejecutar tareas de contexto en paralelo
+        async def _get_campaign():
+            loop = asyncio.get_event_loop()
+            return await loop.run_in_executor(
+                None,
+                lambda: supabase.client.table("campaigns")
+                    .select("name, lore_summary")
+                    .eq("id", campaign_id)
+                    .single()
+                    .execute()
+            )
+        
+        async def _get_user_char():
+            loop = asyncio.get_event_loop()
+            return await loop.run_in_executor(
+                None,
+                lambda: supabase.client.table("characters")
+                    .select("id, name, race, class, level, background")
+                    .eq("campaign_id", campaign_id)
+                    .eq("player_id", user_id)
+                    .execute()
+            )
+        
+        async def _get_party():
+            loop = asyncio.get_event_loop()
+            return await loop.run_in_executor(
+                None,
+                lambda: supabase.client.table("characters")
+                    .select("name, race, class")
+                    .eq("campaign_id", campaign_id)
+                    .neq("player_id", user_id)
+                    .execute()
+            )
+            
+        campaign, user_char, party = await asyncio.gather(
+            _get_campaign(),
+            _get_user_char(),
+            _get_party()
+        )
+        
+        # 3. Preparar contexto
+        user_character_data = user_char.data[0] if user_char.data else None
+        context = {
+            "campaign_id": campaign_id,
+            "campaign_name": campaign.data.get("name", "") if campaign.data else "",
+            "player_name": username,
+            "character_name": user_character_data.get("name", "") if user_character_data else "",
+            "character_race": user_character_data.get("race", "") if user_character_data else "",
+            "character_class": user_character_data.get("class", "") if user_character_data else "",
+            "party_members": party.data or []
+        }
+        
+        # 4. Análisis local y Gemini en paralelo
+        async def _local_analysis():
+            loop = asyncio.get_event_loop()
+            return await loop.run_in_executor(None, searcher.analyze_note, content)
+            
+        local_analysis, gemini_analysis = await asyncio.gather(
+            _local_analysis(),
+            gemini.analyze_session_note(content, context)
+        )
+        
+        # 5. Combinar resultados
+        local_items = local_analysis.get("detected_items", [])
+        local_npcs = local_analysis.get("detected_npcs", [])
+        gemini_items = gemini_analysis.get("detected_items", [])
+        gemini_npcs = gemini_analysis.get("detected_npcs", [])
+        
+        final_items = local_items if local_items else gemini_items
+        final_npcs = gemini_npcs if gemini_npcs else local_npcs
+        
+        # 6. Actualizar nota en Supabase
+        supabase.client.table("session_notes").update({
+            "detected_items": final_items,
+            "detected_npcs": final_npcs
+        }).eq("id", note_id).execute()
+        
+        # 7. RAG Auto-populate
+        _populate_rag_logic(campaign_id, final_items, final_npcs)
+        
+        logger.info(f"✅ Background analysis complete for note {note_id}")
+        
+    except Exception as e:
+        logger.error(f"❌ Error in background analysis task: {e}")
+
+def _populate_rag_logic(campaign_id, final_items, final_npcs):
+    """Lógica interna para poblar RAG (usada en background)"""
+
+    try:
+        supabase = get_supabase()
+        # Items
+        for item in final_items:
+            try:
+                item_name = item.get("name") or item.get("item_name", "Unknown Item") if isinstance(item, dict) else str(item)
+                result = supabase.client.table("rag_entities").select("id, mention_count").match({
+                    "campaign_id": campaign_id,
+                    "entity_type": "ITEM",
+                    "entity_name": item_name
+                }).execute()
+                
+                if result.data:
+                    entity_id = result.data[0]["id"]
+                    current_count = result.data[0]["mention_count"]
+                    supabase.client.table("rag_entities").update({
+                        "mention_count": current_count + 1
+                    }).eq("id", entity_id).execute()
+                else:
+                    supabase.client.table("rag_entities").insert({
+                        "campaign_id": campaign_id,
+                        "entity_type": "ITEM",
+                        "entity_name": item_name,
+                        "mention_count": 1
+                    }).execute()
+            except: pass
+            
+        # NPCs
+        for npc in final_npcs:
+            try:
+                npc_name = npc.get("name", "Unknown NPC") if isinstance(npc, dict) else str(npc)
+                result = supabase.client.table("rag_entities").select("id, mention_count, attributes").match({
+                    "campaign_id": campaign_id,
+                    "entity_type": "NPC",
+                    "entity_name": npc_name
+                }).execute()
+                
+                if result.data:
+                    entity_id = result.data[0]["id"]
+                    current_count = result.data[0]["mention_count"]
+                    current_attrs = result.data[0].get("attributes", {}) or {}
+                    updated_attrs = current_attrs.copy()
+                    if isinstance(npc, dict):
+                        if npc.get("description"): updated_attrs["description"] = npc["description"]
+                        if npc.get("relationship"): updated_attrs["relationship"] = npc["relationship"]
+                    
+                    supabase.client.table("rag_entities").update({
+                        "mention_count": current_count + 1,
+                        "attributes": updated_attrs
+                    }).eq("id", entity_id).execute()
+                else:
+                    attrs = {}
+                    if isinstance(npc, dict):
+                        if npc.get("description"): attrs["description"] = npc["description"]
+                        if npc.get("relationship"): attrs["relationship"] = npc["relationship"]
+                    supabase.client.table("rag_entities").insert({
+                        "campaign_id": campaign_id,
+                        "entity_type": "NPC",
+                        "entity_name": npc_name,
+                        "description": attrs.get("description"),
+                        "attributes": attrs,
+                        "mention_count": 1
+                    }).execute()
+            except: pass
+    except Exception as e:
+        logger.error(f"Error in RAG logic: {e}")
 
 @router.post("/{session_id}/notes")
 async def add_session_note(
@@ -172,303 +354,41 @@ async def add_session_note(
     data: NoteCreate,
     current_user: dict = Depends(get_current_user)
 ):
-    """Agregar nota a sesión"""
+    """Agregar nota a sesión (Guardado instantáneo + Análisis asincrónico)"""
     try:
-        import time
-        import asyncio
-        start_time = time.time()
-        
         supabase = get_supabase()
-        gemini = get_gemini()
         
-        from services.dnd5e_search import get_dnd5e_searcher
-        searcher = get_dnd5e_searcher()
-        
-        # Análisis local
-        async def get_local_analysis():
-            loop = asyncio.get_event_loop()
-            return await loop.run_in_executor(None, searcher.analyze_note, data.content)
-        
-        # Contexto de BD
-        async def get_session_context():
-            try:
-                supabase = get_supabase()
-                
-                # Obtener sesión
-                session = supabase.client.table("sessions") \
-                    .select("campaign_id") \
-                    .eq("id", session_id) \
-                    .single() \
-                    .execute()
-                
-                if not session.data:
-                    raise HTTPException(status_code=404, detail="Sesión no encontrada")
-                
-                campaign_id = session.data["campaign_id"]
-                
-                # Ejecutar queries en executor (simples coroutines)
-                async def _get_campaign():
-                    loop = asyncio.get_event_loop()
-                    return await loop.run_in_executor(
-                        None,
-                        lambda: supabase.client.table("campaigns")
-                            .select("name, lore_summary")
-                            .eq("id", campaign_id)
-                            .single()
-                            .execute()
-                    )
-                
-                async def _get_user_char():
-                    loop = asyncio.get_event_loop()
-                    return await loop.run_in_executor(
-                        None,
-                        lambda: supabase.client.table("characters")
-                            .select("id, name, race, class, level, background")
-                            .eq("campaign_id", campaign_id)
-                            .eq("player_id", current_user["id"])
-                            .execute()
-                    )
-                
-                async def _get_party():
-                    loop = asyncio.get_event_loop()
-                    return await loop.run_in_executor(
-                        None,
-                        lambda: supabase.client.table("characters")
-                            .select("name, race, class")
-                            .eq("campaign_id", campaign_id)
-                            .neq("player_id", current_user["id"])
-                            .execute()
-                    )
-                
-                # Esperar todas las queries
-                campaign, user_char, party = await asyncio.gather(
-                    _get_campaign(),
-                    _get_user_char(),
-                    _get_party()
-                )
-                
-                campaign_name = campaign.data.get("name", "") if campaign.data else ""
-                
-                user_character_data = user_char.data[0] if user_char.data else None
-                character_name = user_character_data.get("name", "") if user_character_data else ""
-                character_race = user_character_data.get("race", "") if user_character_data else ""
-                character_class = user_character_data.get("class", "") if user_character_data else ""
-                
-                party_members = party.data or []
-                
-                return {
-                    "campaign_id": campaign_id,
-                    "campaign_name": campaign_name,
-                    "player_name": current_user.get("username", "Jugador"),
-                    "character_name": character_name,
-                    "character_race": character_race,
-                    "character_class": character_class,
-                    "party_members": party_members
-                }
-            except Exception as e:
-                logger.error(f"Error obteniendo contexto: {e}")
-                return {
-                    "campaign_id": None,
-                    "campaign_name": "",
-                    "player_name": current_user.get("username", "Jugador"),
-                    "character_name": "",
-                    "character_race": "",
-                    "character_class": "",
-                    "party_members": []
-                }
-        
-        # Ejecutar todas las tareas en PARALELO
-        local_analysis, context = await asyncio.gather(
-            get_local_analysis(),
-            get_session_context()
-        )
-        
-        local_items = local_analysis.get("detected_items", [])
-        local_spells = local_analysis.get("detected_spells", [])
-        local_npcs = local_analysis.get("detected_npcs", [])
-        
-        logger.info(
-            f"✓ Parallel tasks completed: {len(local_items)} items (local), "
-            f"context obtained for {context.get('campaign_name', 'unknown')}"
-        )
-
-        # ====================================================================
-        # GEMINI ANALYSIS (con contexto ya obtenido)
-        # ====================================================================
-        
-        gemini_analysis_start = time.time()
-        gemini_analysis = await gemini.analyze_session_note(data.content, context)
-        gemini_items = gemini_analysis.get("detected_items", [])
-        gemini_npcs = gemini_analysis.get("detected_npcs", [])
-        gemini_time = time.time() - gemini_analysis_start
-        
-        logger.info(
-            f"✓ Gemini analysis: {len(gemini_items)} items, {len(gemini_npcs)} NPCs ({gemini_time:.2f}s)"
-        )
-        
-        # ====================================================================
-        # COMBINAR ANÁLISIS (local + Gemini)
-        # ====================================================================
-        
-        final_items = local_items if local_items else gemini_items
-        final_npcs = gemini_npcs if gemini_npcs else local_npcs
-        final_spells = local_spells
-        
-        logger.info(f"  Final combined: {len(final_items)} items, {len(final_npcs)} NPCs")
-        if final_items:
-            for item in final_items:
-                logger.info(f"    - ITEM: {item.get('name', '?')}")
-        if final_npcs:
-            for npc in final_npcs:
-                logger.info(f"    - NPC: {npc.get('name', '?')}")
-        
-        # ====================================================================
-        # Guardar nota en BD con todos los datos
-        # ====================================================================
-        
+        # 1. Guardar la nota inmediatamente
         note_result = supabase.client.table("session_notes").insert({
             "session_id": session_id,
             "author_id": current_user["id"],
             "content": data.content,
-            "detected_items": final_items,
-            "detected_npcs": final_npcs
+            "detected_items": [],
+            "detected_npcs": []
         }).execute()
 
-        note = note_result.data[0] if note_result.data else {}
-        total_time = time.time() - start_time
-
-        logger.info(
-            f"✅ Note saved (Phase 2 Parallel): "
-            f"{len(final_items)} items, {len(final_npcs)} NPCs, {len(final_spells)} spells "
-            f"(Gemini: {gemini_time:.2f}s, Total: {total_time:.2f}s)"
+        if not note_result.data:
+            raise HTTPException(status_code=500, detail="Error al guardar la nota")
+            
+        note = note_result.data[0]
+        
+        # 2. Lanzar análisis en segundo plano (No bloquea la respuesta)
+        asyncio.create_task(
+            _analyze_and_update_note_task(
+                note["id"], 
+                session_id, 
+                data.content, 
+                current_user["id"],
+                current_user.get("username", "Jugador")
+            )
         )
-
-        # ====================================================================
-        # PHASE 3: RAG AUTO-POPULATE (Asincrónico, no bloquea respuesta)
-        # ====================================================================
-        
-        # Registrar en RAG en background (fire-and-forget)
-        try:
-            campaign_id = context.get("campaign_id")
-            if campaign_id:
-                def populate_rag_sync():
-                    """Registrar entidades - sincrónico en background"""
-                    try:
-                        # Items
-                        for item in final_items:
-                            try:
-                                # Soportar ambos formatos: "name" y "item_name"
-                                item_name = item.get("name") or item.get("item_name", "Unknown Item") if isinstance(item, dict) else str(item)
-                                
-                                # Intentar insert, si existe incrementar mention_count
-                                result = supabase.client.table("rag_entities").select("id, mention_count").match({
-                                    "campaign_id": campaign_id,
-                                    "entity_type": "ITEM",
-                                    "entity_name": item_name
-                                }).execute()
-                                
-                                if result.data:
-                                    # Ya existe, incrementar
-                                    entity_id = result.data[0]["id"]
-                                    current_count = result.data[0]["mention_count"]
-                                    supabase.client.table("rag_entities").update({
-                                        "mention_count": current_count + 1
-                                    }).eq("id", entity_id).execute()
-                                    logger.debug(f"  Updated ITEM: {item_name} (count: {current_count + 1})")
-                                else:
-                                    # No existe, crear
-                                    supabase.client.table("rag_entities").insert({
-                                        "campaign_id": campaign_id,
-                                        "entity_type": "ITEM",
-                                        "entity_name": item_name,
-                                        "description": None,
-                                        "mention_count": 1
-                                    }).execute()
-                                    logger.debug(f"  Created ITEM: {item_name}")
-                            except Exception as e:
-                                logger.error(f"  RAG item error: {e}")
-                        
-                        # NPCs
-                        for npc in final_npcs:
-                            try:
-                                npc_name = npc.get("name", "Unknown NPC") if isinstance(npc, dict) else str(npc)
-                                npc_description = npc.get("description", "") if isinstance(npc, dict) else ""
-                                npc_relationship = npc.get("relationship", "") if isinstance(npc, dict) else ""
-                                
-                                # Intentar insert, si existe incrementar mention_count
-                                result = supabase.client.table("rag_entities").select("id, mention_count, attributes").match({
-                                    "campaign_id": campaign_id,
-                                    "entity_type": "NPC",
-                                    "entity_name": npc_name
-                                }).execute()
-                                
-                                if result.data:
-                                    # Ya existe, incrementar y actualizar atributos
-                                    entity_id = result.data[0]["id"]
-                                    current_count = result.data[0]["mention_count"]
-                                    current_attrs = result.data[0].get("attributes", {}) or {}
-                                    
-                                    # Mergear atributos: conservar los viejos, actualizar con los nuevos
-                                    updated_attrs = current_attrs.copy()
-                                    if npc_description:
-                                        updated_attrs["description"] = npc_description
-                                    if npc_relationship:
-                                        updated_attrs["relationship"] = npc_relationship
-                                    
-                                    supabase.client.table("rag_entities").update({
-                                        "mention_count": current_count + 1,
-                                        "attributes": updated_attrs
-                                    }).eq("id", entity_id).execute()
-                                    logger.debug(f"  Updated NPC: {npc_name} (count: {current_count + 1})")
-                                else:
-                                    # No existe, crear con atributos
-                                    attrs = {}
-                                    if npc_description:
-                                        attrs["description"] = npc_description
-                                    if npc_relationship:
-                                        attrs["relationship"] = npc_relationship
-                                    
-                                    supabase.client.table("rag_entities").insert({
-                                        "campaign_id": campaign_id,
-                                        "entity_type": "NPC",
-                                        "entity_name": npc_name,
-                                        "description": npc_description,
-                                        "attributes": attrs,
-                                        "mention_count": 1
-                                    }).execute()
-                                    logger.debug(f"  Created NPC: {npc_name}")
-                            except Exception as e:
-                                logger.error(f"  RAG NPC error: {e}")
-                        
-                        logger.info(f"✓ RAG background: {len(final_items)} items, {len(final_npcs)} NPCs processed")
-                    except Exception as e:
-                        logger.error(f"⚠ RAG background error: {e}")
-                
-                # Ejecutar en thread background (más confiable que asyncio.create_task)
-                import threading
-                thread = threading.Thread(target=populate_rag_sync, daemon=True)
-                thread.start()
-                logger.info("✓ RAG background task launched")
-        
-        except Exception as e:
-            logger.error(f"⚠ RAG init error (non-critical): {e}")
 
         return {
             "note": note,
-            "analysis": {
-                "detected_items": final_items,
-                "detected_npcs": final_npcs,
-                "detected_spells": final_spells,
-                "items_count": len(final_items),
-                "npcs_count": len(final_npcs),
-                "spells_count": len(final_spells),
-                "source": "hybrid_parallel",
-                "performance": {
-                    "gemini_analysis_ms": round(gemini_time * 1000),
-                    "total_ms": round(total_time * 1000)
-                }
-            }
+            "status": "pending_analysis",
+            "message": "Nota guardada instantáneamente. El análisis se completará en segundo plano."
         }
+
 
     except Exception as e:
         logger.error(f"❌ Error guardando nota: {e}")

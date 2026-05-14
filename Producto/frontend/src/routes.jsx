@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
-import ProtectedRoute from './components/ProtectedRoute'
+import ProtectedRoute from './components/shared/ProtectedRoute'
 import Welcome from './pages/Welcome'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'

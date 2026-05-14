@@ -1,0 +1,1290 @@
+[
+  {
+    "id": "longsword",
+    "name": "Espada Larga",
+    "category": "weapon",
+    "equipment_category": {
+      "index": "weapon",
+      "name": "Arma"
+    },
+    "cost": {
+      "quantity": 15,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "damage": {
+      "damage_dice": "1d8",
+      "damage_type": {
+        "name": "Cortante"
+      }
+    },
+    "properties": [
+      {
+        "name": "Versátil (1d10)"
+      }
+    ],
+    "desc": [
+      "Una hoja clásica y confiable para cualquier guerrero."
+    ]
+  },
+  {
+    "id": "crowbar",
+    "name": "Palanqueta",
+    "category": "tools",
+    "equipment_category": {
+      "name": "Tools"
+    },
+    "cost": {
+      "quantity": 2,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "desc": [
+      "Otorga ventaja en pruebas de Fuerza para forzar o abrir objetos cuando se usa como palanca."
+    ]
+  },
+  {
+    "id": "tinderbox",
+    "name": "Pedernal y acero",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 5,
+      "unit": "sp"
+    },
+    "weight": 1,
+    "desc": [
+      "Permite encender fuego produciendo chispas sobre yesca frotando pedernal y acero. Iniciar un fuego toma 1 acción."
+    ]
+  },
+  {
+    "id": "alchemists-fire",
+    "name": "Fuego de alquimista",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 50,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "desc": [
+      "Se adhiere al objetivo y le causa 1d4 de daño de fuego por turno hasta que se apague."
+    ]
+  },
+  {
+    "id": "ink",
+    "name": "Frasco de tinta",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 10,
+      "unit": "gp"
+    },
+    "weight": 0,
+    "desc": [
+      "Tinta negra u oscura de alta calidad, a menudo usada para escribir conjuros, rituales y mensajes importantes (rinde 1 onza)."
+    ]
+  },
+  {
+    "id": "lamp",
+    "name": "Lámpara de aceite",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 5,
+      "unit": "sp"
+    },
+    "weight": 1,
+    "desc": [
+      "Fuente de luz direccional y reutilizable que consume aceite. Emite luz brillante en 15 pies y luz tenue 30 pies más allá."
+    ]
+  },
+  {
+    "id": "wand-of-magic-detection",
+    "name": "Vara de detección / Wand of Detection",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 1,
+    "desc": [
+      "Varita (incomún). Contiene cargas que puedes usar para lanzar conjuros de Detectar Magia de forma inmediata sin gastar espacios."
+    ]
+  },
+  {
+    "id": "cloak-of-displacement",
+    "name": "Capa de desplazamiento / Cloak of Displacement",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Objeto maravilloso (raro, requiere sintonización). Proyecta ilusiones de tu posición. Todas las criaturas tienen desventaja en ataques contra ti. Falla hasta el próximo turno si recibes daño."
+    ]
+  },
+  {
+    "id": "healers-kit",
+    "name": "Kit de sanador",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 5,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "desc": [
+      "Permite estabilizar criaturas a 0 puntos de golpe sin necesidad de prueba. (10 usos)"
+    ]
+  },
+  {
+    "id": "portable-ram",
+    "name": "Ariete portátil",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 4,
+      "unit": "gp"
+    },
+    "weight": 35,
+    "desc": [
+      "Otorga bonificaciones a pruebas de Fuerza (+4 a la tirada) para derribar puertas. Otorga ventaja si alguien te ayuda a usarlo."
+    ]
+  },
+  {
+    "id": "rations",
+    "name": "Raciones (1 día)",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 5,
+      "unit": "sp"
+    },
+    "weight": 2,
+    "desc": [
+      "Provisiones secas (carne seca, frutos secos) suficientes para alimentar a una criatura durante un día de expedición."
+    ]
+  },
+  {
+    "id": "ball-bearings",
+    "name": "Bolsa de rodamientos",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 1,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "desc": [
+      "Se esparcen en el suelo para cubrir un área de 10 pies cuadrados. Las criaturas que se muevan por ella a más de la mitad de su velocidad deben tener éxito en una salvación de Destreza o caer tumbadas (Prone)."
+    ]
+  },
+  {
+    "id": "vorpal-sword",
+    "name": "Espada vorpal / Vorpal Sword",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Weapon"
+    },
+    "weight": 3,
+    "desc": [
+      "Arma mágica (legendaria, requiere sintonización). En un golpe crítico (20 natural) puede decapitar instantáneamente a criaturas que tengan cabeza, matándolas al instante si no tienen acciones legendarias ni el DM dictamina que son demasiado grandes para ser decapitadas."
+    ]
+  },
+  {
+    "id": "cloak-of-elvenkind",
+    "name": "Capa élfica / Cloak of Elvenkind",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Objeto maravilloso (incomún, requiere sintonización). Otorga ventaja en tus tiradas de Sigilo y otorga desventaja en las de Percepción a quienes intentan detectar tu presencia visualmente."
+    ]
+  },
+  {
+    "id": "ring-of-invisibility",
+    "name": "Anillo de invisibilidad / Ring of Invisibility",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Anillo (legendario, requiere sintonización). Permite al portador volverse invisible a voluntad (como acción), manteniendo el efecto incluso al moverse. Se rompe la invisibilidad si atacas o lanzas un hechizo."
+    ]
+  },
+  {
+    "id": "sword-plus-three",
+    "name": "Espada +3",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Weapon"
+    },
+    "weight": 3,
+    "desc": [
+      "Arma mágica (muy rara). Tienes un bonificador de +3 en las tiradas de ataque y daño con esta espada larga."
+    ]
+  },
+  {
+    "id": "oil-flask",
+    "name": "Aceite (frasco)",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 1,
+      "unit": "sp"
+    },
+    "weight": 1,
+    "desc": [
+      "Puede usarse para alimentar lámparas (6 horas por pinta) o arrojarse como combustible inflamable que causa daño extra de fuego al encenderse."
+    ]
+  },
+  {
+    "id": "ring-of-regeneration",
+    "name": "Anillo de regeneración",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Anillo (muy raro, requiere sintonización). Recuperas 1d6 puntos de golpe cada 10 minutos (1 por minuto), y puedes regenerar partes del cuerpo si lo usas por días."
+    ]
+  },
+  {
+    "id": "bag-of-holding",
+    "name": "Bolsa de contención / Bag of Holding",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 15,
+    "desc": [
+      "Contenedor extradimensional capaz de almacenar gran cantidad de peso (hasta 500 lb) sin aumentar significativamente su masa."
+    ]
+  },
+  {
+    "id": "flame-tongue",
+    "name": "Espada flamígera / Flame Tongue",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Weapon"
+    },
+    "weight": 3,
+    "desc": [
+      "Espada mágica (rara, requiere sintonización). Puede activarse con palabra de mando para envolver la hoja en llamas, causando 2d6 daño adicional de fuego e iluminando el entorno."
+    ]
+  },
+  {
+    "id": "animated-shield",
+    "name": "Escudo animado / Animated Shield",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Armor"
+    },
+    "weight": 6,
+    "desc": [
+      "Escudo mágico (muy raro, requiere sintonización). Con una palabra de mando, flota a tu alrededor protegiéndote y otorgando su bono de CA sin usar tus manos (1 minuto)."
+    ]
+  },
+  {
+    "id": "belt-of-giant-strength",
+    "name": "Cinturón de fuerza de gigante / Belt of Giant Strength",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 1,
+    "desc": [
+      "Objeto maravilloso (raro a legendario, requiere sintonización). Aumenta la Fuerza del portador a 21, 23, 25, 27 o 29 dependiendo de la variante del gigante (Hill, Frost, Fire, Cloud, Storm)."
+    ]
+  },
+  {
+    "id": "torch",
+    "name": "Antorcha",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 1,
+      "unit": "cp"
+    },
+    "weight": 1,
+    "desc": [
+      "Fuente de luz básica. Arde produciendo luz brillante en radio de 20 pies y tenue otros 20. Dura aproximadamente 1 hora."
+    ]
+  },
+  {
+    "id": "caltrops",
+    "name": "Abrojos",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 1,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "desc": [
+      "Se esparcen en el suelo para cubrir un área de 5 pies cuadrados. Cualquier criatura que entre en el área debe superar una salvación de Destreza o detenerse y sufrir 1 punto de daño penetrante, reduciendo su velocidad en 10 pies hasta recuperar vida."
+    ]
+  },
+  {
+    "id": "ring-of-protection",
+    "name": "Anillo de protección / Ring of Protection",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Anillo (raro, requiere sintonización). Otorga +1 a la CA (Clase de Armadura) y un bonificador de +1 a todas las tiradas de salvación mientras se lleva puesto."
+    ]
+  },
+  {
+    "id": "wand-of-magic-missiles",
+    "name": "Vara de proyectiles mágicos / Wand of Magic Missiles",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 1,
+    "desc": [
+      "Varita (incomún). Contiene 7 cargas que permiten lanzar el conjuro Proyectil mágico sin gastar espacios de conjuro. Recupera 1d6 + 1 cargas expandidas al amanecer."
+    ]
+  },
+  {
+    "id": "boots-of-levitation",
+    "name": "Botas de levitación / Boots of Levitation",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Objeto maravilloso (raro, requiere sintonización). Al llevarlas puestas, puedes usar el conjuro de Levitar a voluntad (solo sobre ti mismo) sin gastar componentes."
+    ]
+  },
+  {
+    "id": "bullseye-lantern",
+    "name": "Linterna de ojo de buey",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 10,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "desc": [
+      "Ilumina en un cono enfocado. Da luz brillante en un cono de 60 pies y luz tenue 60 pies más allá, consume aceite (1 pinta/6h)."
+    ]
+  },
+  {
+    "id": "parchment",
+    "name": "Pergamino",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 1,
+      "unit": "sp"
+    },
+    "weight": 0,
+    "desc": [
+      "Hoja de piel animal tratada, superficie resistente usada para registrar mapas, diarios o conjuros."
+    ]
+  },
+  {
+    "id": "amulet-of-health",
+    "name": "Amuleto de salud / Amulet of Health",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Objeto maravilloso (raro, requiere sintonización). Establece tu puntuación de Constitución en 19 mientras lo lleves puesto. No tiene efecto si tu CON ya es mayor."
+    ]
+  },
+  {
+    "id": "blanket",
+    "name": "Manta",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 5,
+      "unit": "sp"
+    },
+    "weight": 3,
+    "desc": [
+      "Mantiene el calor y proporciona un lugar cómodo para dormir, ayudando a recuperarse en descansos al aire libre."
+    ]
+  },
+  {
+    "id": "waterskin",
+    "name": "Cantimplora",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 2,
+      "unit": "sp"
+    },
+    "weight": 5,
+    "desc": [
+      "Contiene 4 pintas de líquidos (1 día de agua). Esencial para la supervivencia en viajes largos."
+    ]
+  },
+  {
+    "id": "hammer",
+    "name": "Martillo",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 1,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "desc": [
+      "Herramienta útil. A menudo se usa junto con pitones de hierro para escalar o clavar cuñas."
+    ]
+  },
+  {
+    "id": "ioun-stone",
+    "name": "Piedra Ioun / Ioun Stone",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Objeto maravilloso (rareza varía, requiere sintonización). Cristal que orbita alrededor de tu cabeza otorgando bonificaciones pasivas, como protección (+1 CA), o características aumentadas."
+    ]
+  },
+  {
+    "id": "acid-vial",
+    "name": "Ácido (vial)",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 25,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "desc": [
+      "Puede lanzarse para causar 2d6 de daño de ácido a una criatura impactada."
+    ]
+  },
+  {
+    "id": "cloak-of-protection",
+    "name": "Capa de protección / Cloak of Protection",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Objeto maravilloso (incomún, requiere sintonización). Proporciona un bono de +1 a la CA y un bonificador de +1 a todas las tiradas de salvación mientras se viste."
+    ]
+  },
+  {
+    "id": "rod-of-lordly-might",
+    "name": "Vara de poder / Rod of Lordly Might",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 5,
+    "desc": [
+      "Vara (legendaria, requiere sintonización). Vara versátil que puede transformarse en distintas armas (espada, maza, lanza), emitir efectos mágicos, funcionar como brújula o ariete, y otorgar múltiples habilidades ofensivas a través de sus botones mágicos."
+    ]
+  },
+  {
+    "id": "bucket",
+    "name": "Cubo",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 5,
+      "unit": "cp"
+    },
+    "weight": 2,
+    "desc": [
+      "Contenedor de madera o hierro. Puede albergar hasta 3 galones de líquido o media pulgada cúbica de sólidos pequeños."
+    ]
+  },
+  {
+    "id": "silk-rope",
+    "name": "Cuerda de seda (50 pies)",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 10,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "desc": [
+      "Más ligera y resistente que la cuerda de cáñamo, ideal para escaladas peligrosas."
+    ]
+  },
+  {
+    "id": "boots-of-elvenkind",
+    "name": "Botas élficas / Boots of Elvenkind",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Objeto maravilloso (incomún). Permiten moverse sin hacer ruido y otorgan ventaja en pruebas de Sigilo relacionadas con el movimiento."
+    ]
+  },
+  {
+    "id": "pitons",
+    "name": "Pitones",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 5,
+      "unit": "cp"
+    },
+    "weight": 0.25,
+    "desc": [
+      "Clavos metálicos gruesos con un ojo u orificio, usados clavados en roca o grietas para fijar cuerdas y facilitar la escalada."
+    ]
+  },
+  {
+    "id": "dancing-sword",
+    "name": "Espada danzante / Dancing Sword",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Weapon"
+    },
+    "weight": 3,
+    "desc": [
+      "Arma mágica (muy rara). Como acción adicional la lanzas al aire. Vuela hasta 30 pies atacando a una criatura independientemente en cada uno de tus turnos durante 4 turnos."
+    ]
+  },
+  {
+    "id": "boots-of-speed",
+    "name": "Botas de velocidad / Boots of Speed",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Objeto maravilloso (raro, requiere sintonización). Puedes usarlas para duplicar tu velocidad a pie por 10 minutos al día. Las criaturas que hagan ataques de oportunidad contra ti tienen desventaja."
+    ]
+  },
+  {
+    "id": "potion-of-healing",
+    "name": "Poción de curación",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "cost": {
+      "quantity": 50,
+      "unit": "gp"
+    },
+    "weight": 0.5,
+    "desc": [
+      "Cura 2d4 + 2 puntos de golpe al beberse."
+    ]
+  },
+  {
+    "id": "holy-water",
+    "name": "Agua bendita",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 25,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "desc": [
+      "Causa 2d6 de daño radiante a muertos vivientes e infernales (fiends) al impactar. Puede salpicar si se arroja."
+    ]
+  },
+  {
+    "id": "tent",
+    "name": "Tienda de campaña",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 2,
+      "unit": "gp"
+    },
+    "weight": 20,
+    "desc": [
+      "Refugio básico de lona o piel, caben 2 humanoides cómodamente, protegiendo del clima adverso."
+    ]
+  },
+  {
+    "id": "pearl-of-power",
+    "name": "Perla de poder / Pearl of Power",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 0,
+    "desc": [
+      "Objeto maravilloso (incomún, requiere sintonización por hechicero, mago o brujo). Como acción, recuperas un espacio de conjuro gastado de nivel 3 o inferior."
+    ]
+  },
+  {
+    "id": "staff-of-power",
+    "name": "Bastón de poder / Staff of Power",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 4,
+    "desc": [
+      "Bastón (muy raro, requiere sintonización por hechicero, brujo o mago). Otorga +2 a la CA, tiradas de ataque mágico y salvaciones. Permite gastar cargas para lanzar múltiples conjuros poderosos (Cono de frío, Bola de fuego, Muro de fuerza, etc.). Puede ser quebrado en un Golpe de Retribución mortal."
+    ]
+  },
+  {
+    "id": "antitoxin",
+    "name": "Antitoxina",
+    "category": "adventuring-gear",
+    "equipment_category": {
+      "name": "Adventuring Gear"
+    },
+    "cost": {
+      "quantity": 50,
+      "unit": "gp"
+    },
+    "weight": 0,
+    "desc": [
+      "Otorga ventaja en tiradas de salvación contra veneno durante 1 hora."
+    ]
+  },
+  {
+    "id": "armor-of-invulnerability",
+    "name": "Armadura de invulnerabilidad / Armor of Invulnerability",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Item"
+    },
+    "weight": 65,
+    "desc": [
+      "Armadura de placas (legendaria, requiere sintonización). Otorga resistencia a daño no mágico contundente, perforante y cortante constantemente. Una vez por día, puede activarse durante 10 minutos para ser totalmente invulnerable (inmune) a daño no mágico."
+    ]
+  },
+  {
+    "id": "shield-plus-two",
+    "name": "Escudo +2",
+    "category": "magic",
+    "equipment_category": {
+      "name": "Magic Armor"
+    },
+    "weight": 6,
+    "desc": [
+      "Escudo mágico (raro). Además del bono básico de CA, otorga un +2 adicional, subiendo tu Clase de Armadura total significativamente."
+    ]
+  },
+  {
+    "id": "shortsword",
+    "name": "Shortsword",
+    "category": "weapon",
+    "desc": [
+      "Standard melee weapon."
+    ],
+    "damage": {
+      "damage_dice": "1d6",
+      "damage_type": {
+        "name": "Various"
+      }
+    }
+  },
+  {
+    "id": "dagger",
+    "name": "Dagger",
+    "category": "weapon",
+    "desc": [
+      "Standard melee weapon."
+    ],
+    "damage": {
+      "damage_dice": "1d4",
+      "damage_type": {
+        "name": "Various"
+      }
+    }
+  },
+  {
+    "id": "greataxe",
+    "name": "Greataxe",
+    "category": "weapon",
+    "desc": [
+      "Standard melee weapon."
+    ],
+    "damage": {
+      "damage_dice": "1d12",
+      "damage_type": {
+        "name": "Various"
+      }
+    }
+  },
+  {
+    "id": "longbow",
+    "name": "Longbow",
+    "category": "weapon",
+    "desc": [
+      "Standard ranged weapon."
+    ],
+    "damage": {
+      "damage_dice": "1d8",
+      "damage_type": {
+        "name": "Various"
+      }
+    }
+  },
+  {
+    "id": "crossbow",
+    "name": "Crossbow",
+    "category": "weapon",
+    "desc": [
+      "Standard ranged weapon."
+    ],
+    "damage": {
+      "damage_dice": "1d8",
+      "damage_type": {
+        "name": "Various"
+      }
+    }
+  },
+  {
+    "id": "spear",
+    "name": "Spear",
+    "category": "weapon",
+    "desc": [
+      "Standard melee weapon."
+    ],
+    "damage": {
+      "damage_dice": "1d6",
+      "damage_type": {
+        "name": "Various"
+      }
+    }
+  },
+  {
+    "id": "mace",
+    "name": "Mace",
+    "category": "weapon",
+    "desc": [
+      "Standard melee weapon."
+    ],
+    "damage": {
+      "damage_dice": "1d6",
+      "damage_type": {
+        "name": "Various"
+      }
+    }
+  },
+  {
+    "id": "leather-armor",
+    "name": "Leather Armor",
+    "category": "armor",
+    "desc": [
+      "light armor providing AC 11."
+    ],
+    "armor_class": {
+      "base": 11
+    },
+    "weight": 10
+  },
+  {
+    "id": "chain-mail",
+    "name": "Chain Mail",
+    "category": "armor",
+    "desc": [
+      "heavy armor providing AC 16."
+    ],
+    "armor_class": {
+      "base": 16
+    },
+    "weight": 55
+  },
+  {
+    "id": "plate-armor",
+    "name": "Plate Armor",
+    "category": "armor",
+    "desc": [
+      "heavy armor providing AC 18."
+    ],
+    "armor_class": {
+      "base": 18
+    },
+    "weight": 65
+  },
+  {
+    "id": "scale-mail",
+    "name": "Scale Mail",
+    "category": "armor",
+    "desc": [
+      "medium armor providing AC 14."
+    ],
+    "armor_class": {
+      "base": 14
+    },
+    "weight": 45
+  },
+  {
+    "id": "shield",
+    "name": "Shield",
+    "category": "armor",
+    "desc": [
+      "shield armor providing AC 2."
+    ],
+    "armor_class": {
+      "base": 2
+    },
+    "weight": 6
+  },
+  {
+    "id": "helmet",
+    "name": "Helmet",
+    "category": "armor",
+    "desc": [
+      "accessory armor providing AC ?."
+    ],
+    "weight": 1
+  },
+  {
+    "id": "potion-of-greater-healing",
+    "name": "Potion of Greater Healing",
+    "category": "consumable",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "cost": {
+      "quantity": 100,
+      "unit": "gp"
+    },
+    "rarity": "uncommon"
+  },
+  {
+    "id": "potion-of-strength",
+    "name": "Potion of Strength",
+    "category": "consumable",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "cost": {
+      "quantity": 150,
+      "unit": "gp"
+    },
+    "rarity": "uncommon"
+  },
+  {
+    "id": "potion-of-invisibility",
+    "name": "Potion of Invisibility",
+    "category": "consumable",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "cost": {
+      "quantity": 300,
+      "unit": "gp"
+    },
+    "rarity": "rare"
+  },
+  {
+    "id": "bandages",
+    "name": "Bandages",
+    "category": "consumable",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 0.1
+  },
+  {
+    "id": "healing-kit",
+    "name": "Healing Kit",
+    "category": "consumable",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 3
+  },
+  {
+    "id": "backpack",
+    "name": "Backpack",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 5
+  },
+  {
+    "id": "rope-50-ft",
+    "name": "Rope (50 ft)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 10
+  },
+  {
+    "id": "lantern-hooded",
+    "name": "Lantern (Hooded)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 2
+  },
+  {
+    "id": "grappling-hook",
+    "name": "Grappling Hook",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 4
+  },
+  {
+    "id": "piton-10",
+    "name": "Piton (10)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 2.5
+  },
+  {
+    "id": "lockpick-set",
+    "name": "Lockpick Set",
+    "category": "tools",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1
+  },
+  {
+    "id": "thieves-tools",
+    "name": "Thieves' Tools",
+    "category": "tools",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1
+  },
+  {
+    "id": "smithing-tools",
+    "name": "Smithing Tools",
+    "category": "tools",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 8
+  },
+  {
+    "id": "carpenter-s-tools",
+    "name": "Carpenter's Tools",
+    "category": "tools",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 6
+  },
+  {
+    "id": "herbalism-kit",
+    "name": "Herbalism Kit",
+    "category": "tools",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 3
+  },
+  {
+    "id": "bedroll",
+    "name": "Bedroll",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 5
+  },
+  {
+    "id": "tent-2-person",
+    "name": "Tent (2-person)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 20
+  },
+  {
+    "id": "sleeping-bag",
+    "name": "Sleeping Bag",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 3
+  },
+  {
+    "id": "map",
+    "name": "Map",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 0.1
+  },
+  {
+    "id": "compass",
+    "name": "Compass",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 0.1
+  },
+  {
+    "id": "spellbook",
+    "name": "Spellbook",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 3
+  },
+  {
+    "id": "journal",
+    "name": "Journal",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1
+  },
+  {
+    "id": "dice-set",
+    "name": "Dice Set",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 0.1
+  },
+  {
+    "id": "playing-cards",
+    "name": "Playing Cards",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 0.1
+  },
+  {
+    "id": "rations-10-days",
+    "name": "Rations (10 days)",
+    "category": "consumable",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 10
+  },
+  {
+    "id": "bread",
+    "name": "Bread",
+    "category": "consumable",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 0.5
+  },
+  {
+    "id": "wine-bottle",
+    "name": "Wine (bottle)",
+    "category": "consumable",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1.5
+  },
+  {
+    "id": "ale-flagon",
+    "name": "Ale (flagon)",
+    "category": "consumable",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1
+  },
+  {
+    "id": "chain-10-ft",
+    "name": "Chain (10 ft)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 10
+  },
+  {
+    "id": "manacles",
+    "name": "Manacles",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 6
+  },
+  {
+    "id": "mirror-steel",
+    "name": "Mirror (steel)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 0.5
+  },
+  {
+    "id": "rope-hempen",
+    "name": "Rope (hempen)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 10
+  },
+  {
+    "id": "caltrops-bag-of-20",
+    "name": "Caltrops (bag of 20)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 2
+  },
+  {
+    "id": "holy-water-flask",
+    "name": "Holy Water (flask)",
+    "category": "consumable",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "cost": {
+      "quantity": 25,
+      "unit": "gp"
+    }
+  },
+  {
+    "id": "amulet-holy-symbol",
+    "name": "Amulet (holy symbol)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1
+  },
+  {
+    "id": "flute",
+    "name": "Flute",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1
+  },
+  {
+    "id": "lute",
+    "name": "Lute",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 4
+  },
+  {
+    "id": "drum",
+    "name": "Drum",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 3
+  },
+  {
+    "id": "leather-pouch",
+    "name": "Leather Pouch",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1
+  },
+  {
+    "id": "quiver",
+    "name": "Quiver",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1
+  },
+  {
+    "id": "ammunition-20-arrows",
+    "name": "Ammunition (20 arrows)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1.5
+  },
+  {
+    "id": "ammunition-20-crossbow-bolts",
+    "name": "Ammunition (20 crossbow bolts)",
+    "category": "adventuring-gear",
+    "desc": [
+      "Standard adventuring item."
+    ],
+    "weight": 1.5
+  }
+]

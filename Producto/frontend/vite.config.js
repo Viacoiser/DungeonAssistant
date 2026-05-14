@@ -6,33 +6,32 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
+      injectRegister: 'inline',
       devOptions: {
-        enabled: false
+        enabled: true
       },
       workbox: {
-        clientsClaim: true,
-        skipWaiting: true,
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}']
       },
       manifest: {
         name: 'DungeonAssistant',
-        short_name: 'DungeonAI',
-        description: 'Gestión inteligente de campañas D&D 5e',
-        theme_color: '#1A3A5C',
-        background_color: '#F5F0E8',
+        short_name: 'Assistant',
+        description: 'IA D&D 5e',
+        theme_color: '#0d0b08',
+        background_color: '#0d0b08',
         display: 'standalone',
-        orientation: 'portrait-primary',
         icons: [
           {
-            src: '/icon-192.png',
-            sizes: '192x192',
+            src: 'app-logo.png',
+            sizes: '512x512',
             type: 'image/png'
           },
           {
-            src: '/icon-512.png',
+            src: 'app-logo.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           }
         ]
       }

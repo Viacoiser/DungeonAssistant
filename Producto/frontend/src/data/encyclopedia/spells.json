@@ -1,0 +1,818 @@
+[
+  {
+    "id": "detect-magic",
+    "name": "Detectar magia / Detect Magic",
+    "level": 1,
+    "school": "Adivinación",
+    "casting_time": "1 acción",
+    "range": "Personal",
+    "components": "V, S",
+    "duration": "Concentración, hasta 10 min",
+    "desc": [
+      "Permite percibir la presencia de magia cercana durante un tiempo."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "chain-lightning",
+    "name": "Cadena de relámpagos / Chain Lightning",
+    "level": 6,
+    "school": "Adivinación",
+    "casting_time": "1 acción",
+    "range": "150 pies",
+    "components": "V, S, M",
+    "duration": "Instantáneo",
+    "desc": [
+      "Rayo que salta entre múltiples objetivos. Eliges un blanco inicial y el relámpago salta a otros tres que estén a 30 pies del primero."
+    ],
+    "higher_level": [],
+    "damage": "10d8 relámpago"
+  },
+  {
+    "id": "dominate-person",
+    "name": "Dominar persona / Dominate Person",
+    "level": 5,
+    "school": "Adivinación",
+    "casting_time": "1 acción",
+    "range": "60 pies",
+    "components": "V, S",
+    "duration": "Concentración, hasta 1 min",
+    "desc": [
+      "Permite controlar las acciones de un humanoide con el que tengas enlace telepático."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "maze",
+    "name": "Laberinto / Maze",
+    "level": 8,
+    "school": "Adivinación",
+    "casting_time": "1 acción",
+    "range": "60 pies",
+    "components": "V, S",
+    "duration": "Concentración, hasta 10 min",
+    "desc": [
+      "Atrapa a una criatura en un laberinto extradimensional. No hay salvación inicial; el blanco usa su acción cada turno para intentar escapar con prueba de Inteligencia (CD 20)."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "telekinesis",
+    "name": "Telequinesis / Telekinesis",
+    "level": 5,
+    "school": "Adivinación",
+    "casting_time": "1 acción",
+    "range": "60 pies",
+    "components": "V, S",
+    "duration": "Concentración, hasta 10 min",
+    "desc": [
+      "Puedes mover objetos (hasta 1,000 libras) o criaturas con la mente. En tu turno, puedes moverlos hasta 30 pies en cualquier dirección."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "teleport",
+    "name": "Teletransporte / Teleport",
+    "level": 7,
+    "school": "Conjuración",
+    "casting_time": "1 acción",
+    "range": "10 pies",
+    "components": "V",
+    "duration": "Instantáneo",
+    "desc": [
+      "Permite viajar instantáneamente a grandes distancias con posibles riesgos según la familiaridad del destino. Puedes llevar contigo un objeto u otra criatura voluntaria."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "wall-of-stone",
+    "name": "Muro de piedra / Wall of Stone",
+    "level": 5,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "120 pies",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 10 min",
+    "desc": [
+      "Crea un muro sólido de piedra de hasta 6 pulgadas de grosor. Si mantienes la concentración durante toda la duración, el muro se vuelve permanente."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "misty-step",
+    "name": "Paso brumoso / Misty Step",
+    "level": 2,
+    "school": "Conjuración",
+    "casting_time": "1 acción adicional",
+    "range": "Personal",
+    "components": "V",
+    "duration": "Instantáneo",
+    "desc": [
+      "Teletransporta al lanzador hasta 30 pies a un espacio desocupado que pueda ver."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "time-stop",
+    "name": "Detener el tiempo / Time Stop",
+    "level": 9,
+    "school": "Transmutación",
+    "casting_time": "1 acción",
+    "range": "Personal",
+    "components": "V",
+    "duration": "Instantáneo",
+    "desc": [
+      "Permite actuar durante 1d4+1 turnos sucesivos mientras el tiempo está detenido para todos los demás."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "wall-of-force",
+    "name": "Muro de fuerza / Wall of Force",
+    "level": 5,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "120 pies",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 10 min",
+    "desc": [
+      "Crea una barrera invisible impenetrable. El muro aparece en cualquier orientación y descansa en el aire u otra superficie sólida."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "bola-de-fuego",
+    "name": "Bola de Fuego (Fireball)",
+    "level": 3,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "150 pies",
+    "components": "V, S, M (una bolita de guano de murciélago y azufre)",
+    "duration": "Instantáneo",
+    "desc": [
+      "Una luz brillante destella desde tu dedo apuntando hacia un punto que elijas dentro del alcance y luego florece con un rugido bajo en una explosión de llamas. Cada criatura en una esfera de 20 pies de radio centrada en ese punto debe hacer una tirada de salvación de Destreza. Un objetivo recibe 8d6 de daño de fuego si falla la salvación, o la mitad de daño si tiene éxito.",
+      "El fuego se propaga por las esquinas. Enciende los objetos inflamables en el área que no estén siendo vestidos o transportados."
+    ],
+    "higher_level": [
+      "Cuando lanzas este hechizo usando un espacio de hechizo de nivel 4 o superior, el daño aumenta en 1d6 por cada nivel de espacio por encima de 3."
+    ],
+    "damage": "8d6 fuego"
+  },
+  {
+    "id": "magic-missile",
+    "name": "Proyectil mágico / Magic Missile",
+    "level": 1,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "120 pies",
+    "components": "V, S",
+    "duration": "Instantáneo",
+    "desc": [
+      "Dispara dardos de energía que impactan automáticamente causando daño de fuerza."
+    ],
+    "higher_level": [],
+    "damage": "1d4 + 1 fuerza (por dardo)"
+  },
+  {
+    "id": "simulacrum",
+    "name": "Simulacro / Simulacrum",
+    "level": 7,
+    "school": "Ilusión",
+    "casting_time": "12 horas",
+    "range": "Toque",
+    "components": "V, S, M",
+    "duration": "Hasta que se disipe",
+    "desc": [
+      "Crea una copia de hielo/nieve de una bestia o humanoide con la mitad de sus puntos de golpe y sin capacidad para recuperar recursos o aprender."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "shield",
+    "name": "Escudo / Shield",
+    "level": 1,
+    "school": "Abjuración",
+    "casting_time": "1 reacción",
+    "range": "Personal",
+    "components": "V, S",
+    "duration": "1 ronda",
+    "desc": [
+      "Como reacción, otorga +5 a la CA hasta el siguiente turno y anula los proyectiles mágicos."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "dimension-door",
+    "name": "Puerta dimensional / Dimension Door",
+    "level": 4,
+    "school": "Conjuración",
+    "casting_time": "1 acción",
+    "range": "500 pies",
+    "components": "V",
+    "duration": "Instantáneo",
+    "desc": [
+      "Teletransporta al lanzador y a un acompañante de tamaño similar a gran distancia dentro del alcance (hasta 500 pies)."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "clone",
+    "name": "Clone",
+    "level": 8,
+    "school": "Nigromancia",
+    "casting_time": "1 hora",
+    "range": "Toque",
+    "components": "V, S, M",
+    "duration": "Instantáneo",
+    "desc": [
+      "Permite cultivar un cuerpo de reemplazo de un ser vivo que tarda 120 días en madurar. Si la criatura original muere, su alma se transfiere a este clon."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "fireball-2",
+    "name": "Bola de fuego / Fireball (Resumen)",
+    "level": 3,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "150 pies",
+    "components": "V, S, M",
+    "duration": "Instantáneo",
+    "desc": [
+      "Explosión de fuego en área que causa gran daño a múltiples enemigos."
+    ],
+    "higher_level": [],
+    "damage": "8d6 fuego"
+  },
+  {
+    "id": "disintegrate",
+    "name": "Desintegrar / Disintegrate",
+    "level": 6,
+    "school": "Transmutación",
+    "casting_time": "1 acción",
+    "range": "60 pies",
+    "components": "V, S, M",
+    "duration": "Instantáneo",
+    "desc": [
+      "Inflige daño masivo; si reduce a 0 puntos de golpe, el objetivo se convierte en polvo. Un rayo verde fino sale disparado del dedo apuntando hacia un objetivo que puedas ver dentro del alcance."
+    ],
+    "higher_level": [],
+    "damage": "10d6 + 40 fuerza"
+  },
+  {
+    "id": "antimagic-field",
+    "name": "Antimagia / Antimagic Field",
+    "level": 8,
+    "school": "Abjuración",
+    "casting_time": "1 acción",
+    "range": "Personal (esfera de 10 pies)",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 1 hora",
+    "desc": [
+      "Crea una esfera a tu alrededor donde la magia no funciona. Los conjuros no pueden lanzarse, las criaturas convocadas desaparecen y los objetos mágicos se vuelven mundanos."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "invisibility",
+    "name": "Invisibilidad / Invisibility",
+    "level": 2,
+    "school": "Ilusión",
+    "casting_time": "1 acción",
+    "range": "Toque",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 1 hora",
+    "desc": [
+      "Vuelve invisible a una criatura hasta que ataque o lance un conjuro."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "forcecage",
+    "name": "Jaula de fuerza / Forcecage",
+    "level": 7,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "100 pies",
+    "components": "V, S, M",
+    "duration": "1 hora",
+    "desc": [
+      "Atrapa criaturas en una prisión mágica (caja o jaula sólida) sin salvación inicial. Impide teletransporte físico directo sin superar salvación de Carisma."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "power-word-kill",
+    "name": "Palabra de poder: matar / Power Word Kill",
+    "level": 9,
+    "school": "Encantamiento",
+    "casting_time": "1 acción",
+    "range": "60 pies",
+    "components": "V",
+    "duration": "Instantáneo",
+    "desc": [
+      "Hablas una palabra de poder mortal a una criatura que puedas ver dentro del alcance. Mata instantáneamente a una criatura con menos de 100 puntos de golpe actuales. Si tiene 100 puntos de golpe o más, no tiene ningún efecto."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "mass-invisibility",
+    "name": "Invisibilidad en masa / Mass Invisibility",
+    "level": 7,
+    "school": "Ilusión",
+    "casting_time": "1 acción",
+    "range": "120 pies",
+    "components": "V, S",
+    "duration": "Concentración, hasta 1 hora",
+    "desc": [
+      "(Homebrew o variable). Vuelve invisibles a múltiples criaturas dentro del alcance. Termina en cada objetivo si este ataca o lanza un conjuro."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "astral-projection",
+    "name": "Proyección astral / Astral Projection",
+    "level": 9,
+    "school": "Nigromancia",
+    "casting_time": "1 hora",
+    "range": "10 pies",
+    "components": "V, S, M",
+    "duration": "Especial",
+    "desc": [
+      "Tú y hasta 8 voluntarios dejan sus cuerpos físicos suspendidos y proyectan sus cuerpos astrales al Plano Astral."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "mass-heal",
+    "name": "Curación en masa / Mass Heal",
+    "level": 9,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "60 pies",
+    "components": "V, S",
+    "duration": "Instantáneo",
+    "desc": [
+      "Fluye energía curativa pura distribuyendo hasta 700 puntos de golpe para curar criaturas que puedas ver a tu alrededor. Cura ceguera, sordera y cualquier enfermedad."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "mirror-image",
+    "name": "Imagen espejo / Mirror Image",
+    "level": 2,
+    "school": "Ilusión",
+    "casting_time": "1 acción",
+    "range": "Personal",
+    "components": "V, S",
+    "duration": "1 minuto",
+    "desc": [
+      "Crea tres duplicados ilusorios que dificultan que los ataques impacten al lanzador. Los atacantes deben tirar un d20 para ver si apuntan a un duplicado o a ti."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "fly",
+    "name": "Volar / Fly",
+    "level": 3,
+    "school": "Transmutación",
+    "casting_time": "1 acción",
+    "range": "Toque",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 10 min",
+    "desc": [
+      "Otorga velocidad de vuelo (60 pies) a una criatura durante la duración del conjuro."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "wish",
+    "name": "Deseo / Wish",
+    "level": 9,
+    "school": "Conjuración",
+    "casting_time": "1 acción",
+    "range": "Personal",
+    "components": "V",
+    "duration": "Instantáneo",
+    "desc": [
+      "El conjuro más poderoso, capaz de replicar otros conjuros de nivel 8 o inferior, o alterar la realidad con efectos impredecibles a discreción del DM."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "prismatic-wall",
+    "name": "Muro prismático / Prismatic Wall",
+    "level": 9,
+    "school": "Abjuración",
+    "casting_time": "1 acción",
+    "range": "90 pies",
+    "components": "V, S",
+    "duration": "10 min",
+    "desc": [
+      "Crea una barrera multicolor y opaca de energía mágica. Tiene 7 capas con diferentes efectos letales (daño de fuego, ácido, rayo, veneno, frío, petrificación, ceguera y destierro) para quienes intenten cruzarlo."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "greater-invisibility",
+    "name": "Invisibilidad mayor / Greater Invisibility",
+    "level": 4,
+    "school": "Ilusión",
+    "casting_time": "1 acción",
+    "range": "Toque",
+    "components": "V, S",
+    "duration": "Concentración, hasta 1 min",
+    "desc": [
+      "Vuelve a la criatura tocada invisible. A diferencia de Invisibilidad normal, este conjuro no termina si el objetivo ataca o lanza un conjuro."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "counterspell",
+    "name": "Contrahechizo / Counterspell",
+    "level": 3,
+    "school": "Abjuración",
+    "casting_time": "1 reacción",
+    "range": "60 pies",
+    "components": "S",
+    "duration": "Instantáneo",
+    "desc": [
+      "Interrumpe el lanzamiento de un conjuro enemigo como reacción. Éxito automático contra conjuros de nivel 3 o inferior."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "web",
+    "name": "Telaraña / Web",
+    "level": 2,
+    "school": "Conjuración",
+    "casting_time": "1 acción",
+    "range": "60 pies",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 1 hora",
+    "desc": [
+      "Crea un área de telarañas que puede restringir a las criaturas y generar terreno difícil."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "sunbeam",
+    "name": "Rayo solar / Sunbeam",
+    "level": 6,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "Personal (línea de 60 pies)",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 1 min",
+    "desc": [
+      "Emite un rayo de luz radiante en una línea de 60 pies. Ciega e inflige daño a las criaturas. Puedes crear un nuevo rayo en cada turno como acción."
+    ],
+    "higher_level": [],
+    "damage": "6d8 radiante"
+  },
+  {
+    "id": "psychic-scream",
+    "name": "Explosión psíquica / Psychic Scream",
+    "level": 9,
+    "school": "Encantamiento",
+    "casting_time": "1 acción",
+    "range": "90 pies",
+    "components": "S",
+    "duration": "Instantáneo",
+    "desc": [
+      "Inflige daño psíquico masivo (14d6) a hasta 10 criaturas que elijas y las aturde si fallan su salvación de Inteligencia. Si mueren, sus cabezas explotan."
+    ],
+    "higher_level": [],
+    "damage": "14d6 psíquico"
+  },
+  {
+    "id": "horrid-wilting",
+    "name": "Horrendo marchitamiento / Horrid Wilting",
+    "level": 8,
+    "school": "Nigromancia",
+    "casting_time": "1 acción",
+    "range": "150 pies",
+    "components": "V, S, M",
+    "duration": "Instantáneo",
+    "desc": [
+      "Extrae la humedad vital de toda criatura en un cubo de 30 pies. Las criaturas tipo planta y los elementales de agua tienen desventaja."
+    ],
+    "higher_level": [],
+    "damage": "12d8 necrótico"
+  },
+  {
+    "id": "etherealness",
+    "name": "Forma etérea / Etherealness",
+    "level": 7,
+    "school": "Transmutación",
+    "casting_time": "1 acción",
+    "range": "Personal",
+    "components": "V, S",
+    "duration": "Hasta 8 horas",
+    "desc": [
+      "Permite moverse en el plano etéreo atravesando objetos y evitando ser detectado en el plano material."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "plane-shift",
+    "name": "Plano cambiante / Plane Shift",
+    "level": 7,
+    "school": "Conjuración",
+    "casting_time": "1 acción",
+    "range": "Toque",
+    "components": "V, S, M",
+    "duration": "Instantáneo",
+    "desc": [
+      "Permite viajar entre planos junto a acompañantes voluntarios o intentar desterrar a una criatura hostil al otro lado del multiverso."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "true-resurrection",
+    "name": "Resurrección verdadera / True Resurrection",
+    "level": 9,
+    "school": "Nigromancia",
+    "casting_time": "1 hora",
+    "range": "Toque",
+    "components": "V, S, M",
+    "duration": "Instantáneo",
+    "desc": [
+      "Devuelve a la vida a una criatura muerta hace no más de 200 años por cualquier causa. Restaura partes del cuerpo faltantes o crea un cuerpo nuevo si no existe."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "finger-of-death",
+    "name": "Dedo de la muerte / Finger of Death",
+    "level": 7,
+    "school": "Nigromancia",
+    "casting_time": "1 acción",
+    "range": "60 pies",
+    "components": "V, S",
+    "duration": "Instantáneo",
+    "desc": [
+      "Inflige 7d8 + 30 de daño necrótico extremo. Si el objetivo humanoide muere, se levanta permanentemente como un zombi bajo tu mando."
+    ],
+    "higher_level": [],
+    "damage": "7d8 + 30 necrótico"
+  },
+  {
+    "id": "cloudkill",
+    "name": "Nube aniquiladora / Cloudkill",
+    "level": 5,
+    "school": "Conjuración",
+    "casting_time": "1 acción",
+    "range": "120 pies",
+    "components": "V, S",
+    "duration": "Concentración, hasta 10 min",
+    "desc": [
+      "Genera una nube venenosa que daña a criaturas dentro de ella. La nube se mueve a nivel de suelo alejándose del lanzador."
+    ],
+    "higher_level": [],
+    "damage": "5d8 veneno"
+  },
+  {
+    "id": "meteor-swarm",
+    "name": "Meteoros / Meteor Swarm",
+    "level": 9,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "1 milla",
+    "components": "V, S",
+    "duration": "Instantáneo",
+    "desc": [
+      "Invoca múltiples meteoritos que explotan causando daño masivo en un área enorme (4 esferas de 40 pies de radio)."
+    ],
+    "higher_level": [],
+    "damage": "20d6 fuego + 20d6 contundente"
+  },
+  {
+    "id": "lightning-bolt",
+    "name": "Relámpago / Lightning Bolt",
+    "level": 3,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "Personal (línea de 100 pies)",
+    "components": "V, S, M",
+    "duration": "Instantáneo",
+    "desc": [
+      "Lanza un rayo en línea de 100 pies de largo y 5 pies de ancho que inflige gran daño eléctrico a las criaturas en su trayectoria. Requiere salvación de Destreza (mitad de daño si tiene éxito)."
+    ],
+    "higher_level": [],
+    "damage": "8d6 relámpago"
+  },
+  {
+    "id": "storm-of-vengeance",
+    "name": "Tormenta de venganza / Storm of Vengeance",
+    "level": 9,
+    "school": "Conjuración",
+    "casting_time": "1 acción",
+    "range": "Visión",
+    "components": "V, S",
+    "duration": "Concentración, hasta 1 min",
+    "desc": [
+      "Invoca una tormenta devastadora en un radio de 360 pies. Cada asalto causa diferentes efectos progresivos: truenos ensordecedores, lluvia ácida, relámpagos, granizo gigante y lluvia helada."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "sunburst",
+    "name": "Explosión solar / Sunburst",
+    "level": 8,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "150 pies",
+    "components": "V, S, M",
+    "duration": "Instantáneo",
+    "desc": [
+      "Explosión radiante que ciega y daña en un área inmensa. Hace luz diurna y disipa la oscuridad mágica."
+    ],
+    "higher_level": [],
+    "damage": "12d6 radiante"
+  },
+  {
+    "id": "summon-celestial",
+    "name": "Invocar celestial / Summon Celestial",
+    "level": 5,
+    "school": "Conjuración",
+    "casting_time": "1 acción",
+    "range": "90 pies",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 1 hora",
+    "desc": [
+      "Invoca a un espíritu celestial (Vengador o Defensor) que lucha a tu lado y acata tus órdenes verbales en combate."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "shapechange",
+    "name": "Forma dracónica / Shapechange",
+    "level": 9,
+    "school": "Transmutación",
+    "casting_time": "1 acción",
+    "range": "Personal",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 1 hora",
+    "desc": [
+      "Permite transformarse en cualquier criatura poderosa con un VD igual o menor a tu nivel (como un dragón) adquiriendo sus estadísticas y habilidades físicas."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "ray-of-frost",
+    "name": "Rayo de escarcha / Ray of Frost",
+    "level": 0,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "60 pies",
+    "components": "V, S",
+    "duration": "Instantáneo",
+    "desc": [
+      "Inflige daño de frío y reduce la velocidad del objetivo en 10 pies hasta el inicio de tu próximo turno."
+    ],
+    "higher_level": [],
+    "damage": "1d8 frío"
+  },
+  {
+    "id": "cure-wounds",
+    "name": "Curar heridas / Cure Wounds",
+    "level": 1,
+    "school": "Evocación",
+    "casting_time": "1 acción",
+    "range": "Toque",
+    "components": "V, S",
+    "duration": "Instantáneo",
+    "desc": [
+      "Restaura puntos de golpe a una criatura tocada."
+    ],
+    "higher_level": [],
+    "damage": "1d8 + modificador curación"
+  },
+  {
+    "id": "sleep",
+    "name": "Dormir / Sleep",
+    "level": 1,
+    "school": "Encantamiento",
+    "casting_time": "1 acción",
+    "range": "90 pies",
+    "components": "V, S, M",
+    "duration": "1 minuto",
+    "desc": [
+      "Hace que criaturas en un área caigan inconscientes comenzando por las de menor cantidad de puntos de golpe actuales. Afecta a 5d8 puntos de golpe en total."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "pass-without-trace",
+    "name": "Pasar sin dejar rastro / Pass without Trace",
+    "level": 2,
+    "school": "Abjuración",
+    "casting_time": "1 acción",
+    "range": "Personal",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 1 hora",
+    "desc": [
+      "Otorga un bonificador de +10 a las pruebas de Sigilo (Destreza) a ti y a tus compañeros a 30 pies. Además, no pueden ser rastreados por medios no mágicos ni dejan rastros."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "gate",
+    "name": "Portal / Gate",
+    "level": 9,
+    "school": "Conjuración",
+    "casting_time": "1 acción",
+    "range": "60 pies",
+    "components": "V, S, M",
+    "duration": "Concentración, hasta 1 min",
+    "desc": [
+      "Abre un portal que conecta con un lugar preciso en un plano de existencia diferente. Puedes también llamar a una entidad específica para que cruce el portal."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "fire-bolt",
+    "name": "Fire Bolt",
+    "level": 0,
+    "school": "Evocation",
+    "casting_time": "1 action",
+    "range": "120 feet",
+    "components": "",
+    "duration": "Instantaneous",
+    "desc": [
+      "Disparas una chispa de fuego a una criatura u objeto.",
+      "Escala su daño con el nivel del lanzador."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "mage-hand",
+    "name": "Mage Hand",
+    "level": 0,
+    "school": "Conjuration",
+    "casting_time": "1 action",
+    "range": "30 feet",
+    "components": "",
+    "duration": "1 minute",
+    "desc": [
+      "Invocas una mano espectral para manipular objetos ligeros a distancia.",
+      "No puede atacar ni activar objetos mágicos complejos."
+    ],
+    "higher_level": [],
+    "damage": null
+  },
+  {
+    "id": "fireball",
+    "name": "Fireball",
+    "level": 3,
+    "school": "Evocation",
+    "casting_time": "1 action",
+    "range": "150 feet",
+    "components": "",
+    "duration": "Instantaneous",
+    "desc": [
+      "Explosión de fuego en área amplia con daño elevado.",
+      "Requiere cuidado táctico por daño colateral."
+    ],
+    "higher_level": [],
+    "damage": null
+  }
+]

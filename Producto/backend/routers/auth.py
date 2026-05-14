@@ -54,7 +54,9 @@ async def register(data: UserRegister):
             detail=error_msg,
         )
     except Exception as e:
-        logger.error(f"Unexpected registration error: {e}")
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(f"Unexpected registration error: {e}\n{tb}")
         error_msg = str(e)
         # Check if email already exists
         if "already registered" in error_msg.lower() or "already exists" in error_msg.lower() or "user already registered" in error_msg.lower():
@@ -64,7 +66,7 @@ async def register(data: UserRegister):
             )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error during registration",
+            detail=f"Error during registration: {error_msg}",
         )
 
 

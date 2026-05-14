@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAuthStore } from './store/useAuthStore'
 import { initSocket } from './services/socket'
 import { getAuthAPI } from './services/api'
-import LoadingSpinner from './components/LoadingSpinner'
+import LoadingSpinner from './components/shared/LoadingSpinner'
 
 function App() {
   const { setUser, setToken, token } = useAuthStore()
@@ -37,6 +37,8 @@ function App() {
             console.log('Token inválido, limpiando sesión')
             localStorage.removeItem('auth_token')
             localStorage.removeItem('auth_user')
+            const { logout } = useAuthStore.getState()
+            logout()
           }
         }
       } catch (error) {

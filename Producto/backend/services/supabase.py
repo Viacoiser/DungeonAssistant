@@ -15,7 +15,9 @@ class SupabaseClient:
     """Cliente singleton para Supabase"""
 
     _instance: "SupabaseClient" = None
-    _client: Client = None
+    _client: Client = None  # Cliente con ANON_KEY (para auth de usuarios)
+    _admin_client: Client = None  # Cliente con SERVICE_KEY (para operaciones admin)
+    _initialized: bool = False
 
     def __new__(cls):
         if cls._instance is None:
@@ -23,25 +25,41 @@ class SupabaseClient:
         return cls._instance
 
     def __init__(self):
-        if self._client is None:
-            self._init_client()
+        # Don't initialize on creation, wait for first use
+        pass
 
     def _init_client(self):
-        """Inicializar cliente Supabase"""
+        """Inicializar clientes de Supabase"""
+        if self._initialized:
+            return
+            
         url = os.getenv("SUPABASE_URL")
-        key = os.getenv("SUPABASE_SERVICE_KEY")
+        # Cliente con ANON_KEY para operaciones de cliente (auth, etc)
+        anon_key = os.getenv("SUPABASE_ANON_KEY")
+        # Cliente con SERVICE_KEY para operaciones administrativas
+        service_key = os.getenv("SUPABASE_SERVICE_KEY")
 
-        if not url or not key:
+        if not url or not anon_key:
             raise ValueError(
-                "SUPABASE_URL y SUPABASE_SERVICE_KEY deben estar en .env"
+                "SUPABASE_URL y SUPABASE_ANON_KEY deben estar en .env"
             )
 
-        self._client = create_client(url, key)
-        logger.info("✅ Supabase client initialized")
+        self._client = create_client(url, anon_key)
+        
+        # Crear cliente admin si tenemos SERVICE_KEY
+        if service_key:
+            self._admin_client = create_client(url, service_key)
+            logger.info("✅ Supabase clients initialized (ANON + ADMIN)")
+        else:
+            logger.info("✅ Supabase client initialized (ANON only)")
+        
+        self._initialized = True
 
     @property
     def client(self) -> Client:
         """Obtener cliente Supabase"""
+        if not self._initialized:
+            self._init_client()
         return self._client
 
     # ========================================================================
@@ -64,7 +82,7 @@ class SupabaseClient:
         """
         try:
             # Crear usuario en Supabase Auth
-            response = self._client.auth.sign_up(
+            response = self.client.auth.sign_up(
                 {"email": email, "password": password}
             )
 
@@ -74,7 +92,7 @@ class SupabaseClient:
             user_id = response.user.id
 
             # Crear perfil en tabla users
-            self._client.table("users").insert(
+            self.client.table("users").insert(
                 {
                     "id": user_id,
                     "email": email,
@@ -87,7 +105,7 @@ class SupabaseClient:
                 "id": user_id,
                 "email": email,
                 "username": username,
-                "created_at": response.user.created_at,
+                "created_at": getattr(response.user, "created_at", None),
             }
 
         except APIError as e:
@@ -108,21 +126,28 @@ class SupabaseClient:
             Dict con token y datos del usuario
         """
         try:
-            response = self._client.auth.sign_in_with_password(
+            # Usar la propiedad 'client' para asegurar que está inicializado
+            response = self.client.auth.sign_in_with_password(
                 {"email": email, "password": password}
             )
 
             if not response.session:
                 raise ValueError("No session returned from login")
 
-            # Obtener datos del usuario
-            user_data = (
-                self._client.table("users")
-                .select("*")
-                .eq("id", response.user.id)
-                .single()
-                .execute()
-            )
+            # Intentar obtener datos del usuario de la tabla users
+            try:
+                user_data = (
+                    self.client.table("users")
+                    .select("*")
+                    .eq("id", response.user.id)
+                    .single()
+                    .execute()
+                )
+                username = user_data.data.get("username", email.split("@")[0])
+            except Exception as profile_error:
+                # Si no existe perfil, usar datos básicos
+                logger.warning(f"⚠️  No profile found for user {email}, using basic info")
+                username = email.split("@")[0]
 
             logger.info(f"✅ User logged in: {email}")
             return {
@@ -131,7 +156,7 @@ class SupabaseClient:
                 "user": {
                     "id": response.user.id,
                     "email": response.user.email,
-                    "username": user_data.data.get("username", ""),
+                    "username": username,
                 },
             }
 
@@ -151,7 +176,7 @@ class SupabaseClient:
         """
         try:
             # Verificar token contra Supabase
-            response = self._client.auth.get_user(token)
+            response = self.client.auth.get_user(token)
             
             # La respuesta tiene la estructura: response.user
             if not response or not response.user:
@@ -162,7 +187,7 @@ class SupabaseClient:
 
             # Obtener datos del perfil
             user_data = (
-                self._client.table("users")
+                self.client.table("users")
                 .select("*")
                 .eq("id", user_id)
                 .single()
@@ -196,7 +221,7 @@ class SupabaseClient:
         try:
             # Crear campaña
             campaign = (
-                self._client.table("campaigns")
+                self.client.table("campaigns")
                 .insert({"name": name, "description": description})
                 .execute()
             )
@@ -204,7 +229,7 @@ class SupabaseClient:
             campaign_id = campaign.data[0]["id"]
 
             # Agregar creator como GM
-            self._client.table("campaign_members").insert(
+            self.client.table("campaign_members").insert(
                 {
                     "campaign_id": campaign_id,
                     "user_id": user_id,
@@ -232,7 +257,7 @@ class SupabaseClient:
         """
         try:
             result = (
-                self._client.table("campaign_members")
+                self.client.table("campaign_members")
                 .select(
                     """
                     campaign_id, role,
@@ -260,7 +285,7 @@ class SupabaseClient:
         """Obtener miembros de una campaña"""
         try:
             result = (
-                self._client.table("campaign_members")
+                self.client.table("campaign_members")
                 .select(
                     """
                     id, user_id, role, status, joined_at,
@@ -281,7 +306,7 @@ class SupabaseClient:
         """Unirse a una campaña con rol especificado"""
         try:
             result = (
-                self._client.table("campaign_members")
+                self.client.table("campaign_members")
                 .insert(
                     {
                         "campaign_id": campaign_id,
@@ -307,7 +332,7 @@ class SupabaseClient:
     async def health_check(self) -> bool:
         """Verificar conexión a Supabase"""
         try:
-            result = self._client.table("users").select("id").limit(1).execute()
+            result = self.client.table("users").select("id").limit(1).execute()
             logger.info("✅ Supabase connection verified")
             return True
         except Exception as e:

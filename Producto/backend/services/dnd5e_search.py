@@ -10,162 +10,153 @@ from pathlib import Path
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
+from services.supabase import get_supabase
+
 logger = logging.getLogger(__name__)
 
 
 class DND5ESearcher:
-    """Búsqueda fuzzy local para datos D&D5e"""
+    """Búsqueda de datos D&D5e usando la base de datos local (Supabase)"""
 
     def __init__(self):
-        """Inicializar pero NO cargar datos hasta la primera búsqueda (lazy loading)"""
-        # Ruta: backend/services/dnd5e_search.py -> parent.parent.parent = raiz -> frontend/src/data
-        self.data_path = Path(__file__).parent.parent.parent / "frontend" / "src" / "data"
-        self.cache = {}
-        self._loaded = False
-        logger.info(f"DND5ESearcher initialized (lazy loading from {self.data_path})")
+        self.supabase = get_supabase()
+        logger.info("DND5ESearcher initialized using Supabase Encyclopedia")
 
     def _ensure_loaded(self):
-        """Lazy load: cargar datos solo si no están cargados"""
-        if self._loaded:
-            return
-        logger.info(f"Loading D&D5e data on first use...")
-        self._load_all_data()
-        self._loaded = True
+        """No longer needed for DB-backed search, but kept for compatibility"""
+        pass
 
-    def _load_all_data(self):
-        """Cargar todos los JSONs disponibles"""
-        json_files = {
-            "items": "items.json",
-            "classes": "classes.json",
-            "races": "races.json",
-            "feats": "dnd-feats.json",
-            "spells": "dnd-classes.json",  # TODO: cambiar a archivo de spells cuando disponible
-            "backgrounds": "backgrounds.json",
-            "subclasses": "dnd-subclasses.json",
-            "traits": "dnd-traits.json",
-        }
-
-        for key, filename in json_files.items():
-            filepath = self.data_path / filename
-            if filepath.exists():
-                try:
-                    with open(filepath, 'r', encoding='utf-8') as f:
-                        data = json.load(f)
-                    
-                    # Handle nested structure
-                    if isinstance(data, dict):
-                        if key in data:
-                            self.cache[key] = data[key]
-                        elif "results" in data:
-                            # API response format
-                            self.cache[key] = data["results"]
-                        else:
-                            self.cache[key] = data
-                    else:
-                        self.cache[key] = data
-                    
-                    entry_count = len(self.cache[key]) if isinstance(self.cache[key], list) else len(self.cache[key])
-                    logger.info(f"Loaded {key}: {filename} ({entry_count} entries)")
-                except Exception as e:
-                    logger.error(f"Error loading {filename}: {e}")
-            else:
-                logger.warning(f"File not found: {filepath}")
-
-    def search(self, query: str, categories: list = None, limit: int = 5) -> list:
+    def search(self, query: str = None, categories: list = None, level: str = None, limit: int = 5) -> list:
         """
-        Búsqueda fuzzy en categorías específicas o todas.
-        
-        Args:
-            query: Término de búsqueda (ej: "sword", "fireball")
-            categories: Lista de categorías (ej: ["items", "spells"]) o None para todas
-            limit: Cantidad de resultados
-        
-        Returns:
-            Lista de resultados con score de similitud
+        Búsqueda fuzzy en la tabla encyclopedia.
         """
-        self._ensure_loaded()
-        
-        if not categories:
-            categories = list(self.cache.keys())
-
-        query_lower = query.lower()
-        results = []
-
-        for category in categories:
-            if category not in self.cache:
-                logger.warning(f"Category {category} not found")
-                continue
-
-            data = self.cache[category]
-            candidates = self._extract_names(data, category)
-
-            if not candidates:
-                continue
-
-            # Fuzzy matching con fuzzywuzzy
-            matches = process.extract(
-                query_lower,
-                candidates,
-                scorer=fuzz.token_set_ratio,
-                limit=limit
+        try:
+            # Seleccionamos solo los campos necesarios del JSON para evitar payloads masivos
+            db_query = self.supabase.client.table("encyclopedia").select(
+                "name, category, index, level:data->level, equipment_category:data->equipment_category, challenge_rating:data->challenge_rating, type:data->type"
             )
+            
+            if categories:
+                # Normalizar categorías (ej: equipment-categories/weapon -> equipment)
+                normalized_cats = []
+                for cat in categories:
+                    if "equipment-categories" in cat:
+                        if "equipment" not in normalized_cats:
+                            normalized_cats.append("equipment")
+                    else:
+                        normalized_cats.append(cat)
+                
+                db_query = db_query.in_("category", normalized_cats)
+            
+            if level is not None and level != 'all':
+                if level == "cantrip":
+                    db_query = db_query.eq("data->>level", "0")
+                else:
+                    db_query = db_query.eq("data->>level", str(level))
 
-            for match_name, score in matches:
-                if score >= 60:  # Solo resultados con 60% similitud o más
-                    results.append({
-                        "name": match_name,
-                        "category": category,
-                        "score": score,
-                        "data": self._get_full_data(category, match_name)
-                    })
+            # Búsqueda por nombre solo si hay query
+            if query and len(query.strip()) > 0:
+                db_query = db_query.ilike("name", f"%{query}%")
+            
+            response = db_query.limit(limit).execute()
+            results = response.data or []
+            
+            formatted_results = []
+            for item in results:
+                # Reconstruir un "data" ligero
+                light_data = {}
+                if "level" in item and item["level"] is not None:
+                    light_data["level"] = item["level"]
+                if "equipment_category" in item and item["equipment_category"] is not None:
+                    light_data["equipment_category"] = item["equipment_category"]
+                if "challenge_rating" in item and item["challenge_rating"] is not None:
+                    light_data["challenge_rating"] = item["challenge_rating"]
+                if "type" in item and item["type"] is not None:
+                    light_data["type"] = item["type"]
 
-        # Ordenar por score descendente
-        results.sort(key=lambda x: x["score"], reverse=True)
-        return results[:limit]
+                formatted_results.append({
+                    "name": item["name"],
+                    "category": item["category"],
+                    "index": item["index"],
+                    "score": 100,  # ILIKE matches get 100 for now
+                    "data": light_data
+                })
+            
+            return formatted_results[:limit]
+        except Exception as e:
+            logger.error(f"Error searching encyclopedia: {e}")
+            return []
 
-    def _extract_names(self, data: list, category: str) -> list:
-        """Extraer nombres de items/spells/etc según categoría"""
-        names = []
-
-        if isinstance(data, list):
-            for item in data:
-                if isinstance(item, dict):
-                    # Intentar varios campos comunes de nombre
-                    name = (
-                        item.get("name") or
-                        item.get("title") or
-                        item.get("index") or
-                        ""
-                    )
-                    if name:
-                        names.append(name.lower())
-        elif isinstance(data, dict):
-            # Si es diccionario, obtener las llaves como nombres
-            for key in data.keys():
-                names.append(key.lower())
-
-        return names
+    async def get_detail(self, category: str, index: str) -> dict:
+        """Obtener datos completos de un item específico"""
+        try:
+            # 1. Intentar búsqueda exacta con categoría
+            response = self.supabase.client.table("encyclopedia") \
+                .select("data") \
+                .eq("category", category) \
+                .eq("index", index) \
+                .execute()
+            
+            if response.data and len(response.data) > 0:
+                return response.data[0].get("data")
+            
+            # 2. Si no se encuentra, buscar por index en CUALQUIER categoría (Failsafe)
+            logger.warning(f"Detail not found for {category}/{index}. Trying global search...")
+            global_response = self.supabase.client.table("encyclopedia") \
+                .select("data") \
+                .eq("index", index) \
+                .limit(1) \
+                .execute()
+            
+            if global_response.data and len(global_response.data) > 0:
+                return global_response.data[0].get("data")
+                
+            # 3. Fallback a la API oficial (Sincronización On-demand)
+            import httpx
+            logger.info(f"Item {index} not found in DB. Fetching from official API...")
+            
+            # Intentar con la categoría proporcionada o mapeos comunes
+            api_categories = [category]
+            if category == 'equipment':
+                api_categories = ['equipment', 'magic-items']
+            
+            async with httpx.AsyncClient() as client:
+                for api_cat in api_categories:
+                    try:
+                        api_url = f"https://www.dnd5eapi.co/api/2014/{api_cat}/{index}"
+                        api_res = await client.get(api_url)
+                        if api_res.status_code == 200:
+                            data = api_res.json()
+                            # Guardar en DB para futuras consultas
+                            self.supabase.client.table("encyclopedia").upsert({
+                                "index": index,
+                                "name": data.get("name", index),
+                                "category": category, # Guardar con la categoría que pidió el usuario
+                                "data": data
+                            }).execute()
+                            return data
+                    except Exception as api_err:
+                        logger.error(f"Error fetching from official API for {api_cat}/{index}: {api_err}")
+            
+            return {}
+        except Exception as e:
+            logger.error(f"Error getting detail for {category}/{index}: {e}")
+            return {}
 
     def _get_full_data(self, category: str, name: str) -> dict:
-        """Obtener datos completos de un item/spell/etc"""
-        data = self.cache.get(category, [])
-
-        if isinstance(data, list):
-            for item in data:
-                if isinstance(item, dict):
-                    item_name = (
-                        item.get("name") or
-                        item.get("title") or
-                        item.get("index") or
-                        ""
-                    ).lower()
-                    if item_name == name.lower():
-                        return item
-        elif isinstance(data, dict):
-            if name.lower() in data or name in data:
-                return data.get(name, {})
-
-        return {}
+        """Compatibilidad con código anterior: busca por nombre"""
+        try:
+            response = self.supabase.client.table("encyclopedia") \
+                .select("data") \
+                .eq("category", category) \
+                .ilike("name", name) \
+                .limit(1) \
+                .execute()
+            
+            return response.data[0].get("data") if response.data else {}
+        except Exception as e:
+            logger.error(f"Error getting full data for {name}: {e}")
+            return {}
 
     def analyze_note(self, note_content: str) -> dict:
         """

@@ -4,7 +4,7 @@ Endpoints para autocompletado y búsqueda de items/hechizos
 """
 
 import logging
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, HTTPException
 from services.dnd5e_search import get_dnd5e_searcher
 
 logger = logging.getLogger(__name__)
@@ -24,9 +24,10 @@ def get_searcher():
 
 @router.get("/search")
 async def search_dnd5e(
-    q: str = Query(..., min_length=2, max_length=100, description="Término de búsqueda"),
+    q: str = Query(None, max_length=100, description="Término de búsqueda"),
     categories: str = Query(None, description="Categorías separadas por coma: items,spells,races,classes..."),
-    limit: int = Query(10, ge=1, le=50, description="Límite de resultados")
+    level: str = Query(None, description="Filtro opcional por nivel para hechizos"),
+    limit: int = Query(10, ge=1, le=1000, description="Límite de resultados")
 ):
     """
     Búsqueda fuzzy en datos D&D5e.
@@ -41,7 +42,7 @@ async def search_dnd5e(
         if categories:
             category_list = [cat.strip() for cat in categories.split(",")]
         
-        results = searcher.search(q, categories=category_list, limit=limit)
+        results = searcher.search(q, categories=category_list, level=level, limit=limit)
         
         logger.info(f"Search results for '{q}': {len(results)} items found")
         return {
@@ -102,6 +103,46 @@ async def autocomplete_dnd5e(
             "count": 0,
             "error": str(e)
         }
+
+
+@router.get("/detail/{category}/{index}")
+async def get_dnd5e_detail(category: str, index: str):
+    """
+    Obtener detalles completos de un item/hechizo/monstruo.
+    
+    Ejemplo: GET /api/dnd5e/detail/spells/fireball
+    """
+    try:
+        searcher = get_searcher()
+        result = await searcher.get_detail(category, index)
+        
+        if not result:
+            raise HTTPException(status_code=404, detail="Item no encontrado")
+            
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error obteniendo detalle: {e}")
+        return {"error": str(e)}
+
+
+@router.get("/seed")
+async def seed_category_endpoint(category: str):
+    """Endpoint para forzar la carga de una categoría desde la API externa"""
+    from scripts.seed_encyclopedia import seed_category, get_supabase_client
+    import httpx
+    
+    try:
+        supabase = get_supabase_client()
+        async with httpx.AsyncClient() as client:
+            count, errors = await seed_category(
+                client, supabase, category, "2014", "en", None
+            )
+        return {"status": "success", "category": category, "count": count, "errors": errors}
+    except Exception as e:
+        logger.error(f"Error en seed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/analyze-note")

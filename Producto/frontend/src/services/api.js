@@ -18,6 +18,25 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// Interceptor para manejar errores globales (como el 401)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn("Sesión expirada o inválida. Redirigiendo a login...")
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('auth_user')
+      
+      // Solo redirigir si no estamos ya en login o welcome
+      const path = window.location.pathname
+      if (path !== '/login' && path !== '/') {
+        window.location.href = '/login'
+      }
+    }
+    return Promise.reject(error)
+  }
+)
+
 /**
  * Obtener instancia de axios para hacer llamadas raw
  * Útil para operaciones como validación de token en App.jsx

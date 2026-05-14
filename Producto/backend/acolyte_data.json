@@ -1,0 +1,68 @@
+[
+  {
+    "category": "backgrounds",
+    "index": "acolyte",
+    "name": "Acolyte",
+    "language": "en",
+    "source_url": "https://www.dnd5eapi.co/api/2014/backgrounds/acolyte",
+    "source_system": "dnd5e",
+    "version": "2014",
+    "is_active": true,
+    "data": {
+      "index": "acolyte",
+      "name": "Acolyte",
+      "starting_proficiencies": [
+        { "index": "skill-insight", "name": "Skill: Insight", "url": "/api/2014/proficiencies/skill-insight" },
+        { "index": "skill-religion", "name": "Skill: Religion", "url": "/api/2014/proficiencies/skill-religion" }
+      ],
+      "feature": {
+        "name": "Shelter of the Faithful",
+        "desc": [
+          "As an acolyte, you command the respect of those who share your faith...",
+          "You might also have ties to a specific temple dedicated to your chosen deity..."
+        ]
+      },
+      "personality_traits": {
+        "choose": 2,
+        "type": "personality_traits",
+        "from": {
+          "option_set_type": "options_array",
+          "options": [
+            { "option_type": "string", "string": "I idolize a particular hero of my faith..." },
+            { "option_type": "string", "string": "I can find common ground between the fiercest enemies..." }
+          ]
+        }
+      },
+      "ideals": {
+        "choose": 1,
+        "type": "ideals",
+        "from": {
+          "option_set_type": "options_array",
+          "options": [
+            { "option_type": "ideal", "desc": "Tradition. The ancient traditions...", "alignments": [] }
+          ]
+        }
+      },
+      "bonds": {
+        "choose": 1,
+        "type": "bonds",
+        "from": {
+          "option_set_type": "options_array",
+          "options": [
+            { "option_type": "string", "string": "I would die to recover an ancient relic..." }
+          ]
+        }
+      },
+      "flaws": {
+        "choose": 1,
+        "type": "flaws",
+        "from": {
+          "option_set_type": "options_array",
+          "options": [
+            { "option_type": "string", "string": "I judge others harshly..." }
+          ]
+        }
+      }
+    }
+  }
+]

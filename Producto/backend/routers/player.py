@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, status, Depends, Body
 from datetime import datetime
 import uuid
 
-from models.schemas import CharacterCreate, CharacterResponse, CharacterStatusUpdate
+from models.schemas import CharacterCreate, CharacterResponse, CharacterStatusUpdate, CharacterUpdate
 from middleware.auth import get_current_user
 from services.supabase import get_supabase
 
@@ -56,34 +56,84 @@ async def create_character(
         # Preparar datos para Supabase
         character_data = {
             "id": character_id,
-            "campaign_id": data.campaign_id,  # Puede ser None (personaje independiente)
+            "campaign_id": data.campaign_id,
             "player_id": current_user["id"],
+
+            # ── Identificación ───────────────────────────────────────────────────
             "name": data.name,
             "race": data.race,
-            "class": data.class_,  # Mapear class_ a class para la BD
+            "class": data.class_,
             "level": data.level,
             "background": data.background or "",
             "alignment": data.alignment or "",
-            "stats": data.stats.dict() if hasattr(data.stats, 'dict') else data.stats,
+            "experience_points": data.experience_points,
+            "player_name": data.player_name or "",
+
+            # ── Stats base ───────────────────────────────────────────────────────
+            "stats": data.stats.dict() if hasattr(data.stats, "dict") else data.stats,
+
+            # ── Combate ──────────────────────────────────────────────────────────
             "hp_max": data.hp_max,
             "hp_current": data.hp_current,
-            "armor_class": data.armor_class or 10,
-            "initiative": data.initiative or 0,
-            "speed": data.speed or 30,
-            "proficiency_bonus": data.proficiency_bonus or 2,
-            "hit_dice": data.hit_dice or "1d8",
-            "passive_perception": data.passive_perception or 10,
-            "personality_traits": data.personality_traits or "",
-            "ideals": data.ideals or "",
-            "bonds": data.bonds or "",
-            "flaws": data.flaws or "",
-            "other_proficiencies": data.other_proficiencies or "",
-            "equipment": data.equipment or "",
-            "features_traits": data.features_traits or "",
-            "backstory": data.backstory or "",
+            "hp_temporary": data.hp_temporary,
+            "armor_class": data.armor_class,
+            "initiative": data.initiative,
+            "speed": data.speed,
+            "proficiency_bonus": data.proficiency_bonus,
+            "hit_dice": data.hit_dice,
+            "hit_dice_used": data.hit_dice_used,
+            "passive_perception": data.passive_perception,
+            "inspiration": data.inspiration,
+
+            # ── Tiradas de salvación y habilidades ───────────────────────────────
+            "saving_throws": data.saving_throws,
+            "skills": data.skills,
+
+            # ── Death saves ──────────────────────────────────────────────────────
+            "death_saves": data.death_saves,
+
+            # ── Ataques ──────────────────────────────────────────────────────────
+            "attacks": data.attacks,
+
+            # ── Equipo e inventario ──────────────────────────────────────────────
+            "equipment": data.equipment,
+            "currency": data.currency,
+            "treasure": data.treasure or "",
+
+            # ── Spellcasting ─────────────────────────────────────────────────────
+            "spellcasting": data.spellcasting,
+
+            # ── Personalidad ─────────────────────────────────────────────────────
+            "personality_traits": data.personality_traits,
+            "ideals": data.ideals,
+            "bonds": data.bonds,
+            "flaws": data.flaws,
+
+            # ── Rasgos ───────────────────────────────────────────────────────────
+            "features_traits": data.features_traits,
+            "other_proficiencies": data.other_proficiencies,
+            "additional_features": data.additional_features,
+
+            # ── Trasfondo ────────────────────────────────────────────────────────
+            "backstory": data.backstory,
+            "allies_organizations": data.allies_organizations,
+
+            # ── Apariencia ───────────────────────────────────────────────────────
+            "age": data.age or "",
+            "height": data.height or "",
+            "weight": data.weight or "",
+            "eyes": data.eyes or "",
+            "skin": data.skin or "",
+            "hair": data.hair or "",
+            "appearance": data.appearance or "",
+
+            # ── Imagen / estado ──────────────────────────────────────────────────
+            "image_url": data.image_url,
+            "is_alive": True,
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat(),
         }
+
         
         # Insertar en Supabase
         try:
@@ -241,57 +291,90 @@ async def get_character(
 @router.put("/{character_id}")
 async def update_character(
     character_id: str,
-    data: dict,
+    data: CharacterUpdate,
     current_user: dict = Depends(get_current_user)
 ):
     """Actualizar personaje"""
     try:
         supabase = get_supabase()
         
-        # Obtener personaje
-        character = supabase.client.table("characters").select(
-            "*"
-        ).eq(
-            "id", character_id
-        ).single().execute()
+        # 1. Obtener personaje existente
+        char_res = supabase.client.table("characters").select("*").eq("id", character_id).single().execute()
         
-        if not character.data:
+        if not char_res.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Personaje no encontrado"
             )
         
-        # Verificar permisos (solo el propietario o GM)
-        if character.data["player_id"] != current_user["id"]:
+        character = char_res.data
+        
+        # 2. Verificar permisos (propietario o GM de la campaña)
+        is_owner = character["player_id"] == current_user["id"]
+        is_gm = False
+        
+        if character.get("campaign_id"):
+            member_res = supabase.client.table("campaign_members").select("role").eq("campaign_id", character["campaign_id"]).eq("user_id", current_user["id"]).execute()
+            if member_res.data and member_res.data[0]["role"] == "GM":
+                is_gm = True
+        
+        if not (is_owner or is_gm):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="No tienes permiso para actualizar este personaje"
             )
         
-        # Actualizar
-        data["updated_at"] = datetime.utcnow().isoformat()
-        result = supabase.client.table("characters").update(
-            data
-        ).eq(
-            "id", character_id
-        ).execute()
+        # 3. Preparar datos para actualización
+        update_data = data.dict(exclude_unset=True)
         
-        if not result.data:
+        # Log incoming keys for debugging
+        logger.info(f"Incoming update keys for {character_id}: {list(update_data.keys())}")
+        
+        # Manejar el alias de "class" -> "class" en la BD
+        if "class_" in update_data:
+            update_data["class"] = update_data.pop("class_")
+            
+        # Asegurarse de que no estamos intentando actualizar campos protegidos
+        for field in ["id", "player_id", "campaign_id", "created_at"]:
+            if field in update_data:
+                logger.warning(f"Removing protected field '{field}' from update payload for {character_id}")
+                update_data.pop(field, None)
+            
+        update_data["updated_at"] = datetime.utcnow().isoformat()
+        
+        # 4. Ejecutar actualización
+        try:
+            result = supabase.client.table("characters").update(
+                update_data
+            ).eq(
+                "id", character_id
+            ).execute()
+        except Exception as db_err:
+            logger.error(f"❌ Database error updating character {character_id}: {str(db_err)}")
+            # Log full data to see what might be wrong (be careful with sensitive data in production, but this is dev)
+            logger.debug(f"Payload attempted: {update_data}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Error al actualizar personaje"
+                detail=f"Error de base de datos al actualizar: {str(db_err)}"
             )
         
-        logger.info(f"✅ Character updated: {character_id}")
-        return {"message": "Personaje actualizado"}
+        if not result.data:
+            logger.error(f"❌ Supabase returned no data after update for {character_id}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error al actualizar personaje: no se recibieron datos de vuelta"
+            )
+        
+        logger.info(f"✅ Character updated: {character_id} by {current_user['id']}")
+        return {"message": "Personaje actualizado exitosamente", "data": result.data[0]}
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Error updating character: {e}")
+        logger.error(f"❌ Unhandled error updating character: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error al actualizar personaje"
+            detail=f"Error interno al actualizar personaje: {str(e)}"
         )
 
 

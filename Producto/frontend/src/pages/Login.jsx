@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/useAuthStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, Lock, ArrowRight, FlameKindling, User, KeyRound } from 'lucide-react'
 import bgDungeon from '../assets/bg_dungeon.png'
-import LoadingSpinner from '../components/LoadingSpinner'
+import LoadingSpinner from '../components/shared/LoadingSpinner'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -82,6 +82,10 @@ export default function Login() {
         setUser(user)
         setToken(access_token)
 
+        // Inicializar socket con el nuevo token
+        const { initSocket } = await import('../services/socket')
+        initSocket()
+
         setTimeout(() => navigate('/dashboard'), 300)
       } catch (err) {
         const errorMsg = err.response?.data?.detail || 'Error al iniciar sesión'
@@ -130,10 +134,10 @@ export default function Login() {
               <FlameKindling className="text-orange-500" size={32} />
             </div>
             <h2 className="font-display text-4xl text-white tracking-widest mb-2 drop-shadow-[0_0_15px_rgba(255,165,0,0.4)]">
-              {isRegister ? 'JOIN THE GUILD' : 'ENTER THE KEEP'}
+              {isRegister ? 'ÚNETE AL GREMIO' : 'ENTRA EN LA MAZMORRA'}
             </h2>
             <p className="font-sans text-gray-400 text-sm tracking-tighter uppercase font-medium">
-              {isRegister ? 'Register your name, adventurer.' : 'Identify yourself, traveler.'}
+              {isRegister ? 'Registra tu nombre, viajero.' : 'Identifícate, viajero'}
             </p>
           </motion.div>
         </AnimatePresence>
@@ -153,7 +157,7 @@ export default function Login() {
               {isRegister && (
                 <div className="space-y-2">
                   <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold ml-1">
-                    Adventurer Name
+                    Nombre
                   </label>
                   <div className="relative group">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-orange-500 transition-colors" size={18} />
@@ -165,7 +169,7 @@ export default function Login() {
                       required
                       disabled={loading}
                       className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-10 pr-4 text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-gray-700"
-                      placeholder="Sir Lancelot"
+                      placeholder="Geralt of Rivia"
                     />
                   </div>
                 </div>
@@ -174,7 +178,7 @@ export default function Login() {
               {/* Email */}
               <div className="space-y-2">
                 <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold ml-1">
-                  Email Address / Messenger Pigeon
+                  Email
                 </label>
                 <div className="relative group">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-orange-500 transition-colors" size={18} />
@@ -186,7 +190,7 @@ export default function Login() {
                     required
                     disabled={loading}
                     className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-10 pr-4 text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-gray-700"
-                    placeholder="knight@realm.com"
+                    placeholder="viajero@reino.com"
                   />
                 </div>
               </div>
@@ -194,7 +198,7 @@ export default function Login() {
               {/* Password */}
               <div className="space-y-2">
                 <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold ml-1">
-                  Secret Phrase / Magic Spell
+                  Contraseña
                 </label>
                 <div className="relative group">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-orange-500 transition-colors" size={18} />
@@ -210,7 +214,7 @@ export default function Login() {
                   />
                 </div>
                 {isRegister && (
-                  <p className="text-[10px] text-red-400 ml-1 mt-1">Minimum 8 characters</p>
+                  <p className="text-[10px] text-red-400 ml-1 mt-1">Mínimo 8 caracteres</p>
                 )}
               </div>
 
@@ -218,7 +222,7 @@ export default function Login() {
               {isRegister && (
                 <div className="space-y-2">
                   <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold ml-1">
-                    Confirm Your Spell
+                    Confirma tu Contraseña
                   </label>
                   <div className="relative group">
                     <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-orange-500 transition-colors" size={18} />
@@ -272,7 +276,7 @@ export default function Login() {
               <LoadingSpinner size={24} padding="0" />
             ) : (
               <>
-                {isRegister ? 'CREATE ACCOUNT' : 'PROCEED'}{' '}
+                {isRegister ? 'CREA TU CUENTA' : 'ENTRAR'}{' '}
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </>
             )}
@@ -286,31 +290,31 @@ export default function Login() {
             onClick={() => navigate('/')}
             className="text-[10px] uppercase tracking-[0.2em] text-gray-500 hover:text-white transition-colors"
           >
-            Return to Gates
+            Volver
           </button>
 
           <div className="pt-4 border-t border-white/5">
             <p className="text-xs text-gray-600">
               {isRegister ? (
                 <>
-                  Already a member?{' '}
+                  Ya eres parte del gremio?{' '}
                   <button
                     type="button"
                     onClick={toggleMode}
                     className="text-orange-500/80 hover:text-orange-400 font-semibold transition-colors"
                   >
-                    Enter the Keep
+                    Entra a la mazmorra
                   </button>
                 </>
               ) : (
                 <>
-                  New to the dungeon?{' '}
+                  Nuevo en la mazmorra?{' '}
                   <button
                     type="button"
                     onClick={toggleMode}
                     className="text-orange-500/80 hover:text-orange-400 font-semibold transition-colors"
                   >
-                    Request Entry
+                    Regístrate aquí
                   </button>
                 </>
               )}
