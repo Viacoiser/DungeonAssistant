@@ -1,0 +1,95 @@
+{
+  "backgrounds": [
+    {
+      "index": "acolyte",
+      "name": "Acolyte",
+      "description": "You have spent your life in the service of a temple to a specific god or gods.",
+      "skill_proficiencies": ["Insight", "Religion"],
+      "languages": 2
+    },
+    {
+      "index": "charlatan",
+      "name": "Charlatan",
+      "description": "You have always had a way with people. You know what makes them tick, you're a master of manipulation.",
+      "skill_proficiencies": ["Deception", "Sleight of Hand"],
+      "tool_proficiencies": ["Disguise kit", "Forgery kit"]
+    },
+    {
+      "index": "criminal",
+      "name": "Criminal",
+      "description": "You are an experienced criminal with a history of breaking the law.",
+      "skill_proficiencies": ["Deception", "Stealth"],
+      "tool_proficiencies": ["Thieves' tools"]
+    },
+    {
+      "index": "entertainer",
+      "name": "Entertainer",
+      "description": "You thrive in front of an audience. You know how to captivate them, entertain them, and even inspire them.",
+      "skill_proficiencies": ["Acrobatics", "Performance"],
+      "tool_proficiencies": ["Musical instrument"]
+    },
+    {
+      "index": "folk-hero",
+      "name": "Folk Hero",
+      "description": "You come from a humble social rank, but you are destined for something more.",
+      "skill_proficiencies": ["Animal Handling", "Survival"],
+      "tool_proficiencies": ["Artisan's tools"]
+    },
+    {
+      "index": "guild-artisan",
+      "name": "Guild Artisan",
+      "description": "You are a skilled member of a guild, which serves as an extended family.",
+      "skill_proficiencies": ["Insight", "Persuasion"],
+      "tool_proficiencies": ["Artisan's tools"]
+    },
+    {
+      "index": "hermit",
+      "name": "Hermit",
+      "description": "You lived in seclusion—either in a sheltered community such as a monastery, or entirely alone.",
+      "skill_proficiencies": ["Medicine", "Religion"],
+      "languages": 1
+    },
+    {
+      "index": "noble",
+      "name": "Noble",
+      "description": "You understand wealth, power, and privilege. You carry a noble title and your family owns land.",
+      "skill_proficiencies": ["Insight", "Persuasion"],
+      "languages": 1
+    },
+    {
+      "index": "outlander",
+      "name": "Outlander",
+      "description": "You grew up in the wilds, far from civilization and the comforts of town and technology.",
+      "skill_proficiencies": ["Athletics", "Survival"],
+      "languages": 1
+    },
+    {
+      "index": "sage",
+      "name": "Sage",
+      "description": "You spent years learning the lore of the multiverse. You scoured manuscripts, studied scrolls, and listened to the greatest experts.",
+      "skill_proficiencies": ["Arcana", "History"],
+      "languages": 2
+    },
+    {
+      "index": "sailor",
+      "name": "Sailor",
+      "description": "You sailed on a seagoing vessel for years. In that time, you faced worse storms than any squall.",
+      "skill_proficiencies": ["Athletics", "Perception"],
+      "tool_proficiencies": ["Navigator's tools"]
+    },
+    {
+      "index": "soldier",
+      "name": "Soldier",
+      "description": "War has been your life for as long as you care to remember. You trained as a youth, fought in several campaigns, and have the scars to prove it.",
+      "skill_proficiencies": ["Athletics", "Intimidation"],
+      "tool_proficiencies": ["Gaming set"]
+    },
+    {
+      "index": "urchin",
+      "name": "Urchin",
+      "description": "You grew up on the streets alone, orphaned, and poor. You had no one to watch out for you, so you had to watch out for yourself.",
+      "skill_proficiencies": ["Sleight of Hand", "Stealth"],
+      "tool_proficiencies": ["Thieves' tools"]
+    }
+  ]
+}

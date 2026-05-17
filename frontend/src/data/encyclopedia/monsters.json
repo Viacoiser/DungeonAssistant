@@ -1,0 +1,1284 @@
+[
+  {
+    "id": "ogre",
+    "name": "Ogro / Ogre",
+    "type": "giant",
+    "size": "Grande",
+    "challenge_rating": "2",
+    "armor_class": "11",
+    "hit_points": "59",
+    "hit_dice": "7d10 + 21",
+    "strength": 19,
+    "dexterity": 8,
+    "constitution": 16,
+    "intelligence": 5,
+    "wisdom": 7,
+    "charisma": 7,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Brutal y simple, usa fuerza pura con su enorme garrote. Gran cantidad de vida para su nivel de desafío."
+      }
+    ]
+  },
+  {
+    "id": "gelatinous-cube",
+    "name": "Cubo gelatinoso / Gelatinous Cube",
+    "type": "ooze",
+    "size": "Grande",
+    "challenge_rating": "2",
+    "armor_class": "6",
+    "hit_points": "84",
+    "hit_dice": "8d10 + 40",
+    "strength": 14,
+    "dexterity": 3,
+    "constitution": 20,
+    "intelligence": 1,
+    "wisdom": 6,
+    "charisma": 1,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Se desplaza lentamente absorbiendo criaturas y disolviéndolas con ácido. Es transparente y difícil de percibir (Transparent)."
+      }
+    ]
+  },
+  {
+    "id": "troll",
+    "name": "Trol / Troll",
+    "type": "giant",
+    "size": "Grande",
+    "challenge_rating": "5",
+    "armor_class": "15",
+    "hit_points": "84",
+    "hit_dice": "8d10 + 40",
+    "strength": 18,
+    "dexterity": 13,
+    "constitution": 20,
+    "intelligence": 7,
+    "wisdom": 9,
+    "charisma": 7,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Se regenera rápidamente (10 pg por turno) salvo que reciba daño de fuego o ácido. Sus ataques de garras y mordisco son mortales."
+      }
+    ]
+  },
+  {
+    "id": "pit-fiend",
+    "name": "Pit Fiend",
+    "type": "fiend",
+    "size": "Enorme",
+    "challenge_rating": "20",
+    "armor_class": "19",
+    "hit_points": "300",
+    "hit_dice": "24d12 + 144",
+    "strength": 26,
+    "dexterity": 14,
+    "constitution": 24,
+    "intelligence": 22,
+    "wisdom": 18,
+    "charisma": 24,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "General infernal con gran resistencia, poder físico y habilidades mágicas devastadoras. Emite un aura de miedo paralizante."
+      }
+    ]
+  },
+  {
+    "id": "werewolf",
+    "name": "Werewolf / Hombre lobo",
+    "type": "shapechanger",
+    "size": "Mediano",
+    "challenge_rating": "3",
+    "armor_class": "11",
+    "hit_points": "58",
+    "hit_dice": "9d8 + 18",
+    "strength": 15,
+    "dexterity": 13,
+    "constitution": 14,
+    "intelligence": 10,
+    "wisdom": 11,
+    "charisma": 10,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Humanoide que se transforma en bestia y es inmune a daño de armas no mágicas y no plateadas. Su mordisco puede propagar licantropía."
+      }
+    ]
+  },
+  {
+    "id": "roc",
+    "name": "Roc",
+    "type": "beast",
+    "size": "Gargantuesco",
+    "challenge_rating": "11",
+    "armor_class": "15",
+    "hit_points": "248",
+    "hit_dice": "16d20 + 80",
+    "strength": 28,
+    "dexterity": 10,
+    "constitution": 20,
+    "intelligence": 3,
+    "wisdom": 10,
+    "charisma": 9,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Ave colosal (gigante) capaz de levantar presas de gran tamaño, como elefantes. Tiene garras y pico muy poderosos."
+      }
+    ]
+  },
+  {
+    "id": "solar",
+    "name": "Solar",
+    "type": "celestial",
+    "size": "Grande",
+    "challenge_rating": "21",
+    "armor_class": "21",
+    "hit_points": "243",
+    "hit_dice": "18d10 + 144",
+    "strength": 26,
+    "dexterity": 22,
+    "constitution": 26,
+    "intelligence": 25,
+    "wisdom": 25,
+    "charisma": 30,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "El ángel más poderoso con ataques de gran espada y arco largo que infligen daño radiante extremo, y espada animada capaz de luchar por sí sola."
+      }
+    ]
+  },
+  {
+    "id": "empyrean",
+    "name": "Empyrean",
+    "type": "celestial",
+    "size": "Enorme",
+    "challenge_rating": "23",
+    "armor_class": "22",
+    "hit_points": "313",
+    "hit_dice": "19d12 + 190",
+    "strength": 30,
+    "dexterity": 21,
+    "constitution": 30,
+    "intelligence": 21,
+    "wisdom": 22,
+    "charisma": 27,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Hijos de los dioses, bellos y colosales. Golpean con maullos que aturden y alteran la realidad con sus emociones masivas."
+      }
+    ]
+  },
+  {
+    "id": "iron-golem",
+    "name": "Golem de hierro / Iron Golem",
+    "type": "construct",
+    "size": "Grande",
+    "challenge_rating": "16",
+    "armor_class": "20",
+    "hit_points": "210",
+    "hit_dice": "20d10 + 100",
+    "strength": 24,
+    "dexterity": 9,
+    "constitution": 20,
+    "intelligence": 3,
+    "wisdom": 11,
+    "charisma": 1,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Constructo extremadamente duro. Inmune a casi toda la magia, sus ataques son contundentes mortales y tiene un Aliento Venenoso potente."
+      }
+    ]
+  },
+  {
+    "id": "stone-golem",
+    "name": "Golem de piedra / Stone Golem",
+    "type": "construct",
+    "size": "Grande",
+    "challenge_rating": "10",
+    "armor_class": "17",
+    "hit_points": "178",
+    "hit_dice": "17d10 + 85",
+    "strength": 22,
+    "dexterity": 9,
+    "constitution": 20,
+    "intelligence": 3,
+    "wisdom": 11,
+    "charisma": 1,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Estatua animada de roca. Golpea con fuerza masiva e incorpora un Mirada Desaceleradora que reduce la velocidad y prohíbe acciones múltiples."
+      }
+    ]
+  },
+  {
+    "id": "mimic",
+    "name": "Mímico / Mimic",
+    "type": "giant",
+    "size": "Mediano",
+    "challenge_rating": "2",
+    "armor_class": "12",
+    "hit_points": "58",
+    "hit_dice": "9d8 + 18",
+    "strength": 17,
+    "dexterity": 12,
+    "constitution": 15,
+    "intelligence": 5,
+    "wisdom": 13,
+    "charisma": 8,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Se disfraza de objeto común para emboscar a sus presas y atraparlas con su cuerpo adhesivo."
+      }
+    ]
+  },
+  {
+    "id": "lich",
+    "name": "Lich",
+    "type": "ooze",
+    "size": "Mediano",
+    "challenge_rating": "21",
+    "armor_class": "17",
+    "hit_points": "135",
+    "hit_dice": "18d8 + 54",
+    "strength": 11,
+    "dexterity": 16,
+    "constitution": 16,
+    "intelligence": 20,
+    "wisdom": 14,
+    "charisma": 16,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Hechicero inmortal que almacena su alma en un filacterio y lanza conjuros de alto nivel devastadores (incluyendo Palabra de poder matar). Posee gran resistencia mágica y ataques paralizantes."
+      }
+    ]
+  },
+  {
+    "id": "salamander",
+    "name": "Salamandra",
+    "type": "ooze",
+    "size": "Grande",
+    "challenge_rating": "5",
+    "armor_class": "15",
+    "hit_points": "90",
+    "hit_dice": "12d10 + 24",
+    "strength": 18,
+    "dexterity": 14,
+    "constitution": 15,
+    "intelligence": 11,
+    "wisdom": 10,
+    "charisma": 12,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Ser ígneo reptiliano que calienta armas pasivamente. Cualquiera que lo toque o golpee cuerpo a cuerpo sufre daño de fuego."
+      }
+    ]
+  },
+  {
+    "id": "mind-flayer",
+    "name": "Mind Flayer / Devorador de mentes",
+    "type": "ooze",
+    "size": "Mediano",
+    "challenge_rating": "7",
+    "armor_class": "15",
+    "hit_points": "71",
+    "hit_dice": "13d8 + 13",
+    "strength": 11,
+    "dexterity": 12,
+    "constitution": 12,
+    "intelligence": 19,
+    "wisdom": 17,
+    "charisma": 17,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Psíquico poderoso que aturde en área (Mind Blast) y utiliza sus tentáculos para atrapar a sus víctimas y extraerles el cerebro."
+      }
+    ]
+  },
+  {
+    "id": "goblin-2",
+    "name": "Goblin (Resumen)",
+    "type": "ooze",
+    "size": "Pequeño",
+    "challenge_rating": "1/4",
+    "armor_class": "15",
+    "hit_points": "7",
+    "hit_dice": "2d6",
+    "strength": 8,
+    "dexterity": 14,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 8,
+    "charisma": 8,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Criatura astuta y cobarde que combate en grupo. Puede esconderse o retirarse como acción adicional."
+      }
+    ]
+  },
+  {
+    "id": "ghost",
+    "name": "Ghost / Fantasma",
+    "type": "fiend",
+    "size": "Mediano",
+    "challenge_rating": "4",
+    "armor_class": "11",
+    "hit_points": "45",
+    "hit_dice": "10d8",
+    "strength": 7,
+    "dexterity": 13,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 12,
+    "charisma": 17,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Espíritu incorpóreo que puede poseer cuerpos de humanoides (Possession) y atravesar objetos sólidos. Su toque envejece (Horrifying Visage)."
+      }
+    ]
+  },
+  {
+    "id": "leviathan",
+    "name": "Leviatán",
+    "type": "fiend",
+    "size": "Gargantuesco",
+    "challenge_rating": "20",
+    "armor_class": "17",
+    "hit_points": "328",
+    "hit_dice": "16d20 + 160",
+    "strength": 30,
+    "dexterity": 14,
+    "constitution": 30,
+    "intelligence": 2,
+    "wisdom": 18,
+    "charisma": 17,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Gigante elemental de agua. Destruye barcos creando enormes maremotos y olas aplastantes que devastan ciudades costeras."
+      }
+    ]
+  },
+  {
+    "id": "bugbear",
+    "name": "Bugbear",
+    "type": "fiend",
+    "size": "Mediano",
+    "challenge_rating": "1",
+    "armor_class": "16",
+    "hit_points": "27",
+    "hit_dice": "5d8 + 5",
+    "strength": 15,
+    "dexterity": 14,
+    "constitution": 13,
+    "intelligence": 8,
+    "wisdom": 11,
+    "charisma": 9,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Emboscador fuerte que inflige gran daño en ataques sorpresa (Surprise Attack: extra 2d6 daño)."
+      }
+    ]
+  },
+  {
+    "id": "manticore",
+    "name": "Mantícora / Manticore",
+    "type": "shapechanger",
+    "size": "Grande",
+    "challenge_rating": "3",
+    "armor_class": "14",
+    "hit_points": "68",
+    "hit_dice": "8d10 + 24",
+    "strength": 17,
+    "dexterity": 16,
+    "constitution": 17,
+    "intelligence": 7,
+    "wisdom": 12,
+    "charisma": 8,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Criatura voladora con cola que dispara púas a distancia. Puede hacer tres ataques (un mordisco y dos garras, o tres púas en la cola)."
+      }
+    ]
+  },
+  {
+    "id": "ancient-red-dragon",
+    "name": "Dragón rojo anciano / Ancient Red Dragon",
+    "type": "shapechanger",
+    "size": "Gargantuesco",
+    "challenge_rating": "24",
+    "armor_class": "22",
+    "hit_points": "546",
+    "hit_dice": "28d20 + 252",
+    "strength": 30,
+    "dexterity": 10,
+    "constitution": 29,
+    "intelligence": 18,
+    "wisdom": 15,
+    "charisma": 23,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Una de las criaturas más poderosas, con aliento de fuego devastador (26d6) y gran inteligencia. Usa su Presencia Pavorosa para aterrar enemigos."
+      }
+    ]
+  },
+  {
+    "id": "aboleth",
+    "name": "Aboleth",
+    "type": "shapechanger",
+    "size": "Grande",
+    "challenge_rating": "10",
+    "armor_class": "17",
+    "hit_points": "135",
+    "hit_dice": "18d10 + 36",
+    "strength": 21,
+    "dexterity": 9,
+    "constitution": 15,
+    "intelligence": 18,
+    "wisdom": 15,
+    "charisma": 18,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Criatura acuática antigua con poderes psíquicos. Esclaviza mentes y su mucosidad obliga a respirar bajo el agua."
+      }
+    ]
+  },
+  {
+    "id": "hydra",
+    "name": "Hydra",
+    "type": "beast",
+    "size": "Enorme",
+    "challenge_rating": "8",
+    "armor_class": "15",
+    "hit_points": "172",
+    "hit_dice": "15d12 + 75",
+    "strength": 20,
+    "dexterity": 12,
+    "constitution": 20,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 7,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Bestia de múltiples cabezas que realiza tantos ataques como cabezas tiene, regenerando el doble de cabezas si pierde una y no recibe daño de fuego."
+      }
+    ]
+  },
+  {
+    "id": "shadow",
+    "name": "Sombra / Shadow",
+    "type": "beast",
+    "size": "Mediano",
+    "challenge_rating": "1/2",
+    "armor_class": "12",
+    "hit_points": "16",
+    "hit_dice": "3d8 + 3",
+    "strength": 6,
+    "dexterity": 14,
+    "constitution": 13,
+    "intelligence": 6,
+    "wisdom": 10,
+    "charisma": 8,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Esencia oscura no muerta. Su ataque 'Drenar Fuerza' reduce permanentemente la Fuerza de la víctima, matándola al instante si llega a 0."
+      }
+    ]
+  },
+  {
+    "id": "tarrasque",
+    "name": "Tarrasque",
+    "type": "beast",
+    "size": "Gargantuesco",
+    "challenge_rating": "30",
+    "armor_class": "25",
+    "hit_points": "676",
+    "hit_dice": "33d20 + 330",
+    "strength": 30,
+    "dexterity": 11,
+    "constitution": 30,
+    "intelligence": 3,
+    "wisdom": 11,
+    "charisma": 11,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Criatura colosal casi imparable. Su caparazón refleja conjuros y realiza hasta 5 ataques devastadores que destrozan ejércitos."
+      }
+    ]
+  },
+  {
+    "id": "kraken",
+    "name": "Kraken",
+    "type": "celestial",
+    "size": "Gargantuesco",
+    "challenge_rating": "23",
+    "armor_class": "18",
+    "hit_points": "472",
+    "hit_dice": "27d20 + 189",
+    "strength": 30,
+    "dexterity": 11,
+    "constitution": 25,
+    "intelligence": 22,
+    "wisdom": 18,
+    "charisma": 20,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Criatura marina titánica capaz de destruir barcos y controlar tormentas. Sus tentáculos pueden apresar y devorar presas enteras, e inflige daño con rayos mágicos."
+      }
+    ]
+  },
+  {
+    "id": "death-knight",
+    "name": "Death Knight",
+    "type": "celestial",
+    "size": "Mediano",
+    "challenge_rating": "17",
+    "armor_class": "20",
+    "hit_points": "180",
+    "hit_dice": "19d8 + 95",
+    "strength": 20,
+    "dexterity": 11,
+    "constitution": 20,
+    "intelligence": 12,
+    "wisdom": 16,
+    "charisma": 18,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Paladín corrompido, guerrero maldito con habilidades marciales superiores y magia nigromántica/fuego infernal (Hellfire Orb)."
+      }
+    ]
+  },
+  {
+    "id": "hobgoblin",
+    "name": "Hobgoblin",
+    "type": "celestial",
+    "size": "Mediano",
+    "challenge_rating": "1/2",
+    "armor_class": "18",
+    "hit_points": "11",
+    "hit_dice": "2d8 + 2",
+    "strength": 13,
+    "dexterity": 12,
+    "constitution": 12,
+    "intelligence": 10,
+    "wisdom": 10,
+    "charisma": 9,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Guerrero disciplinado que combate mejor cuando tiene aliados cerca (Martial Advantage: +2d6 de daño si un aliado no incapacitado está a 5 pies del objetivo)."
+      }
+    ]
+  },
+  {
+    "id": "dracolich",
+    "name": "Lich dragón / Dracolich",
+    "type": "construct",
+    "size": "Gargantuesco",
+    "challenge_rating": "17",
+    "armor_class": "19",
+    "hit_points": "225",
+    "hit_dice": "18d20 + 36",
+    "strength": 27,
+    "dexterity": 10,
+    "constitution": 25,
+    "intelligence": 16,
+    "wisdom": 15,
+    "charisma": 19,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Dragón que, buscando inmortalidad, se vincula a un filacterio volviéndose no muerto. Mantiene el poder de dragón pero gana resistencia de no muerto y Mirada Paralizante."
+      }
+    ]
+  },
+  {
+    "id": "owlbear",
+    "name": "Oso lechuza / Owlbear",
+    "type": "construct",
+    "size": "Grande",
+    "challenge_rating": "3",
+    "armor_class": "13",
+    "hit_points": "59",
+    "hit_dice": "7d10 + 21",
+    "strength": 20,
+    "dexterity": 12,
+    "constitution": 17,
+    "intelligence": 3,
+    "wisdom": 12,
+    "charisma": 7,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Depredador salvaje que combina rasgos de oso y búho, extremadamente agresivo. Posee gran percepción de vista y olfato."
+      }
+    ]
+  },
+  {
+    "id": "chimera",
+    "name": "Chimera",
+    "type": "construct",
+    "size": "Grande",
+    "challenge_rating": "6",
+    "armor_class": "14",
+    "hit_points": "114",
+    "hit_dice": "12d10 + 48",
+    "strength": 19,
+    "dexterity": 11,
+    "constitution": 19,
+    "intelligence": 3,
+    "wisdom": 14,
+    "charisma": 10,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Criatura híbrida con cabeza de dragón, león y cabra. Posee ataques variados incluyendo garras, cuernos y aliento de fuego."
+      }
+    ]
+  },
+  {
+    "id": "marilith",
+    "name": "Marilith",
+    "type": "fiend",
+    "size": "Grande",
+    "challenge_rating": "16",
+    "armor_class": "18",
+    "hit_points": "189",
+    "hit_dice": "18d10 + 90",
+    "strength": 18,
+    "dexterity": 20,
+    "constitution": 20,
+    "intelligence": 18,
+    "wisdom": 16,
+    "charisma": 20,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Demonio serpiente de 6 brazos y mente táctica brillante. Ataca con 7 armas y tiene una reacción en CADA turno de otra criatura para hacer paradas."
+      }
+    ]
+  },
+  {
+    "id": "wraith",
+    "name": "Wraith / Espectro",
+    "type": "undead",
+    "size": "Mediano",
+    "challenge_rating": "5",
+    "armor_class": "13",
+    "hit_points": "67",
+    "hit_dice": "9d8 + 27",
+    "strength": 6,
+    "dexterity": 16,
+    "constitution": 16,
+    "intelligence": 12,
+    "wisdom": 14,
+    "charisma": 15,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Espíritu incorpóreo de odio absoluto. Su toque drena vida máxima. Puede crear espectros controlando los espíritus de humanoides que asesina."
+      }
+    ]
+  },
+  {
+    "id": "fire-elemental",
+    "name": "Elemental de fuego",
+    "type": "elemental",
+    "size": "Grande",
+    "challenge_rating": "5",
+    "armor_class": "13",
+    "hit_points": "102",
+    "hit_dice": "12d10 + 36",
+    "strength": 10,
+    "dexterity": 17,
+    "constitution": 16,
+    "intelligence": 6,
+    "wisdom": 10,
+    "charisma": 7,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Ser de llamas vivientes que quema a las criaturas que lo toquen. Puede prender fuego a su paso."
+      }
+    ]
+  },
+  {
+    "id": "nightwalker",
+    "name": "Nightwalker",
+    "type": "undead",
+    "size": "Enorme",
+    "challenge_rating": "20",
+    "armor_class": "14",
+    "hit_points": "297",
+    "hit_dice": "22d12 + 154",
+    "strength": 22,
+    "dexterity": 19,
+    "constitution": 24,
+    "intelligence": 6,
+    "wisdom": 9,
+    "charisma": 8,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Entidad de muerte pura del Plano Negativo. Drena vida acercándose a él, y aquellos que mueren por su causa no pueden ser revividos a menos que la bestia sea destruida."
+      }
+    ]
+  },
+  {
+    "id": "kobold",
+    "name": "Kobold",
+    "type": "humanoid",
+    "size": "Pequeño",
+    "challenge_rating": "1/8",
+    "armor_class": "12",
+    "hit_points": "5",
+    "hit_dice": "2d6 - 2",
+    "strength": 7,
+    "dexterity": 15,
+    "constitution": 9,
+    "intelligence": 8,
+    "wisdom": 7,
+    "charisma": 8,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Criaturas débiles pero peligrosas en grupo gracias a sus tácticas de manada (Pact Tactics)."
+      }
+    ]
+  },
+  {
+    "id": "gorgon",
+    "name": "Gorgon",
+    "type": "monstrosity",
+    "size": "Grande",
+    "challenge_rating": "5",
+    "armor_class": "19",
+    "hit_points": "114",
+    "hit_dice": "12d10 + 48",
+    "strength": 20,
+    "dexterity": 11,
+    "constitution": 18,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 7,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Toro acorazado cubierto de placas de acero. Su ataque de carga atropella y derriba, y su aliento tóxico petrifica a sus víctimas permanentemente."
+      }
+    ]
+  },
+  {
+    "id": "vampire",
+    "name": "Vampire / Vampiro",
+    "type": "undead",
+    "size": "Mediano",
+    "challenge_rating": "13",
+    "armor_class": "16",
+    "hit_points": "144",
+    "hit_dice": "17d8 + 68",
+    "strength": 18,
+    "dexterity": 18,
+    "constitution": 18,
+    "intelligence": 17,
+    "wisdom": 15,
+    "charisma": 18,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Depredador inmortal que drena vida, hechiza a sus presas y puede transformarse en niebla o murciélago. Se regenera constantemente."
+      }
+    ]
+  },
+  {
+    "id": "balor",
+    "name": "Balor",
+    "type": "fiend",
+    "size": "Enorme",
+    "challenge_rating": "19",
+    "armor_class": "19",
+    "hit_points": "262",
+    "hit_dice": "21d12 + 126",
+    "strength": 26,
+    "dexterity": 15,
+    "constitution": 22,
+    "intelligence": 20,
+    "wisdom": 16,
+    "charisma": 22,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Señor demoníaco envuelto en fuego, armado con látigo y espada, extremadamente peligroso en combate. Explota al morir infligiendo daño masivo."
+      }
+    ]
+  },
+  {
+    "id": "minotaur",
+    "name": "Minotauro",
+    "type": "monstrosity",
+    "size": "Grande",
+    "challenge_rating": "3",
+    "armor_class": "14",
+    "hit_points": "76",
+    "hit_dice": "9d10 + 27",
+    "strength": 18,
+    "dexterity": 11,
+    "constitution": 16,
+    "intelligence": 6,
+    "wisdom": 16,
+    "charisma": 9,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Humanoide con cabeza de toro. Agresivo, experto en laberintos (Recall), ataca embistiendo con sus cuernos causando daño masivo al cargar."
+      }
+    ]
+  },
+  {
+    "id": "banshee",
+    "name": "Banshee",
+    "type": "undead",
+    "size": "Mediano",
+    "challenge_rating": "4",
+    "armor_class": "12",
+    "hit_points": "58",
+    "hit_dice": "13d8",
+    "strength": 1,
+    "dexterity": 14,
+    "constitution": 10,
+    "intelligence": 12,
+    "wisdom": 11,
+    "charisma": 17,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Espíritu elfo corrompido que puede usar una vez por día su Wail (Grito) aterrador que reduce a 0 los puntos de golpe a los que fallen su salvación."
+      }
+    ]
+  },
+  {
+    "id": "zombie",
+    "name": "Zombi / Zombie",
+    "type": "muerto viviente",
+    "size": "Mediano",
+    "challenge_rating": "1/4",
+    "armor_class": "8",
+    "hit_points": "22",
+    "hit_dice": "3d8 + 9",
+    "strength": 13,
+    "dexterity": 6,
+    "constitution": 16,
+    "intelligence": 3,
+    "wisdom": 6,
+    "charisma": 5,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Lento pero resistente, puede evitar caer a 0 puntos de golpe gracias a su resistencia antinatural."
+      }
+    ]
+  },
+  {
+    "id": "orc",
+    "name": "Orco",
+    "type": "humanoid",
+    "size": "Mediano",
+    "challenge_rating": "1/2",
+    "armor_class": "13",
+    "hit_points": "15",
+    "hit_dice": "2d8 + 6",
+    "strength": 16,
+    "dexterity": 12,
+    "constitution": 16,
+    "intelligence": 7,
+    "wisdom": 11,
+    "charisma": 10,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Guerrero brutal que puede avanzar rápidamente hacia sus enemigos gracias a su agresividad."
+      }
+    ]
+  },
+  {
+    "id": "goblin",
+    "name": "Goblin",
+    "type": "humanoid",
+    "size": "Pequeño",
+    "challenge_rating": "1/4",
+    "armor_class": "15 (Armadura de cuero, escudo)",
+    "hit_points": "7 (2d6)",
+    "hit_dice": "2d6",
+    "strength": 8,
+    "dexterity": 14,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 8,
+    "charisma": 8,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Cimitarra",
+        "desc": "Ataque de Arma Cuerpo a Cuerpo: +4 a impactar, alcance 5 pies, un objetivo. Daño: 5 (1d6 + 2) cortante."
+      },
+      {
+        "name": "Arco Corto",
+        "desc": "Ataque de Arma a Distancia: +4 a impactar, alcance 80/320 pies, un objetivo. Daño: 5 (1d6 + 2) perforante."
+      }
+    ]
+  },
+  {
+    "id": "guardian-naga",
+    "name": "Naga guardiana / Guardian Naga",
+    "type": "monstrosity",
+    "size": "Grande",
+    "challenge_rating": "10",
+    "armor_class": "15",
+    "hit_points": "122",
+    "hit_dice": "15d10 + 40",
+    "strength": 19,
+    "dexterity": 18,
+    "constitution": 16,
+    "intelligence": 16,
+    "wisdom": 19,
+    "charisma": 18,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Serpiente con rostro divino. Posee un fuerte mordisco venenoso y la habilidad de lanzar hechizos divinos poderosos, además es inmortal."
+      }
+    ]
+  },
+  {
+    "id": "demogorgon",
+    "name": "Demogorgon",
+    "type": "fiend",
+    "size": "Enorme",
+    "challenge_rating": "26",
+    "armor_class": "22",
+    "hit_points": "406",
+    "hit_dice": "28d12 + 224",
+    "strength": 29,
+    "dexterity": 14,
+    "constitution": 26,
+    "intelligence": 20,
+    "wisdom": 17,
+    "charisma": 25,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "El Príncipe de los Demonios. De 2 cabezas, locura personificada, mirada que induce a confusión y locura, y tentáculos que pudren lo que tocan."
+      }
+    ]
+  },
+  {
+    "id": "wyvern",
+    "name": "Wyvern",
+    "type": "dragon",
+    "size": "Grande",
+    "challenge_rating": "6",
+    "armor_class": "13",
+    "hit_points": "110",
+    "hit_dice": "13d10 + 39",
+    "strength": 19,
+    "dexterity": 10,
+    "constitution": 16,
+    "intelligence": 5,
+    "wisdom": 12,
+    "charisma": 6,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Pariente de los dragones sin patas delanteras ni aliento de fuego. Ataca con su aguijón de cola que inyecta un veneno letal masivo."
+      }
+    ]
+  },
+  {
+    "id": "doppelganger",
+    "name": "Doppelganger",
+    "type": "monstrosity",
+    "size": "Mediano",
+    "challenge_rating": "3",
+    "armor_class": "14",
+    "hit_points": "52",
+    "hit_dice": "8d8 + 16",
+    "strength": 11,
+    "dexterity": 18,
+    "constitution": 14,
+    "intelligence": 11,
+    "wisdom": 12,
+    "charisma": 14,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Cambiaformas letal. Puede imitar la apariencia de humanoides y leer mentes superficiales, atacando con sorpresa para daño masivo extra."
+      }
+    ]
+  },
+  {
+    "id": "ghoul",
+    "name": "Ghoul",
+    "type": "muerto viviente",
+    "size": "Mediano",
+    "challenge_rating": "1",
+    "armor_class": "12",
+    "hit_points": "22",
+    "hit_dice": "5d8",
+    "strength": 13,
+    "dexterity": 15,
+    "constitution": 10,
+    "intelligence": 7,
+    "wisdom": 10,
+    "charisma": 6,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Ataca con garras paralizantes (salvación de CON o paralizado) y se alimenta de carne humanoide."
+      }
+    ]
+  },
+  {
+    "id": "beholder",
+    "name": "Beholder",
+    "type": "aberración",
+    "size": "Grande",
+    "challenge_rating": "13",
+    "armor_class": "18",
+    "hit_points": "180",
+    "hit_dice": "19d10 + 76",
+    "strength": 10,
+    "dexterity": 14,
+    "constitution": 18,
+    "intelligence": 17,
+    "wisdom": 15,
+    "charisma": 17,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Criatura flotante con múltiples ojos que disparan rayos mágicos variados (Desintegrar, Paralizar, Miedo, etc.) y un ojo central que proyecta antimagia."
+      }
+    ]
+  },
+  {
+    "id": "young-red-dragon",
+    "name": "Dragón rojo joven / Young Red Dragon",
+    "type": "dragon",
+    "size": "Grande",
+    "challenge_rating": "10",
+    "armor_class": "18",
+    "hit_points": "178",
+    "hit_dice": "17d10 + 85",
+    "strength": 23,
+    "dexterity": 10,
+    "constitution": 21,
+    "intelligence": 14,
+    "wisdom": 11,
+    "charisma": 19,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Criatura poderosa con aliento de fuego (16d6 daño) en cono de 30 pies y gran capacidad destructiva con ataques múltiples."
+      }
+    ]
+  },
+  {
+    "id": "skeleton",
+    "name": "Esqueleto / Skeleton",
+    "type": "muerto viviente",
+    "size": "Mediano",
+    "challenge_rating": "1/4",
+    "armor_class": "13",
+    "hit_points": "13",
+    "hit_dice": "2d8 + 4",
+    "strength": 10,
+    "dexterity": 14,
+    "constitution": 15,
+    "intelligence": 6,
+    "wisdom": 8,
+    "charisma": 5,
+    "desc": [],
+    "actions": [
+      {
+        "name": "Descripción",
+        "desc": "Inmune al veneno, vulnerable al daño contundente. Usa armas simples como espada o arco."
+      }
+    ]
+  },
+  {
+    "id": "wolf",
+    "name": "Wolf",
+    "type": "beast",
+    "size": "Medium",
+    "challenge_rating": "0.25",
+    "armor_class": "13",
+    "hit_points": "11",
+    "hit_dice": "2d8+2",
+    "strength": 12,
+    "dexterity": 15,
+    "constitution": 12,
+    "intelligence": 3,
+    "wisdom": 12,
+    "charisma": 6,
+    "desc": [
+      "Depredador de manada con buen olfato y coordinación.",
+      "Se beneficia de tácticas de flanqueo y presión en equipo."
+    ],
+    "actions": []
+  },
+  {
+    "id": "brown-bear",
+    "name": "Brown Bear",
+    "type": "beast",
+    "size": "Large",
+    "challenge_rating": "1",
+    "armor_class": "11",
+    "hit_points": "34",
+    "hit_dice": "4d10+12",
+    "strength": 19,
+    "dexterity": 10,
+    "constitution": 16,
+    "intelligence": 2,
+    "wisdom": 13,
+    "charisma": 7,
+    "desc": [
+      "Bestia robusta y territorial.",
+      "Alto potencial de daño por ataques múltiples en corto alcance."
+    ],
+    "actions": []
+  },
+  {
+    "id": "imp",
+    "name": "Imp",
+    "type": "fiend",
+    "size": "Tiny",
+    "challenge_rating": "1",
+    "armor_class": "13",
+    "hit_points": "10",
+    "hit_dice": "3d4+3",
+    "strength": 6,
+    "dexterity": 17,
+    "constitution": 13,
+    "intelligence": 11,
+    "wisdom": 12,
+    "charisma": 14,
+    "desc": [
+      "Diablillo astuto usado como espía o familiar.",
+      "Peligroso por su sigilo y engaño más que por daño bruto."
+    ],
+    "actions": []
+  },
+  {
+    "id": "harpy",
+    "name": "Harpy",
+    "type": "monstrosity",
+    "size": "Medium",
+    "challenge_rating": "1",
+    "armor_class": "11",
+    "hit_points": "38",
+    "hit_dice": "7d8+7",
+    "strength": 12,
+    "dexterity": 13,
+    "constitution": 12,
+    "intelligence": 7,
+    "wisdom": 10,
+    "charisma": 13,
+    "desc": [
+      "Criatura alada que atrae víctimas con canto hipnótico.",
+      "Control de posicionamiento enemigo mediante manipulación sonora."
+    ],
+    "actions": []
+  },
+  {
+    "id": "water-elemental",
+    "name": "Water Elemental",
+    "type": "elemental",
+    "size": "Large",
+    "challenge_rating": "5",
+    "armor_class": "14",
+    "hit_points": "114",
+    "hit_dice": "12d10+48",
+    "strength": 18,
+    "dexterity": 14,
+    "constitution": 18,
+    "intelligence": 5,
+    "wisdom": 10,
+    "charisma": 8,
+    "desc": [
+      "Entidad primordial de agua en movimiento constante.",
+      "Excelente para control de campo y desplazamiento forzado."
+    ],
+    "actions": []
+  }
+]

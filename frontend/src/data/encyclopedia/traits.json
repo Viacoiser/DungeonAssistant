@@ -1,0 +1,4389 @@
+[
+  {
+    "id": "dragonborn",
+    "name": "Dragonborn",
+    "category": "races",
+    "desc": [
+      "Dragonborn look distinctly draconic, with horns, slitted eyes, and massive builds."
+    ],
+    "ability_bonuses_summary": "+2 Strength, +1 Charisma",
+    "speed": 30,
+    "languages": [
+      "Common",
+      "Draconic"
+    ]
+  },
+  {
+    "id": "dwarf",
+    "name": "Dwarf",
+    "category": "races",
+    "desc": [
+      "Bold and hardy, dwarves are known as skilled warriors, miners, and workers of stone and metal."
+    ],
+    "ability_bonuses_summary": "+2 Constitution, +1 Wisdom",
+    "speed": 25,
+    "languages": [
+      "Common",
+      "Dwarvish"
+    ]
+  },
+  {
+    "id": "elf",
+    "name": "Elf",
+    "category": "races",
+    "desc": [
+      "Elves are a magical people of otherworldly grace, living in the world but not entirely part of it."
+    ],
+    "ability_bonuses_summary": "+2 Dexterity",
+    "speed": 30,
+    "languages": [
+      "Common",
+      "Elvish"
+    ]
+  },
+  {
+    "id": "gnome",
+    "name": "Gnome",
+    "category": "races",
+    "desc": [
+      "A gnome's energy and enthusiasm for living shines through every inch of his or her body."
+    ],
+    "ability_bonuses_summary": "+2 Intelligence",
+    "speed": 25,
+    "languages": [
+      "Common",
+      "Gnomish"
+    ]
+  },
+  {
+    "id": "half-elf",
+    "name": "Half-Elf",
+    "category": "races",
+    "desc": [
+      "Half-elves' blend of human practicality and elven grace gives them unique perspectives."
+    ],
+    "ability_bonuses_summary": "+2 Charisma, +1 Strength, +1 Wisdom",
+    "speed": 30,
+    "languages": [
+      "Common",
+      "Elvish"
+    ]
+  },
+  {
+    "id": "half-orc",
+    "name": "Half-Orc",
+    "category": "races",
+    "desc": [
+      "Half-orcs' grayish pigmentation, sloping foreheads, and protruding teeth make their orcish heritage plain for all to see."
+    ],
+    "ability_bonuses_summary": "+2 Strength, +1 Constitution",
+    "speed": 30,
+    "languages": [
+      "Common",
+      "Orc"
+    ]
+  },
+  {
+    "id": "halfling",
+    "name": "Halfling",
+    "category": "races",
+    "desc": [
+      "The diminutive halflings have proven to be resilient to the perils of the world and have adapted to nearly every land."
+    ],
+    "ability_bonuses_summary": "+2 Dexterity",
+    "speed": 25,
+    "languages": [
+      "Common",
+      "Halfling"
+    ]
+  },
+  {
+    "id": "human",
+    "name": "Human",
+    "category": "races",
+    "desc": [
+      "Humans are the most adaptable and ambitious people among the common races. Whatever drives them, humans are the innovators, the achievers, and the pioneers of the worlds."
+    ],
+    "ability_bonuses_summary": "+1 Strength, +1 Dexterity, +1 Constitution, +1 Intelligence, +1 Wisdom, +1 Charisma",
+    "speed": 30,
+    "languages": [
+      "Common"
+    ]
+  },
+  {
+    "id": "tiefling",
+    "name": "Tiefling",
+    "category": "races",
+    "desc": [
+      "To be greeted with stares and whispers, to suffer violence and insult on the street, to see mistrust and fear in every eye: this is the lot of the tiefling."
+    ],
+    "ability_bonuses_summary": "+2 Charisma, +1 Intelligence",
+    "speed": 30,
+    "languages": [
+      "Common",
+      "Infernal"
+    ]
+  },
+  {
+    "id": "barbarian",
+    "name": "Barbarian",
+    "category": "classes",
+    "desc": [
+      "A fierce warrior of primitive background who can enter a state of primal fury."
+    ],
+    "hit_die": 12,
+    "saving_throws": [
+      "Strength",
+      "Constitution"
+    ]
+  },
+  {
+    "id": "bard",
+    "name": "Bard",
+    "category": "classes",
+    "desc": [
+      "An inspiring magician whose power echoes the music of creation itself."
+    ],
+    "hit_die": 8,
+    "saving_throws": [
+      "Dexterity",
+      "Charisma"
+    ]
+  },
+  {
+    "id": "cleric",
+    "name": "Cleric",
+    "category": "classes",
+    "desc": [
+      "A priestly champion who wields divine magic in service of a higher power."
+    ],
+    "hit_die": 8,
+    "saving_throws": [
+      "Wisdom",
+      "Charisma"
+    ]
+  },
+  {
+    "id": "druid",
+    "name": "Druid",
+    "category": "classes",
+    "desc": [
+      "A priest of the Old Faith, wielding the powers of nature and adopting animal forms."
+    ],
+    "hit_die": 8,
+    "saving_throws": [
+      "Intelligence",
+      "Wisdom"
+    ]
+  },
+  {
+    "id": "fighter",
+    "name": "Fighter",
+    "category": "classes",
+    "desc": [
+      "A master of martial combat, schooled and hardened in the arts of war."
+    ],
+    "hit_die": 10,
+    "saving_throws": [
+      "Strength",
+      "Constitution"
+    ]
+  },
+  {
+    "id": "monk",
+    "name": "Monk",
+    "category": "classes",
+    "desc": [
+      "A master of martial arts, harnessing the power of the body in pursuit of physical and spiritual perfection."
+    ],
+    "hit_die": 8,
+    "saving_throws": [
+      "Strength",
+      "Dexterity"
+    ]
+  },
+  {
+    "id": "paladin",
+    "name": "Paladin",
+    "category": "classes",
+    "desc": [
+      "A holy warrior bound to a sacred oath, channeling divine magic through martial prowess."
+    ],
+    "hit_die": 10,
+    "saving_throws": [
+      "Wisdom",
+      "Charisma"
+    ]
+  },
+  {
+    "id": "ranger",
+    "name": "Ranger",
+    "category": "classes",
+    "desc": [
+      "A warrior who uses martial prowess and nature magic to fight the dangers at the edge of civilization."
+    ],
+    "hit_die": 10,
+    "saving_throws": [
+      "Strength",
+      "Dexterity"
+    ]
+  },
+  {
+    "id": "rogue",
+    "name": "Rogue",
+    "category": "classes",
+    "desc": [
+      "A scoundrel who uses stealth and trickery to accomplish his aims."
+    ],
+    "hit_die": 8,
+    "saving_throws": [
+      "Dexterity",
+      "Intelligence"
+    ]
+  },
+  {
+    "id": "sorcerer",
+    "name": "Sorcerer",
+    "category": "classes",
+    "desc": [
+      "A spellcaster who draws on inherent magic tuned to a specific bloodline or source."
+    ],
+    "hit_die": 6,
+    "saving_throws": [
+      "Constitution",
+      "Charisma"
+    ]
+  },
+  {
+    "id": "warlock",
+    "name": "Warlock",
+    "category": "classes",
+    "desc": [
+      "A wielder of the occult powers that are granted by a mysterious patron."
+    ],
+    "hit_die": 8,
+    "saving_throws": [
+      "Wisdom",
+      "Charisma"
+    ]
+  },
+  {
+    "id": "wizard",
+    "name": "Wizard",
+    "category": "classes",
+    "desc": [
+      "A scholarly magic-user capable of manipulating the structures of reality."
+    ],
+    "hit_die": 6,
+    "saving_throws": [
+      "Intelligence",
+      "Wisdom"
+    ]
+  },
+  {
+    "id": "acolyte",
+    "name": "Acolyte",
+    "category": "backgrounds",
+    "desc": [
+      "You have spent your life in the service of a temple to a specific god or gods."
+    ],
+    "skill_proficiencies": [
+      "Insight",
+      "Religion"
+    ],
+    "languages_count": 2
+  },
+  {
+    "id": "charlatan",
+    "name": "Charlatan",
+    "category": "backgrounds",
+    "desc": [
+      "You have always had a way with people. You know what makes them tick, you're a master of manipulation."
+    ],
+    "skill_proficiencies": [
+      "Deception",
+      "Sleight of Hand"
+    ],
+    "tool_proficiencies": [
+      "Disguise kit",
+      "Forgery kit"
+    ]
+  },
+  {
+    "id": "criminal",
+    "name": "Criminal",
+    "category": "backgrounds",
+    "desc": [
+      "You are an experienced criminal with a history of breaking the law."
+    ],
+    "skill_proficiencies": [
+      "Deception",
+      "Stealth"
+    ],
+    "tool_proficiencies": [
+      "Thieves' tools"
+    ]
+  },
+  {
+    "id": "entertainer",
+    "name": "Entertainer",
+    "category": "backgrounds",
+    "desc": [
+      "You thrive in front of an audience. You know how to captivate them, entertain them, and even inspire them."
+    ],
+    "skill_proficiencies": [
+      "Acrobatics",
+      "Performance"
+    ],
+    "tool_proficiencies": [
+      "Musical instrument"
+    ]
+  },
+  {
+    "id": "folk-hero",
+    "name": "Folk Hero",
+    "category": "backgrounds",
+    "desc": [
+      "You come from a humble social rank, but you are destined for something more."
+    ],
+    "skill_proficiencies": [
+      "Animal Handling",
+      "Survival"
+    ],
+    "tool_proficiencies": [
+      "Artisan's tools"
+    ]
+  },
+  {
+    "id": "guild-artisan",
+    "name": "Guild Artisan",
+    "category": "backgrounds",
+    "desc": [
+      "You are a skilled member of a guild, which serves as an extended family."
+    ],
+    "skill_proficiencies": [
+      "Insight",
+      "Persuasion"
+    ],
+    "tool_proficiencies": [
+      "Artisan's tools"
+    ]
+  },
+  {
+    "id": "hermit",
+    "name": "Hermit",
+    "category": "backgrounds",
+    "desc": [
+      "You lived in seclusion—either in a sheltered community such as a monastery, or entirely alone."
+    ],
+    "skill_proficiencies": [
+      "Medicine",
+      "Religion"
+    ],
+    "languages_count": 1
+  },
+  {
+    "id": "noble",
+    "name": "Noble",
+    "category": "backgrounds",
+    "desc": [
+      "You understand wealth, power, and privilege. You carry a noble title and your family owns land."
+    ],
+    "skill_proficiencies": [
+      "Insight",
+      "Persuasion"
+    ],
+    "languages_count": 1
+  },
+  {
+    "id": "outlander",
+    "name": "Outlander",
+    "category": "backgrounds",
+    "desc": [
+      "You grew up in the wilds, far from civilization and the comforts of town and technology."
+    ],
+    "skill_proficiencies": [
+      "Athletics",
+      "Survival"
+    ],
+    "languages_count": 1
+  },
+  {
+    "id": "sage",
+    "name": "Sage",
+    "category": "backgrounds",
+    "desc": [
+      "You spent years learning the lore of the multiverse. You scoured manuscripts, studied scrolls, and listened to the greatest experts."
+    ],
+    "skill_proficiencies": [
+      "Arcana",
+      "History"
+    ],
+    "languages_count": 2
+  },
+  {
+    "id": "sailor",
+    "name": "Sailor",
+    "category": "backgrounds",
+    "desc": [
+      "You sailed on a seagoing vessel for years. In that time, you faced worse storms than any squall."
+    ],
+    "skill_proficiencies": [
+      "Athletics",
+      "Perception"
+    ],
+    "tool_proficiencies": [
+      "Navigator's tools"
+    ]
+  },
+  {
+    "id": "soldier",
+    "name": "Soldier",
+    "category": "backgrounds",
+    "desc": [
+      "War has been your life for as long as you care to remember. You trained as a youth, fought in several campaigns, and have the scars to prove it."
+    ],
+    "skill_proficiencies": [
+      "Athletics",
+      "Intimidation"
+    ],
+    "tool_proficiencies": [
+      "Gaming set"
+    ]
+  },
+  {
+    "id": "urchin",
+    "name": "Urchin",
+    "category": "backgrounds",
+    "desc": [
+      "You grew up on the streets alone, orphaned, and poor. You had no one to watch out for you, so you had to watch out for yourself."
+    ],
+    "skill_proficiencies": [
+      "Sleight of Hand",
+      "Stealth"
+    ],
+    "tool_proficiencies": [
+      "Thieves' tools"
+    ]
+  },
+  {
+    "id": "darkvision",
+    "name": "Visión en la Oscuridad",
+    "category": "traits",
+    "desc": [
+      "Acostumbrado a la vida subterránea, tienes una visión superior en la oscuridad y luz tenue. Puedes ver en luz tenue dentro de 60 pies de ti como si fuera luz brillante, y en la oscuridad como si fuera luz tenue. No puedes discernir colores en la oscuridad, solo sombras de gris."
+    ],
+    "races": [
+      {
+        "name": "Elfo"
+      },
+      {
+        "name": "Enano"
+      }
+    ]
+  },
+  {
+    "id": "artificers-lore",
+    "name": "Artificer's Lore",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "brave",
+    "name": "Brave",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "breath-weapon",
+    "name": "Breath Weapon",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "damage-resistance",
+    "name": "Damage Resistance",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry",
+    "name": "Draconic Ancestry",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry-black",
+    "name": "Draconic Ancestry (Black)",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry-blue",
+    "name": "Draconic Ancestry (Blue)",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry-brass",
+    "name": "Draconic Ancestry (Brass)",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry-bronze",
+    "name": "Draconic Ancestry (Bronze)",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry-copper",
+    "name": "Draconic Ancestry (Copper)",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry-gold",
+    "name": "Draconic Ancestry (Gold)",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry-green",
+    "name": "Draconic Ancestry (Green)",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry-red",
+    "name": "Draconic Ancestry (Red)",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry-silver",
+    "name": "Draconic Ancestry (Silver)",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-ancestry-white",
+    "name": "Draconic Ancestry (White)",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dwarven-combat-training",
+    "name": "Dwarven Combat Training",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dwarven-resilience",
+    "name": "Dwarven Resilience",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dwarven-toughness",
+    "name": "Dwarven Toughness",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "elf-weapon-training",
+    "name": "Elf Weapon Training",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "extra-language",
+    "name": "Extra Language",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fey-ancestry",
+    "name": "Fey Ancestry",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "gnome-cunning",
+    "name": "Gnome Cunning",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "halfling-nimbleness",
+    "name": "Halfling Nimbleness",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "hellish-resistance",
+    "name": "Hellish Resistance",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "high-elf-cantrip",
+    "name": "High Elf Cantrip",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "infernal-legacy",
+    "name": "Infernal Legacy",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "keen-senses",
+    "name": "Keen Senses",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "lucky",
+    "name": "Lucky",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "menacing",
+    "name": "Menacing",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "naturally-stealthy",
+    "name": "Naturally Stealthy",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "relentless-endurance",
+    "name": "Relentless Endurance",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "savage-attacks",
+    "name": "Savage Attacks",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-versatility",
+    "name": "Skill Versatility",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "stonecunning",
+    "name": "Stonecunning",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "tinker",
+    "name": "Tinker",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "tool-proficiency",
+    "name": "Tool Proficiency",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "trance",
+    "name": "Trance",
+    "category": "traits",
+    "desc": [
+      "Racial trait from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "spell-expert",
+    "name": "Lanzador experto / Spell Expert",
+    "category": "features",
+    "desc": [
+      "(Homebrew-like). Mejora la eficiencia mágica. Puedes elegir un truco para lanzarlo como acción adicional y recuperar un uso de habilidad mágica menor en descansos cortos."
+    ]
+  },
+  {
+    "id": "shield-training",
+    "name": "Adepto en escudos pesados / Shield Training",
+    "category": "features",
+    "desc": [
+      "Mejora el uso del escudo en combate. Puedes usar el escudo como arma improvisada competente e intentar empujones con ventaja si el enemigo falló un ataque en ese turno."
+    ]
+  },
+  {
+    "id": "arcane-initiate",
+    "name": "Iniciado arcano / Arcane Initiate",
+    "category": "features",
+    "desc": [
+      "Otorga conexión con la urdimbre. Aprendes un truco de la lista del mago y adquieres competencia con herramientas de calígrafo o suministros de alquimista."
+    ]
+  },
+  {
+    "id": "survivalist",
+    "name": "Experto en supervivencia / Survivalist",
+    "category": "features",
+    "desc": [
+      "Bonificación pasiva. Nunca te pierdes al viajar (excepto magia) y encuentras el doble de alimento y agua al recolectar (foraging) en terrenos hostiles."
+    ]
+  },
+  {
+    "id": "quick-draw",
+    "name": "Adepto en iniciativa / Quick Draw",
+    "category": "features",
+    "desc": [
+      "Aumentas tu tirada de iniciativa igual a tu modificador de competencia. Puedes desenfundar o guardar un arma cada vez que realices un ataque en tu turno sin gastar interacciones extra."
+    ]
+  },
+  {
+    "id": "iron-will",
+    "name": "Adepto en voluntad / Iron Will",
+    "category": "features",
+    "desc": [
+      "Tus pensamientos no pueden ser leídos por magia sin tu permiso y tienes ventaja en tiradas de salvación contra ser asustado (frightened) o encantado (charmed)."
+    ]
+  },
+  {
+    "id": "light-armor-master",
+    "name": "Adepto en armaduras ligeras / Light Armor Master",
+    "category": "features",
+    "desc": [
+      "Mejora el uso de armaduras ligeras. Si te atacan y llevas armadura ligera, puedes usar tu reacción para añadir 1d4 a tu CA en ese ataque (movilidad defensiva)."
+    ]
+  },
+  {
+    "id": "alert-mind",
+    "name": "Experto en percepciones / Alert Mind",
+    "category": "features",
+    "desc": [
+      "Inmunidad natural a ser sorprendido. Tienes un +5 en tiradas de iniciativa pasiva y activa, mejorando tu capacidad de reaccionar rápidamente a emboscadas."
+    ]
+  },
+  {
+    "id": "tactical-fighter",
+    "name": "Maestro de combate táctico / Tactical Fighter",
+    "category": "features",
+    "desc": [
+      "Una vez por turno, tras impactar con un ataque cuerpo a cuerpo, puedes desplazarte 5 pies sin provocar ataques de oportunidad."
+    ]
+  },
+  {
+    "id": "enduring",
+    "name": "Adepto en resistencia / Enduring",
+    "category": "features",
+    "desc": [
+      "Tienes una resistencia corporal inigualable. Cada descanso corto reduce tu nivel de fatiga/agotamiento en 1, y tienes ventaja en salvaciones de Constitución."
+    ]
+  },
+  {
+    "id": "improvised-weapon-master",
+    "name": "Adepto en armas improvisadas / Improvised Weapon Master",
+    "category": "features",
+    "desc": [
+      "Tus ataques con armas improvisadas usan 1d6 de base (o el del objeto si es mayor). Eres competente con cualquier cosa que arrojes o golpees que no sea un arma diseñada."
+    ]
+  },
+  {
+    "id": "focused-caster",
+    "name": "Adepto en concentración / Focused Caster",
+    "category": "features",
+    "desc": [
+      "Mientras estás concentrado en un conjuro, tu CA aumenta en +1 y sufres 1 punto menos de daño por cada ataque de arma que recibas."
+    ]
+  },
+  {
+    "id": "lightning-reflexes",
+    "name": "Adepto en reflejos / Lightning Reflexes",
+    "category": "features",
+    "desc": [
+      "Tienes una velocidad de respuesta sobrehumana. Ganas ventaja en todas las tiradas de salvación de Destreza de fuentes que puedas ver, como trampas y conjuros."
+    ]
+  },
+  {
+    "id": "action-surge-1-use",
+    "name": "Action Surge (1 use)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "action-surge-2-uses",
+    "name": "Action Surge (2 uses)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "additional-fighting-style",
+    "name": "Additional Fighting Style",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "additional-magical-secrets",
+    "name": "Additional Magical Secrets",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "arcane-recovery",
+    "name": "Arcane Recovery",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "arcane-tradition",
+    "name": "Arcane Tradition",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "arcane-tradition-improvement-1",
+    "name": "Arcane Tradition feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "archdruid",
+    "name": "Archdruid",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "aura-improvements",
+    "name": "Aura improvements",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "aura-of-courage",
+    "name": "Aura of Courage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "aura-of-devotion",
+    "name": "Aura of Devotion",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "aura-of-protection",
+    "name": "Aura of Protection",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "barbarian-extra-attack",
+    "name": "Extra Attack",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "barbarian-unarmored-defense",
+    "name": "Unarmored Defense",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bard-college",
+    "name": "Bard College",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bard-college-improvement-1",
+    "name": "Bard College feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bard-expertise-1",
+    "name": "Expertise",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bardic-inspiration-d10",
+    "name": "Bardic Inspiration (d10)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bardic-inspiration-d12",
+    "name": "Bardic Inspiration (d12)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bardic-inspiration-d6",
+    "name": "Bardic Inspiration (d6)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bardic-inspiration-d8",
+    "name": "Bardic Inspiration (d8)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "beast-spells",
+    "name": "Beast Spells",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "blessed-healer",
+    "name": "Blessed Healer",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "blindsense",
+    "name": "Blindsense",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bonus-cantrip",
+    "name": "Bonus Cantrip",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bonus-proficiencies",
+    "name": "Bonus Proficiencies",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bonus-proficiency",
+    "name": "Bonus Proficiency",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "brutal-critical-1-die",
+    "name": "Brutal Critical (1 die)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "brutal-critical-2-dice",
+    "name": "Brutal Critical (2 dice)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "brutal-critical-3-dice",
+    "name": "Brutal Critical (3 dice)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "channel-divinity",
+    "name": "Channel Divinity",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "channel-divinity-1-rest",
+    "name": "Channel Divinity (1/rest)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "channel-divinity-2-rest",
+    "name": "Channel Divinity (2/rest)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "channel-divinity-3-rest",
+    "name": "Channel Divinity (3/rest)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "channel-divinity-preserve-life",
+    "name": "Channel Divinity: Preserve Life",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "channel-divinity-sacred-weapon",
+    "name": "Channel Divinity: Sacred Weapon",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "channel-divinity-turn-the-unholy",
+    "name": "Channel Divinity: Turn the Unholy",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "channel-divinity-turn-undead",
+    "name": "Channel Divinity: Turn Undead",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "circle-of-the-land",
+    "name": "Circle of the Land",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "circle-of-the-land-arctic",
+    "name": "Circle of the Land: Arctic",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "circle-of-the-land-coast",
+    "name": "Circle of the Land: Coast",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "circle-of-the-land-desert",
+    "name": "Circle of the Land: Desert",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "circle-of-the-land-forest",
+    "name": "Circle of the Land: Forest",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "circle-of-the-land-grassland",
+    "name": "Circle of the Land: Grassland",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "circle-of-the-land-mountain",
+    "name": "Circle of the Land: Mountain",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "circle-of-the-land-swamp",
+    "name": "Circle of the Land: Swamp",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "circle-spells-1",
+    "name": "Circle Spells",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "cleansing-touch",
+    "name": "Cleansing Touch",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "countercharm",
+    "name": "Countercharm",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "cunning-action",
+    "name": "Cunning Action",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "cutting-words",
+    "name": "Cutting Words",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "danger-sense",
+    "name": "Danger Sense",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dark-ones-blessing",
+    "name": "Dark One's Blessing",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dark-ones-own-luck",
+    "name": "Dark One's Own Luck",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "defensive-tactics",
+    "name": "Defensive Tactics",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "defensive-tactics-escape-the-horde",
+    "name": "Defensive Tactics: Escape the Horde",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "defensive-tactics-multiattack-defense",
+    "name": "Defensive Tactics: Multiattack Defense",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "defensive-tactics-steel-will",
+    "name": "Defensive Tactics: Steel Will",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "deflect-missiles",
+    "name": "Deflect Missiles",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "destroy-undead-cr-1-2-or-below",
+    "name": "Destroy Undead (CR 1/2 or below)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "destroy-undead-cr-1-or-below",
+    "name": "Destroy Undead (CR 1 or below)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "destroy-undead-cr-2-or-below",
+    "name": "Destroy Undead (CR 2 or below)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "destroy-undead-cr-3-or-below",
+    "name": "Destroy Undead (CR 3 or below)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "destroy-undead-cr-4-or-below",
+    "name": "Destroy Undead (CR 4 or below)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "diamond-soul",
+    "name": "Diamond Soul",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "disciple-of-life",
+    "name": "Disciple of Life",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "divine-domain",
+    "name": "Divine Domain",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "divine-domain-improvement-1",
+    "name": "Divine Domain feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "divine-health",
+    "name": "Divine Health",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "divine-intervention",
+    "name": "Divine Intervention",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "divine-intervention-improvement",
+    "name": "Divine Intervention Improvement",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "divine-sense",
+    "name": "Divine Sense",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "divine-smite",
+    "name": "Divine Smite",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "divine-strike",
+    "name": "Divine Strike",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "domain-spells-1",
+    "name": "Domain Spells",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-presence",
+    "name": "Draconic Presence",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "draconic-resilience",
+    "name": "Draconic Resilience",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor",
+    "name": "Dragon Ancestor",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor-black---acid-damage",
+    "name": "Dragon Ancestor: Black - Acid Damage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor-blue---lightning-damage",
+    "name": "Dragon Ancestor: Blue - Lightning Damage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor-brass---fire-damage",
+    "name": "Dragon Ancestor: Brass - Fire Damage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor-bronze---lightning-damage",
+    "name": "Dragon Ancestor: Bronze - Lightning Damage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor-copper---acid-damage",
+    "name": "Dragon Ancestor: Copper - Acid Damage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor-gold---fire-damage",
+    "name": "Dragon Ancestor: Gold - Fire Damage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor-green---poison-damage",
+    "name": "Dragon Ancestor: Green - Poison Damage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor-red---fire-damage",
+    "name": "Dragon Ancestor: Red - Fire Damage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor-silver---cold-damage",
+    "name": "Dragon Ancestor: Silver - Cold Damage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-ancestor-white---cold-damage",
+    "name": "Dragon Ancestor: White - Cold Damage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dragon-wings",
+    "name": "Dragon Wings",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "druid-circle",
+    "name": "Druid Circle",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "druid-circle-improvement-1",
+    "name": "Druid Circle feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "druid-lands-stride",
+    "name": "Land's Stride",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "druid-timeless-body",
+    "name": "Timeless Body",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "druidic",
+    "name": "Druidic",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-agonizing-blast",
+    "name": "Eldritch Invocation: Agonizing Blast",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-armor-of-shadows",
+    "name": "Eldritch Invocation: Armor of Shadows",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-ascendant-step",
+    "name": "Eldritch Invocation: Ascendant Step",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-beast-speech",
+    "name": "Eldritch Invocation: Beast Speech",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-beguiling-influence",
+    "name": "Eldritch Invocation: Beguiling Influence",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-bewitching-whispers",
+    "name": "Eldritch Invocation: Bewitching Whispers",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-book-of-ancient-secrets",
+    "name": "Eldritch Invocation: Book of Ancient Secrets",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-chains-of-carceri",
+    "name": "Eldritch Invocation: Chains of Carceri",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-devils-sight",
+    "name": "Eldritch Invocation: Devil's Sight",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-dreadful-word",
+    "name": "Eldritch Invocation: Dreadful Word",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-eldritch-sight",
+    "name": "Eldritch Invocation: Eldritch Sight",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-eldritch-spear",
+    "name": "Eldritch Invocation: Eldritch Spear",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-eyes-of-the-rune-keeper",
+    "name": "Eldritch Invocation: Eyes of the Rune Keeper",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-fiendish-vigor",
+    "name": "Eldritch Invocation: Fiendish Vigor",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-gaze-of-two-minds",
+    "name": "Eldritch Invocation: Gaze of Two Minds",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-lifedrinker",
+    "name": "Eldritch Invocation: Lifedrinker",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-mask-of-many-faces",
+    "name": "Eldritch Invocation: Mask of Many Faces",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-master-of-myriad-forms",
+    "name": "Eldritch Invocation: Master of Myriad Forms",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-minions-of-chaos",
+    "name": "Eldritch Invocation: Minions of Chaos",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-mire-the-mind",
+    "name": "Eldritch Invocation: Mire the Mind",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-misty-visions",
+    "name": "Eldritch Invocation: Misty Visions",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-one-with-shadows",
+    "name": "Eldritch Invocation: One with Shadows",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-otherworldly-leap",
+    "name": "Eldritch Invocation: Otherworldly Leap",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-repelling-blast",
+    "name": "Eldritch Invocation: Repelling Blast",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-sculptor-of-flesh",
+    "name": "Eldritch Invocation: Sculptor of Flesh",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-sign-of-ill-omen",
+    "name": "Eldritch Invocation: Sign of Ill Omen",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-thief-of-five-fates",
+    "name": "Eldritch Invocation: Thief of Five Fates",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-thirsting-blade",
+    "name": "Eldritch Invocation: Thirsting Blade",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-visions-of-distant-realms",
+    "name": "Eldritch Invocation: Visions of Distant Realms",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-voice-of-the-chain-master",
+    "name": "Eldritch Invocation: Voice of the Chain Master",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-whispers-of-the-grave",
+    "name": "Eldritch Invocation: Whispers of the Grave",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocation-witch-sight",
+    "name": "Eldritch Invocation: Witch Sight",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-invocations",
+    "name": "Eldritch Invocations",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "eldritch-master",
+    "name": "Eldritch Master",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "elemental-affinity",
+    "name": "Elemental Affinity",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "elusive",
+    "name": "Elusive",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "empowered-evocation",
+    "name": "Empowered Evocation",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "empty-body",
+    "name": "Empty Body",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "evocation-savant",
+    "name": "Evocation Savant",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "extra-attack-2",
+    "name": "Extra Attack (2)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "extra-attack-3",
+    "name": "Extra Attack (3)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fast-hands",
+    "name": "Fast Hands",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fast-movement",
+    "name": "Fast Movement",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "favored-enemy-1-type",
+    "name": "Favored Enemy (1 type)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "favored-enemy-2-types",
+    "name": "Favored Enemy (2 types)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "favored-enemy-3-enemies",
+    "name": "Favored Enemy (3 enemies)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "feral-instinct",
+    "name": "Feral Instinct",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "feral-senses",
+    "name": "Feral Senses",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fiendish-resilience",
+    "name": "Fiendish Resilience",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fighter-fighting-style",
+    "name": "Fighting Style",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fighter-fighting-style-archery",
+    "name": "Fighting Style: Archery",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fighter-fighting-style-defense",
+    "name": "Fighting Style: Defense",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fighter-fighting-style-dueling",
+    "name": "Fighting Style: Dueling",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fighter-fighting-style-great-weapon-fighting",
+    "name": "Fighting Style: Great Weapon Fighting",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fighter-fighting-style-protection",
+    "name": "Fighting Style: Protection",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "fighter-fighting-style-two-weapon-fighting",
+    "name": "Fighting Style: Two-Weapon Fighting",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "flexible-casting-converting-spell-slot",
+    "name": "Flexible Casting: Converting Spell Slot",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "flexible-casting-creating-spell-slots",
+    "name": "Flexible Casting: Creating Spell Slots",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "flurry-of-blows",
+    "name": "Flurry of Blows",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "foe-slayer",
+    "name": "Foe Slayer",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "font-of-inspiration",
+    "name": "Font of Inspiration",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "font-of-magic",
+    "name": "Font of Magic",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "frenzy",
+    "name": "Frenzy",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "hide-in-plain-sight",
+    "name": "Hide in Plain Sight",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "holy-nimbus",
+    "name": "Holy Nimbus",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "hunters-prey",
+    "name": "Hunter's Prey",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "hunters-prey-colossus-slayer",
+    "name": "Hunter's Prey: Colossus Slayer",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "hunters-prey-giant-killer",
+    "name": "Hunter's Prey: Giant Killer",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "hunters-prey-horde-breaker",
+    "name": "Hunter's Prey: Horde Breaker",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "hurl-through-hell",
+    "name": "Hurl Through Hell",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "improved-critical",
+    "name": "Improved Critical",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "improved-divine-smite",
+    "name": "Improved Divine Smite",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "indomitable-1-use",
+    "name": "Indomitable (1 use)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "indomitable-2-uses",
+    "name": "Indomitable (2 uses)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "indomitable-3-uses",
+    "name": "Indomitable (3 uses)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "indomitable-might",
+    "name": "Indomitable Might",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "intimidating-presence",
+    "name": "Intimidating Presence",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "jack-of-all-trades",
+    "name": "Jack of All Trades",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "ki",
+    "name": "Ki",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "ki-empowered-strikes",
+    "name": "Ki Empowered Strikes",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "lay-on-hands",
+    "name": "Lay on Hands",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "magical-secrets-1",
+    "name": "Magical Secrets",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "martial-archetype",
+    "name": "Martial Archetype",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "martial-archetype-improvement-1",
+    "name": "Martial Archetype feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "martial-arts",
+    "name": "Martial Arts",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "metamagic-1",
+    "name": "Metamagic",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "metamagic-careful-spell",
+    "name": "Metamagic: Careful Spell",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "metamagic-distant-spell",
+    "name": "Metamagic: Distant Spell",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "metamagic-empowered-spell",
+    "name": "Metamagic: Empowered Spell",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "metamagic-extended-spell",
+    "name": "Metamagic: Extended Spell",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "metamagic-heightened-spell",
+    "name": "Metamagic: Heightened Spell",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "metamagic-quickened-spell",
+    "name": "Metamagic: Quickened Spell",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "metamagic-subtle-spell",
+    "name": "Metamagic: Subtle Spell",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "metamagic-twinned-spell",
+    "name": "Metamagic: Twinned Spell",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "mindless-rage",
+    "name": "Mindless Rage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "monastic-tradition",
+    "name": "Monastic Tradition",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "monastic-tradition-improvement-1",
+    "name": "Monastic Tradition feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "monk-evasion",
+    "name": "Evasion",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "multiattack",
+    "name": "Multiattack",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "multiattack-volley",
+    "name": "Multiattack: Volley",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "multiattack-whirlwind-attack",
+    "name": "Multiattack: Whirlwind Attack",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "mystic-arcanum-6th-level",
+    "name": "Mystic Arcanum (6th level)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "mystic-arcanum-7th-level",
+    "name": "Mystic Arcanum (7th level)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "mystic-arcanum-8th-level",
+    "name": "Mystic Arcanum (8th level)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "mystic-arcanum-9th-level",
+    "name": "Mystic Arcanum (9th level)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "natural-explorer-1-terrain-type",
+    "name": "Natural Explorer (1 terrain type)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "natural-explorer-2-terrain-types",
+    "name": "Natural Explorer (2 terrain types)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "natural-explorer-3-terrain-types",
+    "name": "Natural Explorer (3 terrain types)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "natural-recovery",
+    "name": "Natural Recovery",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "natures-sanctuary",
+    "name": "Nature's Sanctuary",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "natures-ward",
+    "name": "Nature's Ward",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "oath-spells",
+    "name": "Oath Spells",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "open-hand-technique",
+    "name": "Open Hand Technique",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "otherworldly-patron",
+    "name": "Otherworldly Patron",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "otherworldly-patron-improvement-1",
+    "name": "Otherworldly Patron feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "overchannel",
+    "name": "Overchannel",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "pact-boon",
+    "name": "Pact Boon",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "pact-magic",
+    "name": "Pact Magic",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "pact-of-the-blade",
+    "name": "Pact of the Blade",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "pact-of-the-chain",
+    "name": "Pact of the Chain",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "pact-of-the-tome",
+    "name": "Pact of the Tome",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "patient-defense",
+    "name": "Patient Defense",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "peerless-skill",
+    "name": "Peerless Skill",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "perfect-self",
+    "name": "Perfect Self",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "persistent-rage",
+    "name": "Persistent Rage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "potent-cantrip",
+    "name": "Potent Cantrip",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "primal-champion",
+    "name": "Primal Champion",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "primal-path",
+    "name": "Primal Path",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "primal-path-improvement-1",
+    "name": "Path feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "primeval-awareness",
+    "name": "Primeval Awareness",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "purity-of-body",
+    "name": "Purity of Body",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "purity-of-spirit",
+    "name": "Purity of Spirit",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "quivering-palm",
+    "name": "Quivering Palm",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "rage",
+    "name": "Rage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "ranger-archetype",
+    "name": "Ranger Archetype",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "ranger-archetype-improvement-1",
+    "name": "Ranger Archetype feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "reckless-attack",
+    "name": "Reckless Attack",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "relentless-rage",
+    "name": "Relentless Rage",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "reliable-talent",
+    "name": "Reliable Talent",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "remarkable-athlete",
+    "name": "Remarkable Athlete",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "retaliation",
+    "name": "Retaliation",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "roguish-archetype",
+    "name": "Roguish Archetype",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "roguish-archetype-improvement-1",
+    "name": "Roguish Archetype feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "sacred-oath",
+    "name": "Sacred Oath",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "sacred-oath-improvement-1",
+    "name": "Sacred Oath feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "sculpt-spells",
+    "name": "Sculpt Spells",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "second-story-work",
+    "name": "Second-Story Work",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "second-wind",
+    "name": "Second Wind",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "signature-spell",
+    "name": "Signature Spell",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "slippery-mind",
+    "name": "Slippery Mind",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "slow-fall",
+    "name": "Slow Fall",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "sneak-attack",
+    "name": "Sneak Attack",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "song-of-rest-d10",
+    "name": "Song of Rest (d10)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "song-of-rest-d12",
+    "name": "Song of Rest (d12)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "song-of-rest-d6",
+    "name": "Song of Rest (d6)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "song-of-rest-d8",
+    "name": "Song of Rest (d8)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "sorcerous-origin",
+    "name": "Sorcerous Origin",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "sorcerous-origin-improvement-1",
+    "name": "Sorcerous Origin feature",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "sorcerous-restoration",
+    "name": "Sorcerous Restoration",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "spell-mastery",
+    "name": "Spell Mastery",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "spellcasting-bard",
+    "name": "Spellcasting: Bard",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "spellcasting-cleric",
+    "name": "Spellcasting: Cleric",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "spellcasting-druid",
+    "name": "Spellcasting: Druid",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "spellcasting-paladin",
+    "name": "Spellcasting: Paladin",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "spellcasting-ranger",
+    "name": "Spellcasting: Ranger",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "spellcasting-sorcerer",
+    "name": "Spellcasting: Sorcerer",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "spellcasting-wizard",
+    "name": "Spellcasting: Wizard",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "step-of-the-wind",
+    "name": "Step of the Wind",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "stillness-of-mind",
+    "name": "Stillness of Mind",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "stroke-of-luck",
+    "name": "Stroke of Luck",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "stunning-strike",
+    "name": "Stunning Strike",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "superior-critical",
+    "name": "Superior Critical",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "superior-hunters-defense",
+    "name": "Superior Hunter's Defense",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "superior-hunters-defense-evasion",
+    "name": "Superior Hunter's Defense: Evasion",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "superior-hunters-defense-stand-against-the-tide",
+    "name": "Superior Hunter's Defense: Stand Against the Tide",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "superior-hunters-defense-uncanny-dodge",
+    "name": "Superior Hunter's Defense: Uncanny Dodge",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "superior-inspiration",
+    "name": "Superior Inspiration",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "supreme-healing",
+    "name": "Supreme Healing",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "supreme-sneak",
+    "name": "Supreme Sneak",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "survivor",
+    "name": "Survivor",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "thiefs-reflexes",
+    "name": "Thief's Reflexes",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "thieves-cant",
+    "name": "Thieves' Cant",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "tongue-of-the-sun-and-moon",
+    "name": "Tongue of the Sun and Moon",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "tranquility",
+    "name": "Tranquility",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "unarmored-movement-1",
+    "name": "Unarmored Movement",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "uncanny-dodge",
+    "name": "Uncanny Dodge",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "use-magic-device",
+    "name": "Use Magic Device",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "vanish",
+    "name": "Vanish",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "wholeness-of-body",
+    "name": "Wholeness of Body",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "wild-shape-cr-1-2-or-below-no-flying-speed",
+    "name": "Wild Shape (CR 1/2 or below, no flying speed)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "wild-shape-cr-1-4-or-below-no-flying-or-swim-speed",
+    "name": "Wild Shape (CR 1/4 or below, no flying or swim speed)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "wild-shape-cr-1-or-below",
+    "name": "Wild Shape (CR 1 or below)",
+    "category": "features",
+    "desc": [
+      "Class feature from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "alchemists-supplies",
+    "name": "Alchemist's Supplies",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "all-armor",
+    "name": "All armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "bagpipes",
+    "name": "Bagpipes",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "battleaxes",
+    "name": "Battleaxes",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "blowguns",
+    "name": "Blowguns",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "breastplate",
+    "name": "Breastplate",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "brewers-supplies",
+    "name": "Brewer's Supplies",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "calligraphers-supplies",
+    "name": "Calligrapher's Supplies",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "carpenters-tools",
+    "name": "Carpenter's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "cartographers-tools",
+    "name": "Cartographer's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "chain-mail",
+    "name": "Chain Mail",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "chain-shirt",
+    "name": "Chain Shirt",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "clubs",
+    "name": "Clubs",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "cobblers-tools",
+    "name": "Cobbler's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "cooks-utensils",
+    "name": "Cook's utensils",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "crossbows-heavy",
+    "name": "Crossbows, heavy",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "crossbows-light",
+    "name": "Crossbows, light",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "daggers",
+    "name": "Daggers",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "darts",
+    "name": "Darts",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dice-set",
+    "name": "Dice Set",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "disguise-kit",
+    "name": "Disguise Kit",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "drum",
+    "name": "Drum",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "dulcimer",
+    "name": "Dulcimer",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "flails",
+    "name": "Flails",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "flute",
+    "name": "Flute",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "forgery-kit",
+    "name": "Forgery Kit",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "glaives",
+    "name": "Glaives",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "glassblowers-tools",
+    "name": "Glassblower's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "greataxes",
+    "name": "Greataxes",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "greatclubs",
+    "name": "Greatclubs",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "greatswords",
+    "name": "Greatswords",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "halberds",
+    "name": "Halberds",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "half-plate-armor",
+    "name": "Half Plate Armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "hand-crossbows",
+    "name": "Hand crossbows",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "handaxes",
+    "name": "Handaxes",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "heavy-armor",
+    "name": "Heavy Armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "herbalism-kit",
+    "name": "Herbalism Kit",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "hide-armor",
+    "name": "Hide Armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "horn",
+    "name": "Horn",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "javelins",
+    "name": "Javelins",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "jewelers-tools",
+    "name": "Jeweler's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "lances",
+    "name": "Lances",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "land-vehicles",
+    "name": "Land Vehicles",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "leather-armor",
+    "name": "Leather Armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "leatherworkers-tools",
+    "name": "Leatherworker's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "light-armor",
+    "name": "Light Armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "light-hammers",
+    "name": "Light hammers",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "longbows",
+    "name": "Longbows",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "longswords",
+    "name": "Longswords",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "lute",
+    "name": "Lute",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "lyre",
+    "name": "Lyre",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "maces",
+    "name": "Maces",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "martial-weapons",
+    "name": "Martial Weapons",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "masons-tools",
+    "name": "Mason's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "mauls",
+    "name": "Mauls",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "medium-armor",
+    "name": "Medium Armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "morningstars",
+    "name": "Morningstars",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "navigators-tools",
+    "name": "Navigator's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "nets",
+    "name": "Nets",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "padded-armor",
+    "name": "Padded Armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "painters-supplies",
+    "name": "Painter's Supplies",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "pan-flute",
+    "name": "Pan flute",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "pikes",
+    "name": "Pikes",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "plate-armor",
+    "name": "Plate Armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "playing-card-set",
+    "name": "Playing Card Set",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "poisoners-kit",
+    "name": "Poisoner's Kit",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "potters-tools",
+    "name": "Potter's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "quarterstaffs",
+    "name": "Quarterstaffs",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "rapiers",
+    "name": "Rapiers",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "ring-mail",
+    "name": "Ring Mail",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "saving-throw-cha",
+    "name": "Saving Throw: CHA",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "saving-throw-con",
+    "name": "Saving Throw: CON",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "saving-throw-dex",
+    "name": "Saving Throw: DEX",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "saving-throw-int",
+    "name": "Saving Throw: INT",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "saving-throw-str",
+    "name": "Saving Throw: STR",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "saving-throw-wis",
+    "name": "Saving Throw: WIS",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "scale-mail",
+    "name": "Scale Mail",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "scimitars",
+    "name": "Scimitars",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "shawm",
+    "name": "Shawm",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "shields",
+    "name": "Shields",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "shortbows",
+    "name": "Shortbows",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "shortswords",
+    "name": "Shortswords",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "sickles",
+    "name": "Sickles",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "simple-weapons",
+    "name": "Simple Weapons",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-acrobatics",
+    "name": "Skill: Acrobatics",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-animal-handling",
+    "name": "Skill: Animal Handling",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-arcana",
+    "name": "Skill: Arcana",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-athletics",
+    "name": "Skill: Athletics",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-deception",
+    "name": "Skill: Deception",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-history",
+    "name": "Skill: History",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-insight",
+    "name": "Skill: Insight",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-intimidation",
+    "name": "Skill: Intimidation",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-investigation",
+    "name": "Skill: Investigation",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-medicine",
+    "name": "Skill: Medicine",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-nature",
+    "name": "Skill: Nature",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-perception",
+    "name": "Skill: Perception",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-performance",
+    "name": "Skill: Performance",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-persuasion",
+    "name": "Skill: Persuasion",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-religion",
+    "name": "Skill: Religion",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-sleight-of-hand",
+    "name": "Skill: Sleight of Hand",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-stealth",
+    "name": "Skill: Stealth",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "skill-survival",
+    "name": "Skill: Survival",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "slings",
+    "name": "Slings",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "smiths-tools",
+    "name": "Smith's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "spears",
+    "name": "Spears",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "splint-armor",
+    "name": "Splint Armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "studded-leather-armor",
+    "name": "Studded Leather Armor",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "thieves-tools",
+    "name": "Thieves' Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "tinkers-tools",
+    "name": "Tinker's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "tridents",
+    "name": "Tridents",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "viol",
+    "name": "Viol",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "war-picks",
+    "name": "War picks",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "warhammers",
+    "name": "Warhammers",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "water-vehicles",
+    "name": "Water Vehicles",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "weavers-tools",
+    "name": "Weaver's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "whips",
+    "name": "Whips",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "woodcarvers-tools",
+    "name": "Woodcarver's Tools",
+    "category": "proficiencies",
+    "desc": [
+      "Proficiency from D&D 5e SRD."
+    ]
+  },
+  {
+    "id": "alert",
+    "name": "Alerta / Alert",
+    "category": "feats",
+    "desc": [
+      "El personaje no puede ser sorprendido mientras esté consciente, obtiene +5 a la iniciativa y las criaturas ocultas no tienen ventaja automática contra él."
+    ]
+  },
+  {
+    "id": "mobile",
+    "name": "Móvil / Mobile",
+    "category": "feats",
+    "desc": [
+      "Aumenta la velocidad en 10 pies y evita ataques de oportunidad de criaturas a las que haya atacado en ese turno."
+    ]
+  },
+  {
+    "id": "healer",
+    "name": "Sanador / Healer",
+    "category": "feats",
+    "desc": [
+      "Permite usar un kit de sanador para estabilizar criaturas y curarlas con una acción una vez por descanso."
+    ]
+  },
+  {
+    "id": "great-weapon-master",
+    "name": "Maestro de armas grandes / Great Weapon Master",
+    "category": "feats",
+    "desc": [
+      "Permite hacer un ataque adicional tras crítico o matar un enemigo, y aceptar -5 al ataque para ganar +10 al daño."
+    ]
+  },
+  {
+    "id": "defensive-duelist",
+    "name": "Duelista defensivo / Defensive Duelist",
+    "category": "feats",
+    "desc": [
+      "Si el personaje empuña un arma sutil con la que es competente, puede usar su reacción para sumar su bonificador de competencia a su CA contra un ataque cuerpo a cuerpo, lo que potencialmente puede causar que el ataque falle."
+    ]
+  },
+  {
+    "id": "inspiring-leader",
+    "name": "Líder inspirador / Inspiring Leader",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Carisma 13 o superior. Tras dar un discurso motivador (10 minutos), puedes otorgar puntos de golpe temporales a hasta 6 criaturas aliadas (incluyéndote) iguales a tu nivel + tu modificador de Carisma."
+    ]
+  },
+  {
+    "id": "elemental-adept",
+    "name": "Adepto elemental / Elemental Adept",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Capacidad para lanzar al menos un conjuro. Elige un tipo de daño elemental (ácido, frío, fuego, rayo, trueno). Los conjuros que lances ignoran las resistencias a ese tipo de daño y cualquier resultado de 1 en los dados de daño de ese tipo se tratan como 2."
+    ]
+  },
+  {
+    "id": "sentinel",
+    "name": "Centinela / Sentinel",
+    "category": "feats",
+    "desc": [
+      "Cuando aciertas un ataque de oportunidad, la velocidad de la criatura se reduce a 0 por el resto del turno. Las criaturas provocan ataques de oportunidad incluso si se destraban (Disengage). Cuando una criatura cercana ataca a un objetivo que no seas tú, puedes usar tu reacción para hacer un ataque cuerpo a cuerpo contra ella."
+    ]
+  },
+  {
+    "id": "crossbow-expert",
+    "name": "Experto en ballestas / Crossbow Expert",
+    "category": "feats",
+    "desc": [
+      "Ignoras la propiedad de carga de las ballestas. Estar a 5 pies de un enemigo no te impone desventaja en las tiradas de ataque a distancia. Cuando atacas con un arma a una mano, puedes usar una acción adicional para atacar con una ballesta de mano que estés empuñando."
+    ]
+  },
+  {
+    "id": "resilient",
+    "name": "Resistente / Resilient",
+    "category": "feats",
+    "desc": [
+      "Elige una característica. Aumentas esa característica en +1 (hasta un máximo de 20) y obtienes competencia en las tiradas de salvación que usen esa característica."
+    ]
+  },
+  {
+    "id": "tough",
+    "name": "Duro / Tough",
+    "category": "feats",
+    "desc": [
+      "Tus puntos de golpe máximos aumentan en una cantidad igual al doble de tu nivel cuando obtienes esta dote. Cada vez que subas de nivel, tu máximo aumenta en 2 adicionales."
+    ]
+  },
+  {
+    "id": "observant",
+    "name": "Observador / Observant",
+    "category": "feats",
+    "desc": [
+      "Aumenta tu puntuación de Inteligencia o Sabiduría en 1 (máximo 20). Si puedes ver la boca de una criatura mientras habla un idioma que entiendes, puedes leer sus labios. Tienes un bonificador de +5 a tu Percepción (Sabiduría) e Investigación (Inteligencia) pasivas."
+    ]
+  },
+  {
+    "id": "actor",
+    "name": "Actor / Actor",
+    "category": "feats",
+    "desc": [
+      "Aumenta tu Carisma en 1 (máx 20). Tienes ventaja en Engaño y en Interpretación al tratar de hacerte pasar por otra persona. Puedes imitar el habla de otra persona o el sonido de una criatura tras escucharlo 1 minuto."
+    ]
+  },
+  {
+    "id": "martial-adept",
+    "name": "Adepto marcial / Martial Adept",
+    "category": "feats",
+    "desc": [
+      "Aprendes dos maniobras a tu elección de la lista del arquetipo Maestro de Batalla del guerrero. Obtienes un dado de superioridad (un d6) que usas para realizar las maniobras. Recuperas el dado tras un descanso corto o largo."
+    ]
+  },
+  {
+    "id": "war-caster",
+    "name": "Lanzador de conjuros de guerra / War Caster",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Capacidad de lanzar al menos un conjuro. Otorga ventaja en salvaciones de Constitución para mantener concentración en conjuros. Permite realizar los componentes somáticos de los conjuros incluso si tienes armas o escudo en tus manos. Cuando el movimiento de una criatura hostil provoque que le hagas un ataque de oportunidad, puedes usar tu reacción para lanzarle un conjuro (que le apunte solo a ella) en lugar de un ataque de arma."
+    ]
+  },
+  {
+    "id": "spell-sniper",
+    "name": "Francotirador de conjuros / Spell Sniper",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Capacidad de lanzar al menos un conjuro. Duplica el alcance de tus conjuros que requieran tirada de ataque. Tus ataques de conjuro a distancia ignoran la cobertura media y tres cuartos. Aprendes un truco que requiera una tirada de ataque."
+    ]
+  },
+  {
+    "id": "polearm-master",
+    "name": "Maestro de armas de asta / Polearm Master",
+    "category": "feats",
+    "desc": [
+      "Cuando tomas la acción de Ataque y atacas usando solo una guja, alabarda, bastón o lanza, puedes usar una acción adicional para dar un golpe cuerpo a cuerpo con el mango del arma (1d4 daño contundente). Mientras empuñes esas armas, las criaturas provocan ataques de oportunidad cuando ENTRAN en tu alcance."
+    ]
+  },
+  {
+    "id": "shield-master",
+    "name": "Experto en escudos / Shield Master",
+    "category": "feats",
+    "desc": [
+      "Si atacas, puedes usar acción adicional para intentar empujar una criatura 5 pies con el escudo. Si no estás incapacitado, puedes sumar la CA de tu escudo a salvaciones de Destreza de hechizos que solo te afecten a ti. Además, si debes hacer una salvación de DES para recibir mitad de daño, puedes usar tu reacción para recibir cero daño si tienes éxito."
+    ]
+  },
+  {
+    "id": "magic-initiate",
+    "name": "Iniciado en magia / Magic Initiate",
+    "category": "feats",
+    "desc": [
+      "Elige una clase (Bardo, Clérigo, Druida, Hechicero, Mago o Brujo). Aprendes dos trucos de esa clase. Además aprendes un conjuro de nivel 1 de esa clase y puedes lanzarlo a su nivel más bajo una vez hasta completar un descanso largo."
+    ]
+  },
+  {
+    "id": "sharpshooter",
+    "name": "Tirador certero / Sharpshooter",
+    "category": "feats",
+    "desc": [
+      "Tus ataques a distancia no sufren desventaja al disparar a largo alcance. Ignoras la cobertura media y tres cuartos. Antes de hacer el ataque de arma a distancia en el que eres competente, puedes decidir restar -5 a la tirada para sumar +10 al daño."
+    ]
+  },
+  {
+    "id": "skill-expert",
+    "name": "Experto en habilidades / Skill Expert",
+    "category": "feats",
+    "desc": [
+      "Aumenta una característica en +1. Gana competencia en una habilidad de tu elección. Obtienes pericia (expertise) en una habilidad en la que ya tengas competencia (duplicas tu bonificador)."
+    ]
+  },
+  {
+    "id": "metamagic-adept",
+    "name": "Adepto metamagia / Metamagic Adept",
+    "category": "feats",
+    "desc": [
+      "Aprendes 2 opciones de Metamagia de la clase hechicero. Obtienes 2 puntos de hechicería para gastar exclusivamente en estas opciones. Recuperas los puntos al terminar descanso largo."
+    ]
+  },
+  {
+    "id": "fighting-initiate",
+    "name": "Adepto marcial superior / Fighting Initiate",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Competencia con un arma marcial. Aprendes un Estilo de Combate de tu elección de los disponibles para la clase de guerrero."
+    ]
+  },
+  {
+    "id": "ritual-caster",
+    "name": "Lanzador ritual / Ritual Caster",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Inteligencia o Sabiduría 13+. Tienes un libro de rituales con dos conjuros de nivel 1 con etiqueta 'ritual'. Puedes lanzarlos como ritual y transcribir nuevos hechizos que encuentres."
+    ]
+  },
+  {
+    "id": "heavy-armor-master",
+    "name": "Adepto en armaduras pesadas / Heavy Armor Master",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Competencia con armadura pesada. Aumenta tu Fuerza +1. Mientras lleves armadura pesada, el daño cortante, perforante y contundente de ataques con armas no mágicas se reduce en 3."
+    ]
+  },
+  {
+    "id": "mounted-combatant",
+    "name": "Combate montado / Mounted Combatant",
+    "category": "feats",
+    "desc": [
+      "Tienes ventaja en ataques cuerpo a cuerpo contra criaturas desmontadas más pequeñas que tu montura. Puedes obligar a ataques a apuntarte a ti en vez de tu montura. Tu montura recibe 0 daño en salvaciones de DES donde recibiría mitad."
+    ]
+  },
+  {
+    "id": "poisoner",
+    "name": "Adepto en venenos / Poisoner",
+    "category": "feats",
+    "desc": [
+      "Ignoras la resistencia al veneno que tengan tus enemigos. Puedes aplicar venenos a armas o munición como acción adicional. Obtienes competencia con kit de envenenador para crear tus propios viales (causan daño extra y condición de envenenado)."
+    ]
+  },
+  {
+    "id": "grappler",
+    "name": "Iniciado en lucha / Grappler",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Fuerza 13+. Tienes ventaja al atacar a criaturas que tengas agarradas (grappled). Puedes usar tu acción para intentar apresar (restrain) a la criatura inmovilizándola junto a ti."
+    ]
+  },
+  {
+    "id": "keen-mind",
+    "name": "Adepto en percepción / Keen Mind",
+    "category": "feats",
+    "desc": [
+      "Aumenta Inteligencia +1. Siempre sabes en qué dirección está el norte y cuántas horas faltan para amanecer/anochecer. Puedes recordar con exactitud cualquier cosa vista u oída en el último mes."
+    ]
+  },
+  {
+    "id": "skulker",
+    "name": "Adepto en sigilo / Skulker",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Destreza 13+. Puedes intentar esconderte estando ligeramente oculto (luz tenue). Cuando fallas un ataque a distancia oculto no revelas tu posición. La luz tenue no impone desventaja en tiradas de Sabiduría (Percepción)."
+    ]
+  },
+  {
+    "id": "savage-attacker",
+    "name": "Combatiente brutal / Savage Attacker",
+    "category": "feats",
+    "desc": [
+      "Una vez por turno al realizar una tirada de daño cuerpo a cuerpo, puedes tirar los dados nuevamente y usar el resultado más alto. Asegura golpes devastadores constantes."
+    ]
+  },
+  {
+    "id": "medium-armor-master",
+    "name": "Maestro de armaduras medias / Medium Armor Master",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Competencia con armadura media. Usar armadura media no te impone desventaja al Sigilo. El bonificador máximo de Destreza a la CA usando armadura media sube de 2 a 3."
+    ]
+  },
+  {
+    "id": "lightly-armored",
+    "name": "Adepto en armas ligeras / Lightly Armored",
+    "category": "feats",
+    "desc": [
+      "Otorga competencia con armaduras ligeras. Aumenta tu puntuación de Fuerza o Destreza en 1 (hasta un máximo de 20)."
+    ]
+  },
+  {
+    "id": "moderately-armored",
+    "name": "Moderadamente blindado / Moderately Armored",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Competencia con armadura ligera. Obtienes competencia con armaduras medias y escudos. Aumenta tu Fuerza o Destreza en +1."
+    ]
+  },
+  {
+    "id": "heavily-armored",
+    "name": "Fuertemente blindado / Heavily Armored",
+    "category": "feats",
+    "desc": [
+      "Prerrequisito: Competencia con armadura media. Obtienes competencia con armaduras pesadas. Aumenta tu puntuación de Fuerza en +1."
+    ]
+  }
+]
