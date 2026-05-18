@@ -6,10 +6,12 @@ import { create } from 'zustand'
 export const useSocketStore = create((set) => ({
   socket: null,
   isConnected: false,
+  isConnecting: false,  // 🆕 Estado de carga
   notifications: [],
 
   setSocket: (socket) => set({ socket }),
   setIsConnected: (isConnected) => set({ isConnected }),
+  setIsConnecting: (isConnecting) => set({ isConnecting }),  // 🆕
 
   addNotification: (notification) =>
     set((state) => ({

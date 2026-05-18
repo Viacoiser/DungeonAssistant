@@ -5,6 +5,55 @@ from services.supabase import get_supabase
 
 logger = logging.getLogger(__name__)
 
+def extract_token_safely(environ: dict) -> Optional[str]:
+    """
+    Extraer token JWT con múltiples estrategias
+    
+    Estrategias en orden:
+    1. Desde auth objeto (socket.io estándar)
+    2. Desde headers HTTP Authorization
+    3. Desde query string (último recurso, menos seguro)
+    """
+    
+    # Estrategia 1: Desde auth (socket.io client)
+    auth = environ.get('aio.http_auth', {})
+    if auth and isinstance(auth, dict):
+        token = auth.get('token')
+        if token:
+            logger.debug("✓ Token extraído desde 'auth'")
+            return token
+    
+    # Estrategia 2: Desde headers HTTP
+    asgi_scope = environ.get('asgi.scope', {})
+    headers = asgi_scope.get('headers', [])
+    
+    for name, value in headers:
+        try:
+            if name.lower() == b'authorization':
+                auth_value = value.decode()
+                if auth_value.startswith('Bearer '):
+                    token = auth_value[7:]
+                    logger.debug("✓ Token extraído desde header Authorization")
+                    return token
+        except Exception as e:
+            logger.warning(f"Error procesando header: {e}")
+            continue
+    
+    # Estrategia 3: Desde query string
+    try:
+        query_string = asgi_scope.get('query_string', b'').decode()
+        if 'token=' in query_string:
+            for param in query_string.split('&'):
+                if param.startswith('token='):
+                    token = param[6:]
+                    logger.warning("⚠️ Token extraído desde query string (menos seguro)")
+                    return token
+    except Exception as e:
+        logger.warning(f"Error procesando query string: {e}")
+    
+    logger.warning("✗ No se encontró token en ninguna ubicación")
+    return None
+
 class SocketManager:
     """
     Manager centralizado para la lógica de Socket.io
@@ -34,24 +83,11 @@ class SocketManager:
         Manejar conexión y validar JWT
         """
         try:
-            # Extraer token de headers o auth
-            # Socket.io client puede enviar token en la propiedad 'auth'
-            auth = environ.get('aio.http_auth', {})
-            token = auth.get('token')
-            
-            # Fallback a headers si no está en auth
-            if not token:
-                headers = environ.get('asgi.scope', {}).get('headers', [])
-                for name, value in headers:
-                    if name.decode().lower() == 'authorization':
-                        auth_val = value.decode()
-                        if auth_val.startswith('Bearer '):
-                            token = auth_val[7:]
-                        break
+            # Extraer token con múltiples estrategias
+            token = extract_token_safely(environ)
             
             if not token:
-                logger.warning(f"Conexión rechazada (sin token): {sid}")
-                # En Socket.io rechazar conexión es retornando False o levantando excepción
+                logger.warning(f"❌ Conexión rechazada (sin token): {sid}")
                 return False
 
             # Validar token con Supabase
@@ -59,7 +95,7 @@ class SocketManager:
             user = supabase.get_user_by_token(token)
             
             if not user:
-                logger.warning(f"Conexión rechazada (token inválido): {sid}")
+                logger.warning(f"❌ Conexión rechazada (token inválido): {sid}")
                 return False
 
             # Guardar info del usuario
@@ -71,11 +107,11 @@ class SocketManager:
                 "campaign_id": None
             }
             
-            logger.info(f"✓ Socket conectado y autenticado: {self.connected_users[sid]['username']} ({sid})")
+            logger.info(f"✅ Socket conectado y autenticado: {self.connected_users[sid]['username']} ({sid})")
             await self.sio.emit("authenticated", {"status": "ok"}, to=sid)
             
         except Exception as e:
-            logger.error(f"Error en on_connect: {e}")
+            logger.error(f"❌ Error en on_connect: {e}")
             return False
 
     async def on_disconnect(self, sid: str):

@@ -16,6 +16,10 @@ export const initSocket = () => {
     return null
   }
 
+  // 🆕 Mostrar pantalla de carga
+  useSocketStore.setState({ isConnecting: true })
+  console.log('⏳ Conectando socket...')
+
   // Inicializar socket con autenticación
   socket = io(SOCKET_URL, {
     auth: { token },
@@ -27,12 +31,12 @@ export const initSocket = () => {
 
   socket.on('connect', () => {
     console.log('✅ Socket conectado:', socket.id)
-    useSocketStore.setState({ isConnected: true })
+    useSocketStore.setState({ isConnected: true, isConnecting: false })
   })
 
   socket.on('disconnect', (reason) => {
     console.log('❌ Socket desconectado:', reason)
-    useSocketStore.setState({ isConnected: false })
+    useSocketStore.setState({ isConnected: false, isConnecting: false })
   })
 
   socket.on('authenticated', (data) => {
@@ -40,7 +44,13 @@ export const initSocket = () => {
   })
 
   socket.on('error', (error) => {
-    console.error('Socket error:', error)
+    console.error('❌ Socket error:', error)
+    useSocketStore.setState({ isConnecting: false })
+  })
+
+  socket.on('connect_error', (error) => {
+    console.error('❌ Error de conexión:', error)
+    useSocketStore.setState({ isConnecting: false })
   })
 
   // Eventos globales
@@ -68,7 +78,7 @@ export const disconnectSocket = () => {
   if (socket) {
     socket.disconnect()
     socket = null
-    useSocketStore.setState({ socket: null, isConnected: false })
+    useSocketStore.setState({ socket: null, isConnected: false, isConnecting: false })
   }
 }
 
