@@ -3,11 +3,8 @@ import { useSocketStore } from '../store/useSocketStore'
 import { useAuthStore } from '../store/useAuthStore'
 
 const getSocketUrl = () => {
-  if (import.meta.env.VITE_SOCKET_URL) {
-    return import.meta.env.VITE_SOCKET_URL
-  }
   if (import.meta.env.PROD) {
-    return 'https://dungeonassistanttest-production.up.railway.app'
+    return 'https://dungeonassistanttest-production.up.railway.app:8080'
   }
   return 'http://localhost:8000'
 }

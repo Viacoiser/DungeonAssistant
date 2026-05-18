@@ -1,11 +1,8 @@
 import axios from 'axios'
 
 const getApiBase = () => {
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL
-  }
   if (import.meta.env.PROD) {
-    return 'https://dungeonassistanttest-production.up.railway.app/api'
+    return 'https://dungeonassistanttest-production.up.railway.app:8080/api'
   }
   return 'http://localhost:8000'
 }
