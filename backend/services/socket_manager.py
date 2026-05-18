@@ -1,4 +1,5 @@
 import logging
+import os
 import socketio
 from typing import Dict, Any, Optional
 from services.supabase import get_supabase
@@ -11,8 +12,8 @@ def extract_token_safely(environ: dict) -> Optional[str]:
     """
     logger.debug(f"🔍 Extractando token. environ keys: {list(environ.keys())}")
     
-    # Estrategia 1: Desde auth (socket.io client)
-    auth = environ.get('aio.http_auth', {})
+    # Estrategia 1: Desde auth (ASGI socket.io client)
+    auth = environ.get('auth', {}) or environ.get('aio.http_auth', {})
     if auth and isinstance(auth, dict):
         token = auth.get('token')
         if token:
@@ -58,14 +59,21 @@ class SocketManager:
     Manager centralizado para la lógica de Socket.io
     """
     def __init__(self):
+        # Leer orígenes permitidos desde variable de entorno
+        env_origins = os.getenv('ALLOWED_ORIGINS', '')
+        allowed = [
+            'https://dungeon-assistant-test.vercel.app',
+            'https://dungeonassistanttest-production.up.railway.app',
+            'http://localhost:5173',
+            'http://localhost:3000',
+            'http://127.0.0.1:5173'
+        ]
+        if env_origins:
+            allowed.extend([o.strip() for o in env_origins.split(',') if o.strip()])
+        
         self.sio = socketio.AsyncServer(
             async_mode='asgi',
-            cors_allowed_origins=[
-                'https://dungeon-assistant-test.vercel.app',
-                'http://localhost:5173',
-                'http://localhost:3000',
-                'http://127.0.0.1:5173'
-            ],
+            cors_allowed_origins=allowed,
             logger=False,
             engineio_logger=False
         )

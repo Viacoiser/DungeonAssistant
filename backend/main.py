@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import socketio
-from starlette.middleware.cors import CORSMiddleware as StarletteCORS
+
 
 # Cargar entorno
 env_file = Path(__file__).parent / '.env'
@@ -76,16 +76,8 @@ fastapi_app.include_router(dnd5e_search.router, prefix="/api")
 fastapi_app.include_router(rag.router, prefix="/api")
 fastapi_app.include_router(voice.router, prefix="/api")
 
-# Envolver socketio con CORS para que las peticiones preflight pasen
+# Envolver FastAPI con socket.io ASGIApp
 app = socketio.ASGIApp(sio, fastapi_app)
-
-app = StarletteCORS(
-    app,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 if __name__ == "__main__":
     import uvicorn
