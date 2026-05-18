@@ -76,8 +76,8 @@ export default function Login() {
         const response = await authAPI.login(formData.email, formData.password)
         const { access_token, user } = response.data
 
-        localStorage.setItem('auth_token', access_token)
-        localStorage.setItem('auth_user', JSON.stringify(user))
+        sessionStorage.setItem('auth_token', access_token)
+        sessionStorage.setItem('auth_user', JSON.stringify(user))
 
         setUser(user)
         setToken(access_token)

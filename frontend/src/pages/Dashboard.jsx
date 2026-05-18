@@ -127,8 +127,8 @@ export default function Dashboard() {
   }, [prefetchCategory])
 
   const handleLogout = () => {
-    localStorage.removeItem('auth_token')
-    localStorage.removeItem('auth_user')
+    sessionStorage.removeItem('auth_token')
+    sessionStorage.removeItem('auth_user')
     setToken(null)
     setUser(null)
     logout()

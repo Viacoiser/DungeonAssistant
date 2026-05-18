@@ -20,7 +20,7 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token')
+  const token = sessionStorage.getItem('auth_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -32,8 +32,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       console.warn("Sesión expirada o inválida. Redirigiendo a login...")
-      localStorage.removeItem('auth_token')
-      localStorage.removeItem('auth_user')
+      sessionStorage.removeItem('auth_token')
+      sessionStorage.removeItem('auth_user')
       const path = window.location.pathname
       if (path !== '/login' && path !== '/') {
         window.location.href = '/login'
