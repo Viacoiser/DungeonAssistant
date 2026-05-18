@@ -298,8 +298,8 @@ async def update_character(
     try:
         supabase = get_supabase()
         
-        # 1. Obtener personaje existente
-        char_res = supabase.client.table("characters").select("*").eq("id", character_id).single().execute()
+        # 1. Obtener personaje existente (usar admin_client para evitar RLS)
+        char_res = supabase.admin_client.table("characters").select("*").eq("id", character_id).single().execute()
         
         if not char_res.data:
             raise HTTPException(
@@ -344,7 +344,7 @@ async def update_character(
         
         # 4. Ejecutar actualización
         try:
-            result = supabase.client.table("characters").update(
+            result = supabase.admin_client.table("characters").update(
                 update_data
             ).eq(
                 "id", character_id
