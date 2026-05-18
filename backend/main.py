@@ -46,6 +46,9 @@ fastapi_app = FastAPI(
 env_origins = os.getenv("ALLOWED_ORIGINS", "")
 allowed_origins = [origin.strip() for origin in env_origins.split(",") if origin.strip()]
 
+# Temporal: permitir todos los orígenes para debug
+allowed_origins = ["*"]
+
 default_origins = [
     "http://localhost:5173",
     "http://localhost:5174",
