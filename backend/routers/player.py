@@ -137,7 +137,7 @@ async def create_character(
         
         # Insertar en Supabase
         try:
-            result = supabase.client.table("characters").insert(
+            result = supabase.admin_client.table("characters").insert(
                 character_data
             ).execute()
             
@@ -196,7 +196,7 @@ async def list_characters(
     try:
         supabase = get_supabase()
         
-        query = supabase.client.table("characters").select("*")
+        query = supabase.admin_client.table("characters").select("*")
         
         if campaign_id and campaign_id.strip():
             # Verificar que el usuario sea miembro de la campaña
@@ -249,7 +249,7 @@ async def get_character(
         supabase = get_supabase()
         
         # Obtener personaje
-        character = supabase.client.table("characters").select(
+        character = supabase.admin_client.table("characters").select(
             "*"
         ).eq(
             "id", character_id
@@ -392,7 +392,7 @@ async def update_character_status(
         supabase = get_supabase()
         
         # Obtener personaje
-        character = supabase.client.table("characters").select(
+        character = supabase.admin_client.table("characters").select(
             "*"
         ).eq(
             "id", character_id
@@ -432,7 +432,7 @@ async def update_character_status(
             "updated_at": datetime.utcnow().isoformat()
         }
         
-        result = supabase.client.table("characters").update(
+        result = supabase.admin_client.table("characters").update(
             update_data
         ).eq(
             "id", character_id
@@ -485,7 +485,7 @@ async def get_character_history(
         supabase = get_supabase()
         
         # Obtener personaje
-        character = supabase.client.table("characters").select(
+        character = supabase.admin_client.table("characters").select(
             "*"
         ).eq(
             "id", character_id
@@ -550,7 +550,7 @@ async def assign_character_to_campaign(
         supabase = get_supabase()
         
         # Obtener personaje
-        character = supabase.client.table("characters").select(
+        character = supabase.admin_client.table("characters").select(
             "*"
         ).eq(
             "id", character_id
@@ -592,7 +592,7 @@ async def assign_character_to_campaign(
             )
         
         # Asignar personaje a campaña
-        result = supabase.client.table("characters").update({
+        result = supabase.admin_client.table("characters").update({
             "campaign_id": campaign_id,
             "updated_at": datetime.utcnow().isoformat()
         }).eq("id", character_id).execute()
@@ -645,7 +645,7 @@ async def join_campaign_by_code(
             )
         
         # Obtener personaje
-        character = supabase.client.table("characters").select(
+        character = supabase.admin_client.table("characters").select(
             "*"
         ).eq(
             "id", character_id
@@ -688,7 +688,7 @@ async def join_campaign_by_code(
             )
         
         # Asignar personaje a campaña
-        result = supabase.client.table("characters").update({
+        result = supabase.admin_client.table("characters").update({
             "campaign_id": campaign_id,
             "updated_at": datetime.utcnow().isoformat()
         }).eq("id", character_id).execute()
