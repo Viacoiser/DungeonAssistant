@@ -29,10 +29,12 @@ export const initSocket = () => {
 
   socket = io(SOCKET_URL, {
     auth: { token },
+    query: { token },  // Pasar token en query string también (para polling)
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
     reconnectionAttempts: 5,
+    transports: ['websocket', 'polling']  // Permitir ambos transportes
   })
 
   socket.on('connect', () => {
