@@ -2,14 +2,12 @@ import io from 'socket.io-client'
 import { useSocketStore } from '../store/useSocketStore'
 import { useAuthStore } from '../store/useAuthStore'
 
-// En desarrollo: localhost:8000
-// En Vercel con experimentalServices: /_/backend
 const getSocketUrl = () => {
   if (import.meta.env.VITE_SOCKET_URL) {
     return import.meta.env.VITE_SOCKET_URL
   }
   if (import.meta.env.PROD) {
-    return '/_/backend'
+    return 'https://dungeonassistanttest-production.up.railway.app'
   }
   return 'http://localhost:8000'
 }
@@ -28,11 +26,9 @@ export const initSocket = () => {
     return null
   }
 
-  // Mostrar pantalla de carga
   useSocketStore.setState({ isConnecting: true })
   console.log('⏳ Conectando socket...')
 
-  // Inicializar socket con autenticación
   socket = io(SOCKET_URL, {
     auth: { token },
     reconnection: true,
@@ -65,7 +61,6 @@ export const initSocket = () => {
     useSocketStore.setState({ isConnecting: false })
   })
 
-  // Eventos globales
   socket.on('user_joined', (data) => {
     console.log('👤 Usuario unido:', data.username)
   })

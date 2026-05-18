@@ -1,13 +1,11 @@
 import axios from 'axios'
 
-// En desarrollo: localhost:8000
-// En Vercel con experimentalServices: /_/backend
 const getApiBase = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL
   }
   if (import.meta.env.PROD) {
-    return '/_/backend'
+    return 'https://dungeonassistanttest-production.up.railway.app'
   }
   return 'http://localhost:8000'
 }
@@ -21,7 +19,6 @@ const api = axios.create({
   },
 })
 
-// Interceptor para agregar token de autenticación
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('auth_token')
   if (token) {
@@ -30,7 +27,6 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// Interceptor para manejar errores globales (como el 401)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -38,8 +34,6 @@ api.interceptors.response.use(
       console.warn("Sesión expirada o inválida. Redirigiendo a login...")
       localStorage.removeItem('auth_token')
       localStorage.removeItem('auth_user')
-      
-      // Solo redirigir si no estamos ya en login o welcome
       const path = window.location.pathname
       if (path !== '/login' && path !== '/') {
         window.location.href = '/login'
@@ -49,13 +43,8 @@ api.interceptors.response.use(
   }
 )
 
-/**
- * Obtener instancia de axios para hacer llamadas raw
- * Útil para operaciones como validación de token en App.jsx
- */
 export const getAuthAPI = () => api
 
-// Auth
 export const authAPI = {
   register: (email, password, username) =>
     api.post('/auth/register', { email, password, username }),
@@ -65,7 +54,6 @@ export const authAPI = {
   getMe: () => api.get('/auth/me'),
 }
 
-// Campaigns
 export const campaignAPI = {
   create: (name, description) =>
     api.post('/campaigns', { name, description }),
@@ -84,7 +72,6 @@ export const campaignAPI = {
     api.post(`/campaigns/${campaignId}/regenerate-code`),
 }
 
-// Characters
 export const characterAPI = {
   create: (data) => api.post('/characters', data),
   list: (campaignId = null) => 
@@ -101,7 +88,6 @@ export const characterAPI = {
     api.put(`/characters/${characterId}/status`, { is_alive: isAlive }),
 }
 
-// Sessions
 export const sessionAPI = {
   create: (campaignId, sessionNumber, title) =>
     api.post('/sessions', { campaign_id: campaignId, session_number: sessionNumber, title }),
@@ -125,7 +111,6 @@ export const sessionAPI = {
     api.delete(`/sessions/${sessionId}`),
 }
 
-// NPCs
 export const npcAPI = {
   list: (campaignId) =>
     api.get(`/campaigns/${campaignId}/npcs`),
@@ -139,19 +124,16 @@ export const npcAPI = {
     api.post(`/campaigns/${campaignId}/npcs/${npcId}/trait`),
 }
 
-// Assistant
 export const assistantAPI = {
   chat: (campaignId, question) =>
     api.post('/assistant/chat', { campaign_id: campaignId, question }),
 }
 
-// Vision / OCR
 export const visionAPI = {
   digitize: (campaignId, imageUrl) =>
     api.post('/vision/digitize', { campaign_id: campaignId, image_url: imageUrl }),
 }
 
-// D&D5e Search
 export const dnd5eAPI = {
   search: (query, categories = null, limit = 10) => {
     const params = { q: query, limit }
