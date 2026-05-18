@@ -2,7 +2,8 @@ import axios from 'axios'
 
 const getApiBase = () => {
   if (import.meta.env.PROD) {
-    return 'https://dungeonassistanttest-production.up.railway.app:8080/api'
+    // Railway HTTPS: no incluir puerto
+    return 'https://dungeonassistanttest-production.up.railway.app/api'
   }
   return 'http://localhost:8000'
 }
