@@ -81,6 +81,7 @@ class SocketManager:
     async def on_connect(self, sid: str, environ: dict):
         """
         Manejar conexión y validar JWT
+        Permite múltiples conexiones simultáneas de usuarios diferentes
         """
         try:
             # Extraer token con múltiples estrategias
@@ -98,16 +99,23 @@ class SocketManager:
                 logger.warning(f"❌ Conexión rechazada (token inválido): {sid}")
                 return False
 
-            # Guardar info del usuario
+            # Guardar info del usuario - permitir múltiples sockets por usuario
             user_data = user.get("user", user) if isinstance(user, dict) else user
+            user_id = user_data.get("id")
+            username = user_data.get("user_metadata", {}).get("username") or user_data.get("email")
+            
             self.connected_users[sid] = {
-                "user_id": user_data.get("id"),
-                "username": user_data.get("user_metadata", {}).get("username") or user_data.get("email"),
+                "user_id": user_id,
+                "username": username,
                 "email": user_data.get("email"),
-                "campaign_id": None
+                "campaign_id": None,
+                "session_id": sid  # Identificar esta sesión específica
             }
             
-            logger.info(f"✅ Socket conectado y autenticado: {self.connected_users[sid]['username']} ({sid})")
+            # Log con más detalle
+            active_connections = sum(1 for u in self.connected_users.values() if u.get("user_id") == user_id)
+            logger.info(f"✅ Socket conectado: {username} ({sid}) - Conexiones activas: {active_connections}")
+            
             await self.sio.emit("authenticated", {"status": "ok"}, to=sid)
             
         except Exception as e:
