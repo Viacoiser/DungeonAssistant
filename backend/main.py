@@ -8,10 +8,10 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 import socketio
+from starlette.middleware.cors import CORSMiddleware as StarletteCORS
 
 # Cargar entorno
 env_file = Path(__file__).parent / '.env'
@@ -26,7 +26,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# El servidor de sockets ya está configurado en socket_manager.py
 sio = socket_manager.sio
 
 @asynccontextmanager
@@ -41,37 +40,6 @@ fastapi_app = FastAPI(
     version="0.1.0",
     lifespan=lifespan
 )
-
-# Configuración de CORS
-env_origins = os.getenv("ALLOWED_ORIGINS", "")
-allowed_origins = [origin.strip() for origin in env_origins.split(",") if origin.strip()]
-
-# Temporal: permitir todos los orígenes para debug
-allowed_origins = ["*"]
-
-default_origins = [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:5175",
-    "http://localhost:5176",
-    "http://localhost:5177",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:5174",
-    "http://127.0.0.1:3000",
-]
-
-# Agregar dominio de Vercel desde variable de entorno
-vercel_url = os.getenv("VERCEL_URL", "")
-if vercel_url:
-    default_origins.append(f"https://{vercel_url}")
-
-# Permitir todos los subdominios de vercel.app
-vercel_project = os.getenv("VERCEL_PROJECT_DOMAIN", "")
-if vercel_project:
-    default_origins.append(f"https://{vercel_project}")
-
-final_origins = list(set(allowed_origins + default_origins))
 
 fastapi_app.add_middleware(
     CORSMiddleware,
@@ -108,7 +76,16 @@ fastapi_app.include_router(dnd5e_search.router, prefix="/api")
 fastapi_app.include_router(rag.router, prefix="/api")
 fastapi_app.include_router(voice.router, prefix="/api")
 
+# Envolver socketio con CORS para que las peticiones preflight pasen
 app = socketio.ASGIApp(sio, fastapi_app)
+
+app = StarletteCORS(
+    app,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     import uvicorn
