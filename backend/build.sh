@@ -1,8 +1,8 @@
 #!/bin/bash
-# Build script para Vercel - Backend
+# Build script para Vercel - Backend (Production)
 
-echo "📦 Installing Python dependencies..."
-pip install --upgrade pip
-pip install -r requirements.txt
+echo "📦 Installing production dependencies..."
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt --no-cache-dir
 
-echo "✅ Backend dependencies installed successfully"
+echo "✅ Backend production dependencies installed successfully"
