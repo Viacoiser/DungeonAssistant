@@ -90,7 +90,7 @@ class SocketManager:
         self.sio.on('broadcast_message', self.on_broadcast_message)
         self.sio.on('get_active_users', self.on_get_active_users)
 
-    async def on_connect(self, sid: str, environ: dict):
+    async def on_connect(self, sid: str, environ: dict, auth: Optional[dict] = None):
         """
         Manejar conexión y validar JWT
         Permite múltiples conexiones simultáneas de usuarios diferentes
@@ -98,6 +98,8 @@ class SocketManager:
         try:
             # Extraer token con múltiples estrategias
             token = extract_token_safely(environ)
+            if not token and auth:
+                token = auth.get('token')
             
             if not token:
                 logger.warning(f"❌ Conexión rechazada (sin token): {sid}")
