@@ -5,7 +5,7 @@ const getApiBase = () => {
     return import.meta.env.VITE_API_BASE_URL
   }
   if (import.meta.env.PROD) {
-    return 'https://dungeonassistanttest-production.up.railway.app'
+    return 'https://dungeonassistanttest-production.up.railway.app/api'
   }
   return 'http://localhost:8000'
 }
