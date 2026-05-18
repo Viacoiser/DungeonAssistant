@@ -58,6 +58,16 @@ default_origins = [
     "http://127.0.0.1:3000",
 ]
 
+# Agregar dominio de Vercel desde variable de entorno
+vercel_url = os.getenv("VERCEL_URL", "")
+if vercel_url:
+    default_origins.append(f"https://{vercel_url}")
+
+# Permitir todos los subdominios de vercel.app
+vercel_project = os.getenv("VERCEL_PROJECT_DOMAIN", "")
+if vercel_project:
+    default_origins.append(f"https://{vercel_project}")
+
 final_origins = list(set(allowed_origins + default_origins))
 
 fastapi_app.add_middleware(

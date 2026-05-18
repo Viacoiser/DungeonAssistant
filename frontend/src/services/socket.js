@@ -3,13 +3,13 @@ import { useSocketStore } from '../store/useSocketStore'
 import { useAuthStore } from '../store/useAuthStore'
 
 // En desarrollo: localhost:8000
-// En Vercel: /api (ruta relativa)
+// En Vercel con experimentalServices: /_/backend
 const getSocketUrl = () => {
   if (import.meta.env.VITE_SOCKET_URL) {
     return import.meta.env.VITE_SOCKET_URL
   }
   if (import.meta.env.PROD) {
-    return '/api'
+    return '/_/backend'
   }
   return 'http://localhost:8000'
 }
@@ -28,7 +28,7 @@ export const initSocket = () => {
     return null
   }
 
-  // 🆕 Mostrar pantalla de carga
+  // Mostrar pantalla de carga
   useSocketStore.setState({ isConnecting: true })
   console.log('⏳ Conectando socket...')
 
@@ -72,7 +72,6 @@ export const initSocket = () => {
 
   socket.on('message', (data) => {
     console.log('📩 Nuevo mensaje:', data)
-    // Aquí podrías despachar una notificación al store
   })
 
   useSocketStore.setState({ socket })

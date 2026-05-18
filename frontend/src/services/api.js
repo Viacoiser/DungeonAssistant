@@ -1,13 +1,13 @@
 import axios from 'axios'
 
 // En desarrollo: localhost:8000
-// En Vercel: /api (ruta relativa)
+// En Vercel con experimentalServices: /_/backend
 const getApiBase = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL
   }
   if (import.meta.env.PROD) {
-    return '/api'
+    return '/_/backend'
   }
   return 'http://localhost:8000'
 }
@@ -156,15 +156,15 @@ export const dnd5eAPI = {
   search: (query, categories = null, limit = 10) => {
     const params = { q: query, limit }
     if (categories) params.categories = categories.join(',')
-    return api.get('/api/dnd5e/search', { params })
+    return api.get('/dnd5e/search', { params })
   },
   autocomplete: (query, categories = null, limit = 5) => {
     const params = { q: query, limit }
     if (categories) params.categories = categories.join(',')
-    return api.get('/api/dnd5e/autocomplete', { params })
+    return api.get('/dnd5e/autocomplete', { params })
   },
   analyzeNote: (content) =>
-    api.post('/api/dnd5e/analyze-note', { content }),
+    api.post('/dnd5e/analyze-note', { content }),
 }
 
 export default api
