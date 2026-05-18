@@ -8,19 +8,15 @@ logger = logging.getLogger(__name__)
 def extract_token_safely(environ: dict) -> Optional[str]:
     """
     Extraer token JWT con múltiples estrategias
-    
-    Estrategias en orden:
-    1. Desde auth objeto (socket.io estándar)
-    2. Desde headers HTTP Authorization
-    3. Desde query string (último recurso, menos seguro)
     """
+    logger.debug(f"🔍 Extractando token. environ keys: {list(environ.keys())}")
     
     # Estrategia 1: Desde auth (socket.io client)
     auth = environ.get('aio.http_auth', {})
     if auth and isinstance(auth, dict):
         token = auth.get('token')
         if token:
-            logger.debug("✓ Token extraído desde 'auth'")
+            logger.info("✓ Token desde 'auth'")
             return token
     
     # Estrategia 2: Desde headers HTTP
@@ -33,7 +29,7 @@ def extract_token_safely(environ: dict) -> Optional[str]:
                 auth_value = value.decode()
                 if auth_value.startswith('Bearer '):
                     token = auth_value[7:]
-                    logger.debug("✓ Token extraído desde header Authorization")
+                    logger.info("✓ Token desde header Authorization")
                     return token
         except Exception as e:
             logger.warning(f"Error procesando header: {e}")
@@ -42,16 +38,19 @@ def extract_token_safely(environ: dict) -> Optional[str]:
     # Estrategia 3: Desde query string
     try:
         query_string = asgi_scope.get('query_string', b'').decode()
+        logger.debug(f"Query string: {query_string}")
+        
         if 'token=' in query_string:
-            for param in query_string.split('&'):
-                if param.startswith('token='):
-                    token = param[6:]
-                    logger.warning("⚠️ Token extraído desde query string (menos seguro)")
-                    return token
+            import urllib.parse
+            params = urllib.parse.parse_qs(query_string)
+            if 'token' in params:
+                token = params['token'][0]
+                logger.info(f"✓ Token desde query string: {token[:20]}...")
+                return token
     except Exception as e:
         logger.warning(f"Error procesando query string: {e}")
     
-    logger.warning("✗ No se encontró token en ninguna ubicación")
+    logger.warning("✗ No se encontró token")
     return None
 
 class SocketManager:
