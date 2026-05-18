@@ -61,8 +61,13 @@ class SocketManager:
     def __init__(self):
         self.sio = socketio.AsyncServer(
             async_mode='asgi',
-            cors_allowed_origins='*',
-            logger=False, # Reducir ruido de logs
+            cors_allowed_origins=[
+                'https://dungeon-assistant-test.vercel.app',
+                'https://dungeonassistanttest-production.up.railway.app:8080',
+                'http://localhost:5173',
+                'http://localhost:3000'
+            ],
+            logger=False,
             engineio_logger=False
         )
         
