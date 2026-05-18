@@ -223,24 +223,29 @@ export default function Dashboard() {
 
     let campaignId = insertCharacterForm.campaignId
 
-    // Si usa código, buscar la campaña
+    // Si usa código, unirse a la campaña primero
     if (insertCharacterForm.useCode) {
       if (!insertCharacterForm.campaignCode.trim()) {
         setInsertCharacterError('Por favor ingresa el código de la campaña')
         return
       }
 
-      // Buscar campaña por código
-      const campaignWithCode = campaigns.find(c =>
-        c.invite_code?.toUpperCase() === insertCharacterForm.campaignCode.trim().toUpperCase()
-      )
+      setInsertingCharacter(true)
+      setInsertCharacterError('')
 
-      if (!campaignWithCode) {
-        setInsertCharacterError('No se encontró una campaña con ese código')
+      try {
+        const joinRes = await campaignAPI.joinByCode(insertCharacterForm.campaignCode.trim().toUpperCase())
+        campaignId = joinRes.data?.campaign_id
+        if (!campaignId) {
+          throw new Error('No se pudo obtener el ID de la campaña')
+        }
+        await loadCampaigns()
+      } catch (joinErr) {
+        const detail = joinErr.response?.data?.detail || 'Error al unirse a la campaña'
+        setInsertCharacterError(detail)
+        setInsertingCharacter(false)
         return
       }
-
-      campaignId = campaignWithCode.id
     } else {
       if (!campaignId) {
         setInsertCharacterError('Por favor selecciona una campaña')
