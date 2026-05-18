@@ -1,13 +1,13 @@
 import axios from 'axios'
 
 // En desarrollo: localhost:8000
-// En Vercel: /_/backend (ruta relativa)
+// En Vercel: /api (ruta relativa)
 const getApiBase = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL
   }
   if (import.meta.env.PROD) {
-    return '/_/backend'
+    return '/api'
   }
   return 'http://localhost:8000'
 }

@@ -3,13 +3,13 @@ import { useSocketStore } from '../store/useSocketStore'
 import { useAuthStore } from '../store/useAuthStore'
 
 // En desarrollo: localhost:8000
-// En Vercel: /_/backend (ruta relativa)
+// En Vercel: /api (ruta relativa)
 const getSocketUrl = () => {
   if (import.meta.env.VITE_SOCKET_URL) {
     return import.meta.env.VITE_SOCKET_URL
   }
   if (import.meta.env.PROD) {
-    return '/_/backend'
+    return '/api'
   }
   return 'http://localhost:8000'
 }
