@@ -57,10 +57,19 @@ class SupabaseClient:
 
     @property
     def client(self) -> Client:
-        """Obtener cliente Supabase"""
+        """Obtener cliente Supabase (ANON)"""
         if not self._initialized:
             self._init_client()
         return self._client
+
+    @property
+    def admin_client(self) -> Client:
+        """Obtener cliente admin (SERVICE_KEY) para operaciones que requieren evitar RLS"""
+        if not self._initialized:
+            self._init_client()
+        if not self._admin_client:
+            raise ValueError("ADMIN client not available - SERVICE_KEY not configured")
+        return self._admin_client
 
     # ========================================================================
     # AUTHENTICATION
@@ -185,20 +194,27 @@ class SupabaseClient:
             user = response.user
             user_id = user.id
 
-            # Obtener datos del perfil
-            user_data = (
-                self.client.table("users")
-                .select("*")
-                .eq("id", user_id)
-                .single()
-                .execute()
-            )
+            # Intentar obtener datos del perfil (puede no existir)
+            try:
+                user_data = (
+                    self.client.table("users")
+                    .select("*")
+                    .eq("id", user_id)
+                    .single()
+                    .execute()
+                )
+                username = user_data.data.get("username", user.email.split("@")[0] if user.email else "user")
+                created_at = user_data.data.get("created_at")
+            except Exception:
+                logger.warning(f"⚠️ No profile found for user {user.email}, using basic info")
+                username = user.email.split("@")[0] if user.email else "user"
+                created_at = None
 
             return {
                 "id": user_id,
                 "email": user.email,
-                "username": user_data.data.get("username", ""),
-                "created_at": user_data.data.get("created_at"),
+                "username": username,
+                "created_at": created_at,
             }
 
         except Exception as e:

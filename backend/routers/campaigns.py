@@ -159,7 +159,8 @@ async def join_campaign_by_code(request: JoinCampaignRequest, current_user: dict
         user_id = current_user["id"]
         code = request.invite_code.upper()
         
-        campaign_result = supabase.client.table("campaigns").select("*").eq("invitation_code", code).execute()
+        # Usar admin_client para evitar RLS/session issues al buscar por código
+        campaign_result = supabase.admin_client.table("campaigns").select("*").eq("invitation_code", code).execute()
         
         if not campaign_result.data:
             raise HTTPException(status_code=404, detail="Código inválido")
