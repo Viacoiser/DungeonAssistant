@@ -2,7 +2,19 @@ import io from 'socket.io-client'
 import { useSocketStore } from '../store/useSocketStore'
 import { useAuthStore } from '../store/useAuthStore'
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:8000'
+// En desarrollo: localhost:8000
+// En Vercel: /_/backend (ruta relativa)
+const getSocketUrl = () => {
+  if (import.meta.env.VITE_SOCKET_URL) {
+    return import.meta.env.VITE_SOCKET_URL
+  }
+  if (import.meta.env.PROD) {
+    return '/_/backend'
+  }
+  return 'http://localhost:8000'
+}
+
+const SOCKET_URL = getSocketUrl()
 
 let socket = null
 
