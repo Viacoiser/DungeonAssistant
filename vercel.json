@@ -11,7 +11,14 @@
     },
     {
       "src": "/(.*)",
-      "dest": "frontend/$1"
+      "dest": "frontend/dist/index.html"
+    }
+  ],
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "frontend/dist" }
     }
   ]
 }
