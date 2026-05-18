@@ -335,7 +335,7 @@ async def update_character(
             update_data["class"] = update_data.pop("class_")
             
         # Asegurarse de que no estamos intentando actualizar campos protegidos
-        for field in ["id", "player_id", "campaign_id", "created_at"]:
+        for field in ["id", "player_id", "created_at"]:
             if field in update_data:
                 logger.warning(f"Removing protected field '{field}' from update payload for {character_id}")
                 update_data.pop(field, None)

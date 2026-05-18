@@ -282,6 +282,7 @@ class CharacterUpdate(BaseModel):
     alignment: Optional[str] = None
     experience_points: Optional[int] = Field(None, ge=0)
     player_name: Optional[str] = None
+    campaign_id: Optional[str] = None
 
     # ── Stats base ───────────────────────────────────────────────────────────────
     stats: Optional[StatsModel] = None
