@@ -171,7 +171,8 @@ async def join_campaign_by_code(request: JoinCampaignRequest, current_user: dict
             .select("*").eq("campaign_id", campaign["id"]).eq("user_id", user_id).execute()
         
         if existing_member.data:
-            raise HTTPException(status_code=400, detail="Ya eres miembro")
+            # Ya es miembro, devolver campaign_id igual para que el frontend pueda asignar personaje
+            return {"message": "Ya eras miembro", "campaign_id": campaign["id"], "success": True}
         
         member_data = {
             "campaign_id": campaign["id"],
