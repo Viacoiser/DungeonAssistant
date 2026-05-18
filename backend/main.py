@@ -83,17 +83,17 @@ async def root():
         "docs": "/docs"
     }
 
-fastapi_app.include_router(auth.router)
-fastapi_app.include_router(campaigns.router)
-fastapi_app.include_router(player.router)
-fastapi_app.include_router(sessions.router)
-fastapi_app.include_router(vision.router)
-fastapi_app.include_router(gamemaster.router)
-fastapi_app.include_router(realtime.router)
-fastapi_app.include_router(assistant.router)
-fastapi_app.include_router(dnd5e_search.router)
-fastapi_app.include_router(rag.router)
-fastapi_app.include_router(voice.router)
+fastapi_app.include_router(auth.router, prefix="/api")
+fastapi_app.include_router(campaigns.router, prefix="/api")
+fastapi_app.include_router(player.router, prefix="/api")
+fastapi_app.include_router(sessions.router, prefix="/api")
+fastapi_app.include_router(vision.router, prefix="/api")
+fastapi_app.include_router(gamemaster.router, prefix="/api")
+fastapi_app.include_router(realtime.router, prefix="/api")
+fastapi_app.include_router(assistant.router, prefix="/api")
+fastapi_app.include_router(dnd5e_search.router, prefix="/api")
+fastapi_app.include_router(rag.router, prefix="/api")
+fastapi_app.include_router(voice.router, prefix="/api")
 
 app = socketio.ASGIApp(sio, fastapi_app)
 
