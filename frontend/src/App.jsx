@@ -17,7 +17,7 @@ function App() {
      */
     const restoreSession = async () => {
       try {
-        const storedToken = sessionStorage.getItem('auth_token')
+        const storedToken = localStorage.getItem('auth_token')
         
         if (storedToken) {
           // Validar token con backend
@@ -35,8 +35,8 @@ function App() {
           } catch (error) {
             // Token inválido o expirado
             console.log('Token inválido, limpiando sesión')
-            sessionStorage.removeItem('auth_token')
-            sessionStorage.removeItem('auth_user')
+            localStorage.removeItem('auth_token')
+            localStorage.removeItem('auth_user')
             const { logout } = useAuthStore.getState()
             logout()
           }

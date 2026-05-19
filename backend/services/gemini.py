@@ -436,7 +436,7 @@ class GeminiService:
                     loop = asyncio.get_event_loop()
                     rag_data = await loop.run_in_executor(
                         None,
-                        lambda: self._get_rag_context(supabase_client.client, campaign_id)
+                        lambda: self._get_rag_context(supabase_client.admin_client, campaign_id)
                     )
                     rag_entities_total = rag_data.get("total_entities", 0) if rag_data else 0
                     

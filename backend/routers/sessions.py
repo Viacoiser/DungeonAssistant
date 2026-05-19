@@ -50,7 +50,22 @@ async def create_session(
     try:
         supabase = get_supabase()
 
-        result = supabase.client.table("sessions").insert({
+        # Verificar que el usuario sea GM de la campaña
+        campaign_members = supabase.client.table("campaign_members").select(
+            "role"
+        ).eq(
+            "campaign_id", data.campaign_id
+        ).eq(
+            "user_id", current_user["id"]
+        ).execute()
+
+        if not campaign_members.data or campaign_members.data[0]["role"] != "GM":
+            raise HTTPException(
+                status_code=403,
+                detail="Solo el GM de la campaña puede crear sesiones"
+            )
+
+        result = supabase.admin_client.table("sessions").insert({
             "campaign_id": data.campaign_id,
             "session_number": data.session_number,
             "title": data.title,
@@ -64,6 +79,8 @@ async def create_session(
         logger.info(f"✅ Sesión {data.session_number} creada para campaña {data.campaign_id}")
         return session
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Error creando sesión: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -89,6 +106,8 @@ async def list_sessions(
 
         return result.data or []
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Error listando sesiones: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -108,7 +127,7 @@ async def start_session(
         supabase = get_supabase()
         from datetime import datetime, timezone
 
-        supabase.client.table("sessions").update({
+        supabase.admin_client.table("sessions").update({
             "is_active": True,
             "started_at": datetime.now(timezone.utc).isoformat()
         }).eq("id", session_id).execute()
@@ -116,6 +135,8 @@ async def start_session(
         logger.info(f"✅ Sesión {session_id} iniciada")
         return {"message": "Sesión iniciada", "session_id": session_id}
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Error iniciando sesión: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -137,7 +158,7 @@ async def end_session(
         from datetime import datetime, timezone
 
         # Obtener notas de la sesión
-        notes_result = supabase.client.table("session_notes") \
+        notes_result = supabase.admin_client.table("session_notes") \
             .select("content, author_id") \
             .eq("session_id", session_id) \
             .execute()
@@ -148,7 +169,7 @@ async def end_session(
         summary = await gemini.generate_session_summary(notes)
 
         # Marcar sesión como inactiva y guardar resumen
-        supabase.client.table("sessions").update({
+        supabase.admin_client.table("sessions").update({
             "is_active": False,
             "ended_at": datetime.now(timezone.utc).isoformat(),
             "summary": summary
@@ -157,6 +178,8 @@ async def end_session(
         logger.info(f"✅ Sesión {session_id} terminada con resumen generado")
         return {"message": "Sesión terminada", "summary": summary}
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Error terminando sesión: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -358,8 +381,26 @@ async def add_session_note(
     try:
         supabase = get_supabase()
         
-        # 1. Guardar la nota inmediatamente
-        note_result = supabase.client.table("session_notes").insert({
+        # Verificar que la sesión existe y obtener campaña
+        session = supabase.client.table("sessions").select("campaign_id").eq("id", session_id).execute()
+        if not session.data:
+            raise HTTPException(status_code=404, detail="Sesión no encontrada")
+        campaign_id = session.data[0]["campaign_id"]
+        
+        # Verificar que el usuario sea miembro de la campaña
+        campaign_members = supabase.client.table("campaign_members").select(
+            "id"
+        ).eq(
+            "campaign_id", campaign_id
+        ).eq(
+            "user_id", current_user["id"]
+        ).execute()
+
+        if not campaign_members.data:
+            raise HTTPException(status_code=403, detail="No eres miembro de esta campaña")
+
+        # 1. Guardar la nota inmediatamente (usando admin_client)
+        note_result = supabase.admin_client.table("session_notes").insert({
             "session_id": session_id,
             "author_id": current_user["id"],
             "content": data.content,
@@ -390,6 +431,8 @@ async def add_session_note(
         }
 
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Error guardando nota: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -407,14 +450,17 @@ async def get_session_notes(
     """Listar notas de sesión"""
     try:
         supabase = get_supabase()
-        result = supabase.client.table("session_notes") \
+        result = supabase.admin_client.table("session_notes") \
             .select("*") \
             .eq("session_id", session_id) \
+            .eq("author_id", current_user["id"]) \
             .order("created_at", desc=False) \
             .execute()
 
         return {"notes": result.data or []}
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Error obteniendo notas: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -436,19 +482,22 @@ async def update_session_note(
         gemini = get_gemini()
 
         # 1. Obtener la nota actual para saber a qué sesión pertenece
-        note = supabase.client.table("session_notes") \
-            .select("session_id") \
+        note = supabase.admin_client.table("session_notes") \
+            .select("session_id, author_id") \
             .eq("id", note_id) \
             .single() \
             .execute()
         
         if not note.data:
             raise HTTPException(status_code=404, detail="Nota no encontrada")
+            
+        if note.data["author_id"] != current_user["id"]:
+            raise HTTPException(status_code=403, detail="No tienes permisos para editar esta nota")
         
         session_id = note.data["session_id"]
         
         # 2. Obtener sesión y campaña
-        session = supabase.client.table("sessions") \
+        session = supabase.admin_client.table("sessions") \
             .select("campaign_id") \
             .eq("id", session_id) \
             .single() \
@@ -510,7 +559,7 @@ async def update_session_note(
         detected_items = analysis.get("detected_items", [])
         detected_npcs = analysis.get("detected_npcs", [])
 
-        result = supabase.client.table("session_notes").update({
+        result = supabase.admin_client.table("session_notes").update({
             "content": data.content,
             "detected_items": detected_items,
             "detected_npcs": detected_npcs
@@ -525,6 +574,8 @@ async def update_session_note(
                 "npcs_count": len(detected_npcs)
             }
         }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Error editando nota: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -544,7 +595,7 @@ async def toggle_note_visibility(
         supabase = get_supabase()
         
         # Verificar que sea el autor de la nota
-        note = supabase.client.table("session_notes") \
+        note = supabase.admin_client.table("session_notes") \
             .select("author_id, is_public") \
             .eq("id", note_id) \
             .single() \
@@ -554,7 +605,7 @@ async def toggle_note_visibility(
             raise HTTPException(status_code=403, detail="Solo el autor puede cambiar la privacidad")
         
         # Actualizar privacidad
-        result = supabase.client.table("session_notes").update({
+        result = supabase.admin_client.table("session_notes").update({
             "is_public": data.is_public
         }).eq("id", note_id).execute()
         
@@ -584,8 +635,24 @@ async def delete_session_note(
     """Eliminar una nota individual"""
     try:
         supabase = get_supabase()
-        supabase.client.table("session_notes").delete().eq("id", note_id).execute()
+        
+        # Obtener nota
+        note = supabase.admin_client.table("session_notes").select("author_id, session_id").eq("id", note_id).execute()
+        if not note.data:
+            raise HTTPException(status_code=404, detail="Nota no encontrada")
+            
+        note_data = note.data[0]
+        
+        # Verificar permisos (es el autor estricto, ni siquiera el GM puede)
+        is_allowed = note_data["author_id"] == current_user["id"]
+                    
+        if not is_allowed:
+            raise HTTPException(status_code=403, detail="No tienes permisos para eliminar esta nota")
+            
+        supabase.admin_client.table("session_notes").delete().eq("id", note_id).execute()
         return {"message": "Nota eliminada"}
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Error eliminando nota: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -604,13 +671,13 @@ async def delete_session(
         supabase = get_supabase()
 
         # Eliminar notas primero (FK constraint)
-        supabase.client.table("session_notes") \
+        supabase.admin_client.table("session_notes") \
             .delete() \
             .eq("session_id", session_id) \
             .execute()
 
         # Eliminar la sesión
-        supabase.client.table("sessions") \
+        supabase.admin_client.table("sessions") \
             .delete() \
             .eq("id", session_id) \
             .execute()
@@ -618,6 +685,8 @@ async def delete_session(
         logger.info(f"✅ Sesión {session_id} eliminada")
         return {"message": "Sesión eliminada correctamente"}
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Error eliminando sesión: {e}")
         raise HTTPException(status_code=500, detail=str(e))

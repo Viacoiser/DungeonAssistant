@@ -253,19 +253,21 @@ async def get_character(
             "*"
         ).eq(
             "id", character_id
-        ).single().execute()
+        ).execute()
         
         if not character.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Personaje no encontrado"
             )
+            
+        character_data = character.data[0]
         
         # Verificar que el usuario sea miembro de la campaña del personaje
         campaign_members = supabase.client.table("campaign_members").select(
             "*"
         ).eq(
-            "campaign_id", character.data["campaign_id"]
+            "campaign_id", character_data["campaign_id"]
         ).eq(
             "user_id", current_user["id"]
         ).execute()
@@ -276,7 +278,7 @@ async def get_character(
                 detail="No tienes permiso para ver este personaje"
             )
         
-        return character.data
+        return character_data
         
     except HTTPException:
         raise
@@ -299,7 +301,7 @@ async def update_character(
         supabase = get_supabase()
         
         # 1. Obtener personaje existente (usar admin_client para evitar RLS)
-        char_res = supabase.admin_client.table("characters").select("*").eq("id", character_id).single().execute()
+        char_res = supabase.admin_client.table("characters").select("*").eq("id", character_id).execute()
         
         if not char_res.data:
             raise HTTPException(
@@ -307,7 +309,7 @@ async def update_character(
                 detail="Personaje no encontrado"
             )
         
-        character = char_res.data
+        character = char_res.data[0]
         
         # 2. Verificar permisos (propietario o GM de la campaña)
         is_owner = character["player_id"] == current_user["id"]
@@ -396,19 +398,21 @@ async def update_character_status(
             "*"
         ).eq(
             "id", character_id
-        ).single().execute()
+        ).execute()
         
         if not character.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Personaje no encontrado"
             )
+            
+        character_data = character.data[0]
         
         # Verificar que el usuario es GM de la campaña
         campaign_members = supabase.client.table("campaign_members").select(
             "*"
         ).eq(
-            "campaign_id", character.data["campaign_id"]
+            "campaign_id", character_data["campaign_id"]
         ).eq(
             "user_id", current_user["id"]
         ).eq(
@@ -422,7 +426,7 @@ async def update_character_status(
             )
         
         # Determinar el tipo de cambio
-        old_status = character.data.get("is_alive", True)
+        old_status = character_data.get("is_alive", True)
         new_status = data.is_alive
         change_type = "DIED" if not new_status and old_status else "REVIVED" if new_status and not old_status else "STATUS_CHANGE"
         
@@ -489,19 +493,21 @@ async def get_character_history(
             "*"
         ).eq(
             "id", character_id
-        ).single().execute()
+        ).execute()
         
         if not character.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Personaje no encontrado"
             )
+            
+        character_data = character.data[0]
         
         # Verificar permisos
         campaign_members = supabase.client.table("campaign_members").select(
             "*"
         ).eq(
-            "campaign_id", character.data["campaign_id"]
+            "campaign_id", character_data["campaign_id"]
         ).eq(
             "user_id", current_user["id"]
         ).execute()
@@ -554,16 +560,18 @@ async def assign_character_to_campaign(
             "*"
         ).eq(
             "id", character_id
-        ).single().execute()
+        ).execute()
         
         if not character.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Personaje no encontrado"
             )
+            
+        character_data = character.data[0]
         
         # Verificar que el usuario es el propietario del personaje
-        if character.data["player_id"] != current_user["id"]:
+        if character_data["player_id"] != current_user["id"]:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Solo puedes asignar tus propios personajes"
@@ -585,7 +593,7 @@ async def assign_character_to_campaign(
             )
         
         # Verificar que el personaje no esté ya en una campaña
-        if character.data["campaign_id"] is not None:
+        if character_data["campaign_id"] is not None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Este personaje ya pertenece a una campaña"
@@ -649,16 +657,18 @@ async def join_campaign_by_code(
             "*"
         ).eq(
             "id", character_id
-        ).single().execute()
+        ).execute()
         
         if not character.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Personaje no encontrado"
             )
+            
+        character_data = character.data[0]
         
         # Verificar que el usuario es propietario del personaje
-        if character.data["player_id"] != current_user["id"]:
+        if character_data["player_id"] != current_user["id"]:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Solo puedes unir tus propios personajes"
@@ -681,7 +691,7 @@ async def join_campaign_by_code(
         campaign_id = campaign["id"]
         
         # Verificar que el personaje no esté ya en una campaña
-        if character.data["campaign_id"] is not None:
+        if character_data["campaign_id"] is not None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Este personaje ya pertenece a una campaña"

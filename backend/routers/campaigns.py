@@ -246,14 +246,21 @@ async def get_campaign_members(campaign_id: str, current_user: dict = Depends(ge
 async def generate_npc(campaign_id: str, data: dict, current_user: dict = Depends(get_current_user)):
     try:
         supabase = get_supabase()
+        
+        # Verificar que sea GM de la campaña
+        member_check = supabase.admin_client.table("campaign_members").select("role") \
+            .eq("campaign_id", campaign_id).eq("user_id", current_user["id"]).execute()
+        if not member_check.data or member_check.data[0]["role"] != "GM":
+            raise HTTPException(status_code=403, detail="Solo el GM puede generar NPCs")
+
         from services.gemini import GeminiService
         gemini = GeminiService()
 
-        campaign_res = supabase.client.table("campaigns").select("name, lore_summary") \
+        campaign_res = supabase.admin_client.table("campaigns").select("name, lore_summary") \
             .eq("id", campaign_id).single().execute()
         campaign = campaign_res.data or {}
 
-        npcs_res = supabase.client.table("npcs").select("name").eq("campaign_id", campaign_id).execute()
+        npcs_res = supabase.admin_client.table("npcs").select("name").eq("campaign_id", campaign_id).execute()
 
         context = {
             "campaign_name": campaign.get("name", ""),
@@ -264,7 +271,7 @@ async def generate_npc(campaign_id: str, data: dict, current_user: dict = Depend
         npc_data = await gemini.generate_npc(context, data.get("prompt", ""))
         stats = npc_data.get("stats") or {}
         
-        insert_res = supabase.client.table("npcs").insert({
+        insert_res = supabase.admin_client.table("npcs").insert({
             "campaign_id": campaign_id,
             "name": npc_data.get("name", "NPC"),
             "race": npc_data.get("race", ""),
@@ -275,38 +282,67 @@ async def generate_npc(campaign_id: str, data: dict, current_user: dict = Depend
         }).execute()
 
         return insert_res.data[0] if insert_res.data else npc_data
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error generando NPC: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/{campaign_id}/npcs")
-async def list_npcs(campaign_id: str):
+async def list_npcs(campaign_id: str, current_user: dict = Depends(get_current_user)):
     try:
         supabase = get_supabase()
-        result = supabase.client.table("npcs").select("*") \
+        
+        # Verificar que sea miembro de la campaña
+        member_check = supabase.admin_client.table("campaign_members").select("id") \
+            .eq("campaign_id", campaign_id).eq("user_id", current_user["id"]).execute()
+        if not member_check.data:
+            raise HTTPException(status_code=403, detail="No eres miembro de esta campaña")
+
+        result = supabase.admin_client.table("npcs").select("*") \
             .eq("campaign_id", campaign_id).order("created_at").execute()
         return result.data or []
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error listando NPCs: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.patch("/{campaign_id}/npcs/{npc_id}")
-async def update_npc(npc_id: str, data: dict):
+async def update_npc(campaign_id: str, npc_id: str, data: dict, current_user: dict = Depends(get_current_user)):
     try:
         supabase = get_supabase()
+        
+        # Verificar que sea GM
+        member_check = supabase.admin_client.table("campaign_members").select("role") \
+            .eq("campaign_id", campaign_id).eq("user_id", current_user["id"]).execute()
+        if not member_check.data or member_check.data[0]["role"] != "GM":
+            raise HTTPException(status_code=403, detail="Solo el GM puede editar NPCs")
+
         update_data = {k: v for k, v in data.items() if v is not None}
-        result = supabase.client.table("npcs").update(update_data).eq("id", npc_id).execute()
+        result = supabase.admin_client.table("npcs").update(update_data).eq("id", npc_id).execute()
         return result.data[0] if result.data else {}
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error actualizando NPC: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/{campaign_id}/npcs/{npc_id}")
-async def delete_npc(npc_id: str):
+async def delete_npc(campaign_id: str, npc_id: str, current_user: dict = Depends(get_current_user)):
     try:
         supabase = get_supabase()
-        supabase.client.table("npcs").delete().eq("id", npc_id).execute()
+        
+        # Verificar que sea GM
+        member_check = supabase.admin_client.table("campaign_members").select("role") \
+            .eq("campaign_id", campaign_id).eq("user_id", current_user["id"]).execute()
+        if not member_check.data or member_check.data[0]["role"] != "GM":
+            raise HTTPException(status_code=403, detail="Solo el GM puede eliminar NPCs")
+
+        supabase.admin_client.table("npcs").delete().eq("id", npc_id).execute()
         return {"message": "NPC eliminado"}
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error eliminando NPC: {e}")
         raise HTTPException(status_code=500, detail=str(e))

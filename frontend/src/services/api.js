@@ -5,7 +5,7 @@ const getApiBase = () => {
     // Railway HTTPS: no incluir puerto
     return 'https://dungeonassistanttest-production.up.railway.app/api'
   }
-  return 'http://localhost:8000'
+  return 'http://localhost:8000/api'
 }
 
 const API_BASE = getApiBase()
@@ -18,7 +18,7 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem('auth_token')
+  const token = localStorage.getItem('auth_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -30,8 +30,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       console.warn("Sesión expirada o inválida. Redirigiendo a login...")
-      sessionStorage.removeItem('auth_token')
-      sessionStorage.removeItem('auth_user')
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('auth_user')
       const path = window.location.pathname
       if (path !== '/login' && path !== '/') {
         window.location.href = '/login'
