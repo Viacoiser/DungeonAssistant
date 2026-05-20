@@ -48,7 +48,12 @@ function makeSpellcasting() {
   }
 }
 
-export default function CharacterForm({ campaignId, onSubmit, loading, initialData }) {
+export default function CharacterForm({ campaignId, onSubmit, loading, initialData, ocrFields = new Set(), onOcrExtracted }) {
+  // Helper: clase de borde ámbar para campos rellenados por OCR
+  const ocr = (key) => ocrFields.has(key)
+    ? 'border-amber-400/60 ring-1 ring-amber-400/30 bg-amber-400/5'
+    : ''
+
   const { races, classes, backgrounds, alignments } = useDndData()
   const { calculateBaseStats, calculateMaxHP } = useDnd5eAPI()
 
@@ -394,79 +399,103 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
   }
 
   const handleCharacterDataExtracted = (extractedData) => {
+    // Si el padre quiere manejar el flujo OCR (para mostrar el modal de revisión), delegar
+    if (onOcrExtracted) {
+      onOcrExtracted(extractedData)
+      setShowCamera(false)
+      return
+    }
+
+    // Flujo interno: construir spellcasting anidado desde campos planos
+    const spellcasting = (extractedData.spellcasting_class || extractedData.cantrips?.length || extractedData.spells?.length)
+      ? {
+          class: extractedData.spellcasting_class || '',
+          ability: (extractedData.spellcasting_ability || '').toLowerCase(),
+          save_dc: extractedData.spell_save_dc || 0,
+          attack_bonus: extractedData.spell_attack_bonus || 0,
+          slots: Object.fromEntries(
+            Array.from({ length: 9 }, (_, i) => [String(i + 1), { total: 0, used: 0 }])
+          ),
+          cantrips: extractedData.cantrips || [],
+          spells: (extractedData.spells || []).map(s => (typeof s === 'string' ? s : s.name)),
+        }
+      : extractedData.spellcasting || null
+
+    const merged = { ...extractedData, spellcasting }
+
     // Actualizar el formulario con TODOS los datos escaneados de una vez
     setFormData(prev => {
       const updated = { ...prev }
       
       // Identificación — con fuzzy matching para selects
-      if (extractedData.character_name) updated.name = extractedData.character_name
-      if (extractedData.race) updated.race = findBestMatch(extractedData.race, races) || extractedData.race
-      if (extractedData.class) updated.class_ = findBestMatch(extractedData.class, classes) || extractedData.class
-      if (extractedData.subclass) updated.subclass = extractedData.subclass
-      if (extractedData.level) updated.level = extractedData.level
-      if (extractedData.background) updated.background = findBestMatch(extractedData.background, backgrounds) || extractedData.background
-      if (extractedData.alignment) updated.alignment = findBestMatch(extractedData.alignment, alignments) || extractedData.alignment
-      if (extractedData.experience_points) updated.experience_points = extractedData.experience_points
-      if (extractedData.player_name) updated.player_name = extractedData.player_name
+      if (merged.character_name) updated.name = merged.character_name
+      if (merged.race) updated.race = findBestMatch(merged.race, races) || merged.race
+      if (merged.class) updated.class_ = findBestMatch(merged.class, classes) || merged.class
+      if (merged.subclass) updated.subclass = merged.subclass
+      if (merged.level) updated.level = merged.level
+      if (merged.background) updated.background = findBestMatch(merged.background, backgrounds) || merged.background
+      if (merged.alignment) updated.alignment = findBestMatch(merged.alignment, alignments) || merged.alignment
+      if (merged.experience_points) updated.experience_points = merged.experience_points
+      if (merged.player_name) updated.player_name = merged.player_name
       
       // Stats
-      if (extractedData.stats) {
+      if (merged.stats) {
         updated.stats = {
-          strength: extractedData.stats.strength || prev.stats.strength,
-          dexterity: extractedData.stats.dexterity || prev.stats.dexterity,
-          constitution: extractedData.stats.constitution || prev.stats.constitution,
-          intelligence: extractedData.stats.intelligence || prev.stats.intelligence,
-          wisdom: extractedData.stats.wisdom || prev.stats.wisdom,
-          charisma: extractedData.stats.charisma || prev.stats.charisma,
+          strength: merged.stats.strength || prev.stats.strength,
+          dexterity: merged.stats.dexterity || prev.stats.dexterity,
+          constitution: merged.stats.constitution || prev.stats.constitution,
+          intelligence: merged.stats.intelligence || prev.stats.intelligence,
+          wisdom: merged.stats.wisdom || prev.stats.wisdom,
+          charisma: merged.stats.charisma || prev.stats.charisma,
         }
       }
       
       // Combate
-      if (extractedData.armor_class) updated.armor_class = extractedData.armor_class
-      if (extractedData.hp_max) {
-        updated.hp_max = extractedData.hp_max
-        updated.hp_current = extractedData.hp_current || extractedData.hp_max
+      if (merged.armor_class) updated.armor_class = merged.armor_class
+      if (merged.hp_max) {
+        updated.hp_max = merged.hp_max
+        updated.hp_current = merged.hp_current || merged.hp_max
       }
-      if (extractedData.hp_temporary) updated.hp_temporary = extractedData.hp_temporary
-      if (extractedData.proficiency_bonus) updated.proficiency_bonus = extractedData.proficiency_bonus
-      if (extractedData.initiative) updated.initiative = extractedData.initiative
-      if (extractedData.speed) updated.speed = extractedData.speed
-      if (extractedData.hit_dice) updated.hit_dice = extractedData.hit_dice
-      if (extractedData.passive_perception) updated.passive_perception = extractedData.passive_perception
-      if (extractedData.inspiration !== undefined) updated.inspiration = extractedData.inspiration
+      if (merged.hp_temporary) updated.hp_temporary = merged.hp_temporary
+      if (merged.proficiency_bonus) updated.proficiency_bonus = merged.proficiency_bonus
+      if (merged.initiative) updated.initiative = merged.initiative
+      if (merged.speed) updated.speed = merged.speed
+      if (merged.hit_dice) updated.hit_dice = merged.hit_dice
+      if (merged.passive_perception) updated.passive_perception = merged.passive_perception
+      if (merged.inspiration !== undefined) updated.inspiration = merged.inspiration
       
       // Saving throws y skills (estructurados)
-      if (extractedData.saving_throws) updated.saving_throws = extractedData.saving_throws
-      if (extractedData.skills) updated.skills = extractedData.skills
+      if (merged.saving_throws) updated.saving_throws = merged.saving_throws
+      if (merged.skills) updated.skills = merged.skills
       
       // Ataques
-      if (extractedData.attacks) updated.attacks = extractedData.attacks
+      if (merged.attacks) updated.attacks = merged.attacks
       
       // Equipo
-      if (extractedData.equipment) updated.equipment = extractedData.equipment
-      if (extractedData.currency) updated.currency = extractedData.currency
+      if (merged.equipment) updated.equipment = merged.equipment
+      if (merged.currency) updated.currency = merged.currency
       
       // Personalidad
-      if (extractedData.personality_traits) updated.personality_traits = extractedData.personality_traits
-      if (extractedData.ideals) updated.ideals = extractedData.ideals
-      if (extractedData.bonds) updated.bonds = extractedData.bonds
-      if (extractedData.flaws) updated.flaws = extractedData.flaws
+      if (merged.personality_traits) updated.personality_traits = merged.personality_traits
+      if (merged.ideals) updated.ideals = merged.ideals
+      if (merged.bonds) updated.bonds = merged.bonds
+      if (merged.flaws) updated.flaws = merged.flaws
       
       // Rasgos
-      if (extractedData.features_traits) updated.features_traits = extractedData.features_traits
-      if (extractedData.other_proficiencies) updated.other_proficiencies = extractedData.other_proficiencies
+      if (merged.features_traits) updated.features_traits = merged.features_traits
+      if (merged.other_proficiencies) updated.other_proficiencies = merged.other_proficiencies
       
-      // Spellcasting
-      if (extractedData.spellcasting) updated.spellcasting = extractedData.spellcasting
+      // Spellcasting (ya resuelto arriba)
+      if (merged.spellcasting) updated.spellcasting = merged.spellcasting
       
       // Apariencia
-      if (extractedData.age) updated.age = extractedData.age
-      if (extractedData.height) updated.height = extractedData.height
-      if (extractedData.weight) updated.weight = extractedData.weight
-      if (extractedData.eyes) updated.eyes = extractedData.eyes
-      if (extractedData.skin) updated.skin = extractedData.skin
-      if (extractedData.hair) updated.hair = extractedData.hair
-      if (extractedData.backstory) updated.backstory = extractedData.backstory
+      if (merged.age) updated.age = merged.age
+      if (merged.height) updated.height = merged.height
+      if (merged.weight) updated.weight = merged.weight
+      if (merged.eyes) updated.eyes = merged.eyes
+      if (merged.skin) updated.skin = merged.skin
+      if (merged.hair) updated.hair = merged.hair
+      if (merged.backstory) updated.backstory = merged.backstory
       
       return updated
     })
@@ -680,7 +709,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.name}
               onChange={handleChange}
               className={`w-full px-4 py-2 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600 ${
-                submitAttempted && errors.name ? 'border-red-500' : 'border-gray-600'
+                submitAttempted && errors.name ? 'border-red-500' : `border-gray-600 ${ocr('character_name')}`
               }`}
               placeholder="Aragorn, Merlin, etc..."
             />
@@ -700,7 +729,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.level}
               onChange={handleChange}
               className={`w-full px-4 py-2 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-yellow-600 ${
-                submitAttempted && errors.level ? 'border-red-500' : 'border-gray-600'
+                submitAttempted && errors.level ? 'border-red-500' : `border-gray-600 ${ocr('level')}`
               }`}
             />
             {submitAttempted && errors.level && <p className="text-red-400 text-sm mt-1">{errors.level}</p>}
@@ -716,7 +745,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.race}
               onChange={handleChange}
               className={`w-full px-4 py-2 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-yellow-600 ${
-                submitAttempted && errors.race ? 'border-red-500' : 'border-gray-600'
+                submitAttempted && errors.race ? 'border-red-500' : `border-gray-600 ${ocr('race')}`
               }`}
             >
               <option value="" style={{ background: '#1a1a1a', color: '#fff' }}>Seleccionar raza...</option>
@@ -739,7 +768,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.class_}
               onChange={handleChange}
               className={`w-full px-4 py-2 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-yellow-600 ${
-                submitAttempted && errors.class_ ? 'border-red-500' : 'border-gray-600'
+                submitAttempted && errors.class_ ? 'border-red-500' : `border-gray-600 ${ocr('class')}`
               }`}
             >
               <option value="" style={{ background: '#1a1a1a', color: '#fff' }}>Seleccionar clase...</option>
@@ -761,7 +790,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               name="background"
               value={formData.background}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600 ${ocr('background')}`}
             >
               <option value="" style={{ background: '#1a1a1a', color: '#fff' }}>Seleccionar trasfondo...</option>
               {backgrounds.map((bg) => (
@@ -781,7 +810,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               name="alignment"
               value={formData.alignment}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600 ${ocr('alignment')}`}
             >
               <option value="" style={{ background: '#1a1a1a', color: '#fff' }}>Seleccionar alineación...</option>
               {alignments.map((align) => (
@@ -798,7 +827,35 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
       <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
         <h2 className="text-xl font-bold text-yellow-600 mb-6">🖼️ Imagen del Personaje</h2>
 
-        {/* Image Preview */}
+      {/* OCR Re-scan Banner — shown when OCR data has been applied */}
+      {ocrFields.size > 0 && (
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem',
+          padding: '0.75rem 1.25rem', borderRadius: 12,
+          background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)',
+          marginBottom: '0.5rem',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#fcd34d' }}>
+            <span>📷</span>
+            <span style={{ fontWeight: 600 }}>{ocrFields.size} campos pre-rellenados por OCR</span>
+            <span style={{ color: 'rgba(255,200,50,0.6)', fontSize: '0.78rem' }}>— Los campos con borde ámbar fueron detectados automáticamente</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowCamera(true)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '0.4rem',
+              padding: '0.35rem 0.85rem', borderRadius: 8,
+              background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.35)',
+              color: '#fcd34d', cursor: 'pointer', fontWeight: 600, fontSize: '0.8rem',
+            }}
+          >
+            <Camera size={14} /> Re-escanear
+          </button>
+        </div>
+      )}
+
+      {/* Image Preview */}
         <div className="mb-4">
           {imagePreview ? (
             <div className="relative">
@@ -916,7 +973,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.hp_max}
               onChange={handleChange}
               className={`w-full px-4 py-2 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-yellow-600 ${
-                submitAttempted && errors.hp_max ? 'border-red-500' : 'border-gray-600'
+                submitAttempted && errors.hp_max ? 'border-red-500' : `border-gray-600 ${ocr('hp_max')}`
               }`}
             />
             {submitAttempted && errors.hp_max && <p className="text-red-400 text-sm mt-1">{errors.hp_max}</p>}
@@ -948,7 +1005,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               name="armor_class"
               value={formData.armor_class}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600 ${ocr('armor_class')}`}
             />
           </div>
 
@@ -962,7 +1019,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               name="initiative"
               value={formData.initiative}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600 ${ocr('initiative')}`}
             />
           </div>
 
@@ -976,7 +1033,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               name="speed"
               value={formData.speed}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600 ${ocr('speed')}`}
             />
           </div>
 
@@ -990,7 +1047,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               name="proficiency_bonus"
               value={formData.proficiency_bonus}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600 ${ocr('proficiency_bonus')}`}
             />
           </div>
 
@@ -1005,7 +1062,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.hit_dice}
               onChange={handleChange}
               placeholder="1d8"
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600 ${ocr('hit_dice')}`}
             />
           </div>
 
@@ -1019,7 +1076,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               name="passive_perception"
               value={formData.passive_perception}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-600 ${ocr('passive_perception')}`}
             />
           </div>
         </div>
@@ -1040,7 +1097,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.personality_traits}
               onChange={handleChange}
               rows="3"
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600 ${ocr('personality_traits')}`}
               placeholder="Describe los rasgos de personalidad..."
             />
           </div>
@@ -1055,7 +1112,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.ideals}
               onChange={handleChange}
               rows="3"
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600 ${ocr('ideals')}`}
               placeholder="¿Qué ideales defiende tu personaje?"
             />
           </div>
@@ -1070,7 +1127,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.bonds}
               onChange={handleChange}
               rows="3"
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600 ${ocr('bonds')}`}
               placeholder="¿A qué personas u organizaciones está vinculado?"
             />
           </div>
@@ -1085,7 +1142,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.flaws}
               onChange={handleChange}
               rows="3"
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600 ${ocr('flaws')}`}
               placeholder="¿Cuáles son sus debilidades o defectos?"
             />
           </div>
@@ -1100,7 +1157,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.other_proficiencies}
               onChange={handleChange}
               rows="3"
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600 ${ocr('other_proficiencies')}`}
               placeholder="Idiomas, herramientas, etc..."
             />
           </div>
@@ -1115,7 +1172,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.equipment}
               onChange={handleChange}
               rows="3"
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600 ${ocr('equipment')}`}
               placeholder="Armas, armaduras, objetos especiales..."
             />
           </div>
@@ -1130,7 +1187,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
               value={formData.features_traits}
               onChange={handleChange}
               rows="3"
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600"
+              className={`w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-600 ${ocr('features_traits')}`}
               placeholder="Habilidades especiales, talentos, etc..."
             />
           </div>

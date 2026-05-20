@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react'
-import { X, Edit2, Save, Trash2, Sword, Shield, Book, Sparkles, User as UserIcon } from 'lucide-react'
+import { X, Edit2, Save, Trash2, Sword, Shield, Book, Sparkles, User as UserIcon, Camera } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import './CharacterSheet5e.css'
@@ -20,8 +20,7 @@ import equipmentData from '../../data/encyclopedia/equipment.json'
 import traitsData from '../../data/encyclopedia/traits.json'
 
 /* ── Header bar ────────────────────────────────────────────── */
-/* ── Header bar ────────────────────────────────────────────── */
-function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, onSave, onCancel, onEdit, isSaving }) {
+function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, onSave, onCancel, onEdit, isSaving, onScanOCR, ocrFields, isCreating, onCreateSubmit }) {
   const classDisplay = [
     character.class_,
     character.subclass,
@@ -59,7 +58,7 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
               value={character.name || ''} 
               onChange={(e) => onEdit({ name: e.target.value })}
               placeholder="Nombre del personaje"
-              disabled={isSaving}
+              disabled={isSaving || isCreating}
             />
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <span style={{ fontSize: '0.7rem', color: 'var(--cs-text-dim)' }}>Lvl</span>
@@ -69,7 +68,7 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
                 style={{ width: '2.5rem' }}
                 value={character.level || 1} 
                 onChange={(e) => onEdit({ level: parseInt(e.target.value) || 1 })}
-                disabled={isSaving}
+                disabled={isSaving || isCreating}
               />
               <input 
                 type="text" 
@@ -77,7 +76,7 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
                 value={character.class_ || ''} 
                 onChange={(e) => onEdit({ class_: e.target.value })}
                 placeholder="Clase"
-                disabled={isSaving}
+                disabled={isSaving || isCreating}
               />
               <input 
                 type="text" 
@@ -85,7 +84,7 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
                 value={character.race || ''} 
                 onChange={(e) => onEdit({ race: e.target.value })}
                 placeholder="Raza"
-                disabled={isSaving}
+                disabled={isSaving || isCreating}
               />
             </div>
           </div>
@@ -108,7 +107,7 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
                   className="cs-identity__meta-input" 
                   value={character.background || ''} 
                   onChange={(e) => onEdit({ background: e.target.value })}
-                  disabled={isSaving}
+                  disabled={isSaving || isCreating}
                 />
               ) : (
                 <span className="cs-meta-item__value">{character.background}</span>
@@ -123,7 +122,7 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
                 style={{ background: 'var(--cs-surface-2)', color: 'var(--cs-text-muted)' }}
                 value={character.alignment || ''}
                 onChange={(e) => onEdit({ alignment: e.target.value })}
-                disabled={isSaving}
+                disabled={isSaving || isCreating}
               >
                 <option value="">None</option>
                 {Object.keys(alignmentMap).map(k => <option key={k} value={k}>{alignmentMap[k]}</option>)}
@@ -141,7 +140,7 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
                   className="cs-identity__meta-input" 
                   value={character.experience_points || 0} 
                   onChange={(e) => onEdit({ experience_points: parseInt(e.target.value) || 0 })}
-                  disabled={isSaving}
+                  disabled={isSaving || isCreating}
                 />
               ) : (
                 <span className="cs-meta-item__value">{xpDisplay}</span>
@@ -164,12 +163,12 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
               <span className="cs-meta-item__label">Status</span>
               <button 
                 onClick={() => onEdit({ is_alive: !character.is_alive })}
-                disabled={isSaving}
+                disabled={isSaving || isCreating}
                 style={{ 
                   background: 'none', border: '1px solid var(--cs-border)', 
                   borderRadius: '4px', color: character.is_alive ? '#4ade80' : '#ef4444',
-                  fontSize: '0.7rem', padding: '0.1rem 0.4rem', cursor: isSaving ? 'not-allowed' : 'pointer',
-                  opacity: isSaving ? 0.5 : 1
+                  fontSize: '0.7rem', padding: '0.1rem 0.4rem', cursor: (isSaving || isCreating) ? 'not-allowed' : 'pointer',
+                  opacity: (isSaving || isCreating) ? 0.5 : 1
                 }}
               >
                 {character.is_alive ? 'VIVO' : 'MUERTO'}
@@ -181,7 +180,52 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
 
       {/* Controls */}
       <div className="cs-header__controls">
-        {isEditing ? (
+        {/* Modo Creación */}
+        {mode === 'create' ? (
+          <>
+            {/* Botón OCR en header */}
+            {onScanOCR && (
+              <button
+                type="button"
+                onClick={onScanOCR}
+                className="cs-btn"
+                style={{
+                  background: ocrFields?.size > 0
+                    ? 'rgba(34,197,94,0.15)'
+                    : 'rgba(217,83,30,0.15)',
+                  border: ocrFields?.size > 0
+                    ? '1px solid rgba(34,197,94,0.4)'
+                    : '1px solid rgba(217,83,30,0.4)',
+                  color: ocrFields?.size > 0 ? '#86efac' : '#ff8a65',
+                }}
+                disabled={isCreating}
+              >
+                <Camera size={16} />
+                <span className="cs-btn__text">
+                  {ocrFields?.size > 0 ? `✅ ${ocrFields.size} campos` : 'Escanear Hoja'}
+                </span>
+              </button>
+            )}
+            <button
+              type="button"
+              className="cs-btn cs-btn--cancel"
+              onClick={onCancel}
+              disabled={isCreating}
+            >
+              <X size={18} />
+              <span className="cs-btn__text">Cancelar</span>
+            </button>
+            <button
+              type="button"
+              className={`cs-btn cs-btn--save ${isCreating ? 'loading' : ''}`}
+              onClick={onCreateSubmit}
+              disabled={isCreating}
+            >
+              {isCreating ? <div className="cs-spinner" /> : <Save size={18} />}
+              <span className="cs-btn__text">{isCreating ? 'Creando...' : 'Crear Personaje'}</span>
+            </button>
+          </>
+        ) : isEditing ? (
           <>
             <button className="cs-btn cs-btn--cancel" onClick={onCancel} title="Cancelar cambios" disabled={isSaving}>
               <X size={18} />
@@ -204,7 +248,7 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
           </button>
         )}
         
-        {!isEditing && (
+        {!isEditing && mode !== 'create' && (
           <button className="cs-close" onClick={onClose} title="Cerrar">
             <X size={22} />
           </button>
@@ -214,7 +258,7 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
   )
 }
 
-/* ── Main CharacterSheet5e ─────────────────────────────────── */
+/* ── Main CharacterSheet5e ──────────────────────────────────── */
 export default function CharacterSheet5e({
   character: rawCharacter,
   campaignId,
@@ -222,13 +266,20 @@ export default function CharacterSheet5e({
   onUpdate,   // kept for future interactivity phase
   isGM,
   mode = 'modal',
+  // create-mode props
+  onSubmit,   // (characterData) => Promise — called when creating a new character
+  onCancel: onCancelProp,  // () => void  — called when canceling creation
+  onScanOCR,  // () => void  — opens the OCR scanner
+  ocrFields,  // Set<string> — fields pre-filled by OCR
 }) {
   const isMobile = useMediaQuery('(max-width: 850px)')
   const [activeTab, setActiveTab] = useState('stats')
+  const isCreateMode = mode === 'create'
   const initialCharacter = useMemo(() => normalizeCharacter(rawCharacter), [rawCharacter])
   const [character, setCharacter] = useState(initialCharacter)
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(isCreateMode) // always editing in create mode
   const [isSaving, setIsSaving] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
 
   const sheetTabs = [
     { id: 'stats', label: 'Stats', icon: <UserIcon size={16} /> },
@@ -239,10 +290,10 @@ export default function CharacterSheet5e({
 
   // Update local state when prop changes (but only if not editing)
   useEffect(() => {
-    if (!isEditing) {
+    if (!isEditing || isCreateMode) {
       setCharacter(normalizeCharacter(rawCharacter))
     }
-  }, [rawCharacter, isEditing])
+  }, [rawCharacter, isEditing, isCreateMode])
 
   const handleEdit = useCallback((changes) => {
     setCharacter(prev => ({ ...prev, ...changes }))
@@ -267,6 +318,24 @@ export default function CharacterSheet5e({
       }
     } else {
       setIsEditing(false)
+    }
+  }
+
+  const handleCreateSubmit = async () => {
+    if (!character.name?.trim()) {
+      alert('El nombre del personaje es requerido')
+      return
+    }
+    if (onSubmit) {
+      setIsCreating(true)
+      try {
+        await onSubmit(character)
+      } catch (e) {
+        console.error('Error al crear personaje:', e)
+        alert('Error al crear el personaje. Por favor revisa los datos.')
+      } finally {
+        setIsCreating(false)
+      }
     }
   }
   
@@ -338,9 +407,13 @@ export default function CharacterSheet5e({
         isEditing={isEditing}
         onToggleEdit={() => setIsEditing(!isEditing)}
         onSave={handleSave}
-        onCancel={handleCancel}
+        onCancel={isCreateMode ? onCancelProp : handleCancel}
         onEdit={handleEdit}
         isSaving={isSaving}
+        onScanOCR={isCreateMode ? onScanOCR : undefined}
+        ocrFields={isCreateMode ? ocrFields : undefined}
+        isCreating={isCreating}
+        onCreateSubmit={handleCreateSubmit}
       />
 
       {/* Mobile Tabs */}
@@ -448,5 +521,6 @@ export default function CharacterSheet5e({
     )
   }
 
+  // create mode or split: render inline
   return content
 }

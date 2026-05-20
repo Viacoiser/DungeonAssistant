@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Camera } from 'lucide-react'
 import CharacterForm from '../components/shared/CharacterForm'
 import CameraCapture from '../components/CharacterCreation/CameraCapture'
+import OCRReviewModal from '../components/CharacterCreation/OCRReviewModal'
 import { characterAPI, campaignAPI } from '../services/api'
 
 export default function CreateCharacter({ onClose }) {
@@ -19,7 +20,10 @@ export default function CreateCharacter({ onClose }) {
   const [joiningByCode, setJoiningByCode] = useState(false)
   
   const [showCamera, setShowCamera] = useState(false)
-  const [scannedData, setScannedData] = useState(null)
+  const [rawOcrData, setRawOcrData] = useState(null)   // datos crudos del OCR, previos a la revisión
+  const [showReview, setShowReview] = useState(false)   // mostrar modal de revisión
+  const [scannedData, setScannedData] = useState(null)  // datos aprobados para el formulario
+  const [ocrFields, setOcrFields] = useState(new Set())  // campos rellenados por OCR
 
   const handleSubmit = async (formData) => {
     try {
@@ -93,9 +97,54 @@ export default function CreateCharacter({ onClose }) {
     })
   }
 
+  // Primer callback: el OCR terminó → mostrar modal de revisión
   const handleCharacterDataExtracted = (extractedData) => {
-    setScannedData(extractedData)
+    setRawOcrData(extractedData)
     setShowCamera(false)
+    setShowReview(true)
+  }
+
+  // Segundo callback: el usuario aprueba los datos en el modal de revisión
+  const handleOcrConfirm = (data) => {
+    // Construir el objeto spellcasting anidado desde los campos planos del OCR
+    const spellcasting = (data.spellcasting_class || data.cantrips?.length || data.spells?.length)
+      ? {
+          class: data.spellcasting_class || '',
+          ability: (data.spellcasting_ability || '').toLowerCase(),
+          save_dc: data.spell_save_dc || 0,
+          attack_bonus: data.spell_attack_bonus || 0,
+          slots: Object.fromEntries(
+            Array.from({ length: 9 }, (_, i) => [String(i + 1), { total: 0, used: 0 }])
+          ),
+          cantrips: data.cantrips || [],
+          spells: (data.spells || []).map(s => (typeof s === 'string' ? s : s.name)),
+        }
+      : null
+
+    // Datos normalizados para CharacterForm
+    const normalized = { ...data, spellcasting }
+
+    // Registrar qué campos tienen datos del OCR (para destacarlos en el formulario)
+    const filled = new Set()
+    const simple = [
+      'character_name', 'race', 'class', 'subclass', 'level', 'background',
+      'alignment', 'player_name', 'experience_points',
+      'armor_class', 'hp_max', 'hp_current', 'hp_temporary',
+      'speed', 'initiative', 'proficiency_bonus', 'hit_dice', 'passive_perception', 'inspiration',
+      'equipment', 'personality_traits', 'ideals', 'bonds', 'flaws',
+      'features_traits', 'other_proficiencies',
+    ]
+    simple.forEach(k => { if (data[k] !== null && data[k] !== undefined && data[k] !== '') filled.add(k) })
+    if (data.stats && Object.values(data.stats).some(v => v)) filled.add('stats')
+    if (data.saving_throws) filled.add('saving_throws')
+    if (data.skills) filled.add('skills')
+    if (data.attacks?.some(a => a?.name)) filled.add('attacks')
+    if (spellcasting) filled.add('spellcasting')
+    if (data.currency) filled.add('currency')
+
+    setOcrFields(filled)
+    setScannedData(normalized)
+    setShowReview(false)
   }
 
   const handleJoinByCode = async () => {
@@ -246,10 +295,23 @@ export default function CreateCharacter({ onClose }) {
           >
             <Camera size={20} /> Escanear Hoja de Personaje
           </button>
-          
           {scannedData && (
-            <div className="text-green-400 text-sm font-semibold">
-              Datos escaneados listos para revisar
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                padding: '0.3rem 0.8rem', borderRadius: 999,
+                background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)',
+                color: '#86efac', fontSize: '0.82rem', fontWeight: 700,
+              }}>✅ {ocrFields.size} campos escaneados</span>
+              <button
+                type="button"
+                onClick={() => { setShowReview(true); }}
+                style={{
+                  padding: '0.3rem 0.8rem', borderRadius: 999, fontSize: '0.8rem',
+                  background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)',
+                  color: '#ccc', cursor: 'pointer', fontWeight: 600,
+                }}
+              >Ver revisión</button>
             </div>
           )}
         </div>
@@ -261,10 +323,19 @@ export default function CreateCharacter({ onClose }) {
           />
         )}
 
+        {showReview && rawOcrData && (
+          <OCRReviewModal
+            ocrData={rawOcrData}
+            onConfirm={handleOcrConfirm}
+            onRescan={() => { setShowReview(false); setShowCamera(true); }}
+            onCancel={() => setShowReview(false)}
+          />
+        )}
+
         {scannedData && (
           <div className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-            <h3 className="text-green-400 font-semibold mb-2">Datos Escaneados:</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-green-300">
+            <h3 className="text-green-400 font-semibold mb-2">📷 Datos escaneados aplicados:</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-green-300">
               {scannedData.character_name && <div><strong>Nombre:</strong> {scannedData.character_name}</div>}
               {scannedData.race && <div><strong>Raza:</strong> {scannedData.race}</div>}
               {scannedData.class && <div><strong>Clase:</strong> {scannedData.class}</div>}
@@ -276,6 +347,16 @@ export default function CreateCharacter({ onClose }) {
               {scannedData.hp_max && <div><strong>HP Máx:</strong> {scannedData.hp_max}</div>}
               {scannedData.speed && <div><strong>Velocidad:</strong> {scannedData.speed}</div>}
               {scannedData.hit_dice && <div><strong>Dado de Golpe:</strong> {scannedData.hit_dice}</div>}
+              {scannedData.stats?.strength && <div><strong>STR:</strong> {scannedData.stats.strength}</div>}
+              {scannedData.stats?.dexterity && <div><strong>DEX:</strong> {scannedData.stats.dexterity}</div>}
+              {scannedData.stats?.constitution && <div><strong>CON:</strong> {scannedData.stats.constitution}</div>}
+              {scannedData.spellcasting?.class && <div><strong>Hechicería:</strong> {scannedData.spellcasting.class}</div>}
+              {scannedData.spellcasting?.cantrips?.length > 0 && (
+                <div><strong>Cantrips:</strong> {scannedData.spellcasting.cantrips.length}</div>
+              )}
+              {scannedData.spellcasting?.spells?.length > 0 && (
+                <div><strong>Hechizos:</strong> {scannedData.spellcasting.spells.length}</div>
+              )}
             </div>
           </div>
         )}
@@ -284,6 +365,8 @@ export default function CreateCharacter({ onClose }) {
           campaignId={campaignId}
           onSubmit={handleSubmit}
           loading={loading}
+          ocrFields={ocrFields}
+          onOcrExtracted={handleCharacterDataExtracted}
           initialData={scannedData ? {
             name: scannedData.character_name || '',
             race: scannedData.race || '',
