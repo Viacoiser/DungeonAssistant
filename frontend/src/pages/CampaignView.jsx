@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { User } from 'lucide-react'
+import { User, Swords, Maximize2, X, Sparkles, Play, Dices, RefreshCw, Check, Lock, Shield, AlertTriangle } from 'lucide-react'
 import { campaignAPI, characterAPI } from '../services/api'
 import { useAuthStore } from '../store/useAuthStore'
 import LoadingSpinner from '../components/shared/LoadingSpinner'
@@ -32,6 +32,22 @@ export default function CampaignView() {
   const [playerName, setPlayerName] = useState(null) // Para mostrar el nombre del personaje del player
   const [combatState, setCombatState] = useState({ status: 'inactive', turns: [], history: [], current_turn: 0 })
   const [isTrackerOpen, setIsTrackerOpen] = useState(false)
+  const [isMiniTrackerHidden, setIsMiniTrackerHidden] = useState(false)
+
+  // Estados adicionales para la tirada de iniciativa desde el Mini-Tracker
+  const [characterId, setCharacterId] = useState(null)
+  const [characterInitiative, setCharacterInitiative] = useState(0)
+  const [miniIsRolling, setMiniIsRolling] = useState(false)
+  const [miniRollingNum, setMiniRollingNum] = useState(20)
+  const [miniTempTotal, setMiniTempTotal] = useState(null)
+  const [miniRollValue, setMiniRollValue] = useState(null)
+  const [activeUsers, setActiveUsers] = useState([])
+
+  const formatModifier = (val) => {
+    const num = parseInt(val)
+    if (isNaN(num)) return '+0'
+    return num >= 0 ? `+${num}` : `${num}`
+  }
 
   // ── SOCKET SETUP ──────────────────────────────────────────────────────────
   const joinedCampaignRef = useRef(null)
@@ -66,11 +82,38 @@ export default function CampaignView() {
       setCombatState(state)
     }
 
+    const handleJoinedCampaign = (data) => {
+      if (data && data.active_users) {
+        setActiveUsers(data.active_users)
+      }
+    }
+
+    const handleUserJoined = (data) => {
+      if (data && data.active_users) {
+        setActiveUsers(data.active_users)
+      }
+    }
+
+    const handleUserLeft = (data) => {
+      if (data && data.active_users) {
+        setActiveUsers(data.active_users)
+      } else if (data && data.user_id) {
+        setActiveUsers(prev => prev.filter(u => u.user_id !== data.user_id))
+      }
+    }
+
     socket.off('combat_state_update')
     socket.on('combat_state_update', handleCombatUpdate)
 
+    socket.on('joined_campaign', handleJoinedCampaign)
+    socket.on('user_joined', handleUserJoined)
+    socket.on('user_left', handleUserLeft)
+
     return () => {
       socket.off('combat_state_update', handleCombatUpdate)
+      socket.off('joined_campaign', handleJoinedCampaign)
+      socket.off('user_joined', handleUserJoined)
+      socket.off('user_left', handleUserLeft)
     }
   }, [campaignId])
 
@@ -88,17 +131,27 @@ export default function CampaignView() {
         // Si es PLAYER, obtener el nombre del personaje del usuario desde localStorage
         if (role !== 'GM') {
           const savedPlayerName = localStorage.getItem(`campaign_${campaignId}_player_name`)
-          if (savedPlayerName) {
+          const savedCharId = localStorage.getItem(`campaign_${campaignId}_player_char_id`)
+          const savedCharInit = localStorage.getItem(`campaign_${campaignId}_player_char_init`)
+          
+          if (savedPlayerName && savedCharId) {
             setPlayerName(savedPlayerName)
+            setCharacterId(savedCharId)
+            setCharacterInitiative(parseInt(savedCharInit) || 0)
           } else {
             // Intentar obtener del backend si no está guardado
             try {
               const charsRes = await characterAPI.list(campaignId)
               const playerChars = charsRes.data?.characters?.filter(c => c.player_id === user?.id) || []
               if (playerChars.length > 0) {
-                const charName = playerChars[0].name
-                setPlayerName(charName)
-                localStorage.setItem(`campaign_${campaignId}_player_name`, charName)
+                const char = playerChars[0]
+                setPlayerName(char.name)
+                setCharacterId(char.id)
+                setCharacterInitiative(char.initiative || 0)
+                
+                localStorage.setItem(`campaign_${campaignId}_player_name`, char.name)
+                localStorage.setItem(`campaign_${campaignId}_player_char_id`, char.id)
+                localStorage.setItem(`campaign_${campaignId}_player_char_init`, char.initiative || 0)
               }
             } catch (e) {
               console.error('Error obtener personajes:', e)
@@ -114,7 +167,112 @@ export default function CampaignView() {
     load()
   }, [campaignId, user?.id])
 
+  // Reset mini tracker visibility when combat ends or starts
+  useEffect(() => {
+    if (combatState.status === 'inactive') {
+      setIsMiniTrackerHidden(false)
+    }
+  }, [combatState.status])
+
+  // Controlar la apertura automática del tracker cuando el combate se activa
+  const prevCombatStatusRef = useRef('inactive')
+  useEffect(() => {
+    const prev = prevCombatStatusRef.current
+    const curr = combatState?.status || 'inactive'
+    prevCombatStatusRef.current = curr
+    
+    if (prev === 'inactive' && (curr === 'rolling' || curr === 'active')) {
+      setIsTrackerOpen(true)
+    }
+  }, [combatState?.status])
+
+  // Obtener mi personaje en el combate actual
+  const getMyCombatParticipant = () => {
+    if (!combatState || !combatState.turns || !characterId) return null
+    return combatState.turns.find(t => t.id === characterId)
+  }
+  const myParticipant = getMyCombatParticipant()
+
+  // Tirar iniciativa directamente desde el Mini-Tracker
+  const startMiniRoll = () => {
+    if (!characterId || miniIsRolling) return
+    setMiniIsRolling(true)
+    let counter = 0
+    const interval = setInterval(() => {
+      setMiniRollingNum(Math.floor(Math.random() * 20) + 1)
+      counter++
+      if (counter > 10) {
+        clearInterval(interval)
+        const d20 = Math.floor(Math.random() * 20) + 1
+        const total = d20 + characterInitiative
+        setMiniRollValue(d20)
+        setMiniTempTotal(total)
+        setMiniIsRolling(false)
+        
+        // Enviar tirada tentativa al socket
+        const socket = getSocket()
+        if (socket) {
+          socket.emit('submit_initiative', {
+            campaign_id: campaignId,
+            participant_id: characterId,
+            name: playerName,
+            roll: d20,
+            modifier: characterInitiative,
+            total: total,
+            is_monster: false
+          })
+        }
+      }
+    }, 60)
+  }
+
+  const confirmMiniRoll = () => {
+    const socket = getSocket()
+    if (socket && characterId) {
+      socket.emit('confirm_initiative', {
+        campaign_id: campaignId,
+        participant_id: characterId
+      })
+    }
+  }
+
+  const startCombatFromMini = () => {
+    const socket = getSocket()
+    if (socket) {
+      socket.emit('finish_rolling_phase', { campaign_id: campaignId })
+    }
+  }
+
   const isGM = userRole === 'GM'
+
+  // Obtener los participantes visibles a partir del turno actual circularmente
+  const getMiniTrackerData = () => {
+    if (!combatState || combatState.status === 'inactive' || !combatState.turns?.length) {
+      return { activeParticipant: null, nextParticipants: [], isMonsterTurn: false }
+    }
+
+    const turns = combatState.turns
+    const currentIdx = combatState.current_turn
+    const activeParticipant = turns[currentIdx]
+    const isMonsterTurn = activeParticipant?.is_monster === true
+
+    // Obtener los siguientes participantes visibles (hasta 2 después del actual, circularmente)
+    const nextParticipants = []
+    const totalTurns = turns.length
+    for (let i = 1; i < totalTurns; i++) {
+      const idx = (currentIdx + i) % totalTurns
+      const p = turns[idx]
+      // Filtrar monstruos si no es GM
+      if (isGM || !p.is_monster) {
+        nextParticipants.push(p)
+      }
+      if (nextParticipants.length >= 2) break
+    }
+
+    return { activeParticipant, nextParticipants, isMonsterTurn }
+  }
+
+  const { activeParticipant, nextParticipants, isMonsterTurn } = getMiniTrackerData()
 
   const tabs = [
     { id: 'notes', label: 'Notas', icon: <Icon.scroll /> },
@@ -257,21 +415,185 @@ export default function CampaignView() {
         </div>
       </main>
 
-      {/* Floating Initiative Tracker Alert Bar */}
-      {combatState && combatState.status !== 'inactive' && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-bounce">
-          <button
-            onClick={() => setIsTrackerOpen(true)}
-            className="px-5 py-3 bg-gradient-to-r from-amber-700 via-fantasy-accent to-amber-700 hover:brightness-110 border border-fantasy-gold/30 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_15px_rgba(217,83,30,0.4)] text-white text-xs lg:text-sm font-semibold font-display tracking-widest flex items-center gap-3 active:scale-95 transition-all duration-300"
-          >
-            <span className="flex h-2.5 w-2.5 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
-            </span>
-            <span className="flex items-center gap-2">
-              ⚔️ COMBATE EN CURSO — VER INICIATIVA EN VIVO
-            </span>
-          </button>
+      {/* Mini Tracker de Iniciativa Flotante (Minimizado) */}
+      {combatState && combatState.status !== 'inactive' && !isTrackerOpen && !isMiniTrackerHidden && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-sm px-4">
+          <div className="bg-[#0d0a08]/95 backdrop-blur-md border border-fantasy-gold/20 rounded-2xl p-3 shadow-[0_10px_35px_rgba(0,0,0,0.85)] flex flex-col gap-2.5 transition-all duration-300">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-white/5 pb-1.5">
+              <span className="font-serif text-[10px] font-bold text-fantasy-gold/75 tracking-wider uppercase flex items-center gap-1.5">
+                <Swords size={12} className="text-fantasy-accent" />
+                Iniciativa Activa
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setIsTrackerOpen(true)}
+                  className="p-1 hover:bg-white/5 rounded text-fantasy-gold/60 hover:text-white transition"
+                  title="Maximizar Combate"
+                >
+                  <Maximize2 size={12} />
+                </button>
+                <button
+                  onClick={() => setIsMiniTrackerHidden(true)}
+                  className="p-1 hover:bg-white/5 rounded text-fantasy-gold/60 hover:text-red-400 transition"
+                  title="Ocultar Widget"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            </div>
+
+            {/* Contenido Dinámico del Mini-Tracker */}
+            {(!isGM && characterId && (!myParticipant || !myParticipant.confirmed)) ? (
+              /* PANEL DE TIRADA DEL JUGADOR EN EL MINI-TRACKER */
+              <div className="bg-gradient-to-r from-fantasy-accent/15 to-amber-950/15 border border-fantasy-gold/30 rounded-xl p-2.5 flex flex-col gap-2 shadow-[0_0_15px_rgba(217,83,30,0.15)]">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-bold text-fantasy-gold uppercase tracking-wider flex items-center gap-1">
+                    <Dices size={10} className="text-fantasy-accent animate-pulse" />
+                    Tu Tirada de Iniciativa
+                  </span>
+                  <span className="text-[8px] text-fantasy-gold/50">Modificador: {formatModifier(characterInitiative)}</span>
+                </div>
+                
+                <div className="flex items-center gap-2.5">
+                  <button
+                    disabled={miniIsRolling || (myParticipant?.roll !== undefined && !miniTempTotal)}
+                    onClick={startMiniRoll}
+                    className={`w-10 h-10 rounded-lg bg-gradient-to-br from-fantasy-accent to-red-700 hover:brightness-110 border border-fantasy-gold/35 flex items-center justify-center font-serif text-sm font-bold text-white shadow-md active:scale-95 transition-all duration-300
+                      ${miniIsRolling ? 'animate-bounce' : ''}
+                      ${(myParticipant?.roll !== undefined || miniTempTotal !== null) ? 'opacity-75' : ''}
+                    `}
+                  >
+                    {miniIsRolling ? (
+                      <span className="text-white animate-pulse">{miniRollingNum}</span>
+                    ) : (
+                      <span>{myParticipant?.roll !== undefined ? myParticipant.roll : (miniRollValue || 'd20')}</span>
+                    )}
+                  </button>
+
+                  <div className="flex-1 flex items-center justify-between">
+                    {(myParticipant?.roll !== undefined || miniTempTotal !== null) ? (
+                      <div className="flex items-center justify-between w-full">
+                        <div>
+                          <div className="text-[8px] text-fantasy-gold/50">Total</div>
+                          <div className="text-xs font-bold text-white">
+                            {myParticipant?.total !== undefined ? myParticipant.total : miniTempTotal} 
+                            <span className="text-[8px] text-fantasy-gold/60 ml-1 font-normal">
+                              ({myParticipant?.roll !== undefined ? myParticipant.roll : miniRollValue} {formatModifier(characterInitiative)})
+                            </span>
+                          </div>
+                        </div>
+                        {!(myParticipant?.confirmed) ? (
+                          <button
+                            onClick={confirmMiniRoll}
+                            className="px-2.5 py-1 bg-green-700 hover:bg-green-600 text-white font-display font-semibold text-[9px] tracking-wider rounded transition active:scale-95 flex items-center gap-1 shadow-md border border-green-500/30"
+                          >
+                            <Check size={9} />
+                            CONFIRMAR
+                          </button>
+                        ) : (
+                          <span className="text-[8px] text-green-400 font-semibold tracking-wider flex items-center gap-1">
+                            <Check size={10} /> CONFIRMADA
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-[9px] text-fantasy-gold/70 leading-snug">Lanza tu d20 para entrar al combate.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (isGM && combatState.status === 'rolling') ? (
+              /* PANEL DEL GM EN EL MINI-TRACKER (Rolling Phase) */
+              <div className="bg-white/3 border border-white/5 rounded-xl p-2.5 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-bold text-fantasy-gold uppercase tracking-wider">
+                    Fase de Tiradas
+                  </span>
+                  <span className="text-[8px] text-fantasy-accent font-semibold">
+                    {combatState.turns?.filter(t => t.confirmed).length || 0} / {combatState.turns?.filter(t => !t.is_monster).length || 0} Confirmados
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-[9px] text-fantasy-gold/60 leading-snug">
+                    Los jugadores están tirando. Puedes iniciar el combate ya.
+                  </div>
+                  <button
+                    onClick={startCombatFromMini}
+                    className="px-2.5 py-1.5 bg-fantasy-accent hover:brightness-110 text-white font-display font-semibold text-[9px] tracking-wider rounded transition active:scale-95 flex items-center gap-1 shadow-[0_0_8px_rgba(217,83,30,0.3)] border border-fantasy-accent/30"
+                  >
+                    <Play size={9} />
+                    INICIAR
+                  </button>
+                </div>
+              </div>
+            ) : activeParticipant ? (
+              playerName && activeParticipant.name === playerName ? (
+                /* ¡Es tu Turno! */
+                <div className="bg-gradient-to-r from-fantasy-accent/25 via-amber-950/20 to-transparent border border-fantasy-accent/60 rounded-xl p-2.5 flex items-center justify-between shadow-[0_0_15px_rgba(217,83,30,0.2)] animate-pulse">
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={14} className="text-fantasy-accent animate-spin-slow" />
+                    <div>
+                      <div className="text-[9px] uppercase font-bold tracking-widest text-fantasy-accent">¡Tu Turno!</div>
+                      <div className="text-xs font-bold text-white">¡Te toca actuar, {playerName}!</div>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setIsTrackerOpen(true)}
+                    className="px-2.5 py-1 bg-fantasy-accent hover:brightness-110 text-white font-display font-semibold text-[10px] tracking-wider rounded-lg transition active:scale-95"
+                  >
+                    ABRIR
+                  </button>
+                </div>
+              ) : (
+                /* Turno de otro personaje / criatura */
+                <div className="flex items-center justify-between p-2.5 bg-white/3 border border-white/5 rounded-xl">
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-fantasy-gold/10 border border-fantasy-gold/20 flex items-center justify-center font-display text-[10px] text-fantasy-gold font-bold">
+                      🛡️
+                    </div>
+                    <div>
+                      <div className="text-[8px] uppercase tracking-wider text-fantasy-gold/50">Turno Activo</div>
+                      <div className={`text-xs font-semibold ${isMonsterTurn ? 'text-red-400' : 'text-fantasy-gold'}`}>
+                        {isMonsterTurn && !isGM ? 'Criatura Misteriosa 👾' : activeParticipant.name}
+                      </div>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setIsTrackerOpen(true)}
+                    className="px-2 py-0.5 bg-white/5 hover:bg-white/10 border border-white/10 text-fantasy-gold font-display font-semibold text-[9px] tracking-wider rounded transition active:scale-95"
+                  >
+                    VER
+                  </button>
+                </div>
+              )
+            ) : (
+              <div className="text-xs text-fantasy-gold/30 italic py-1 text-center">Fase de tiradas...</div>
+            )}
+
+            {/* Siguientes Turnos */}
+            {nextParticipants.length > 0 && (
+              <div className="flex items-center gap-1.5 pt-2 border-t border-white/5 text-[9px] text-fantasy-gold/60">
+                <span className="font-semibold uppercase tracking-wider text-[8px] text-fantasy-gold/45">Siguientes:</span>
+                <div className="flex gap-1.5 flex-wrap">
+                  {nextParticipants.map((p) => (
+                    <span 
+                      key={p.id} 
+                      className={`px-2 py-0.5 rounded border text-[9px] font-medium
+                        ${p.is_monster 
+                          ? 'bg-red-950/20 border-red-500/20 text-red-300' 
+                          : 'bg-white/5 border-white/5 text-fantasy-gold/85'
+                        }
+                      `}
+                    >
+                      {p.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -303,6 +625,7 @@ export default function CampaignView() {
             isGM={isGM}
             user={user}
             combatState={combatState}
+            activeUsers={activeUsers}
             onClose={() => setIsTrackerOpen(false)}
           />
         )}

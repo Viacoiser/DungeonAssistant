@@ -73,7 +73,7 @@ class SocketManager:
         
         self.sio = socketio.AsyncServer(
             async_mode='asgi',
-            cors_allowed_origins=allowed,
+            cors_allowed_origins='*',
             logger=False,
             engineio_logger=False
         )
@@ -279,9 +279,14 @@ class SocketManager:
                         del self.campaign_rooms[campaign_id]
                 
                 # Notificar a los demás
+                active_users = self._get_active_users_list(campaign_id)
                 await self.sio.emit(
                     "user_left",
-                    {"user_id": user_info["user_id"], "username": user_info["username"]},
+                    {
+                        "user_id": user_info["user_id"],
+                        "username": user_info["username"],
+                        "active_users": active_users
+                    },
                     to=f"campaign_{campaign_id}"
                 )
                 logger.info(f"Usuario {user_info['username']} salió de sala campaign_{campaign_id}")
@@ -447,8 +452,8 @@ class SocketManager:
                 return
             
             combat = self.active_combats[campaign_id]
-            if combat["status"] != "rolling":
-                return  # Solo en fase de tiradas
+            if combat["status"] not in ["rolling", "active"]:
+                return
             
             # Buscar si ya existe
             existing = None
@@ -500,7 +505,7 @@ class SocketManager:
                 return
             
             combat = self.active_combats[campaign_id]
-            if combat["status"] != "rolling":
+            if combat["status"] not in ["rolling", "active"]:
                 return
             
             # Buscar participante
@@ -517,14 +522,35 @@ class SocketManager:
             participant["confirmed"] = True
             
             # Agregar al historial
+            if combat["status"] == "active":
+                msg = f"🎲 {participant['name']} se unió al combate en curso con iniciativa: {participant['total']} ({participant['roll']} + {participant['modifier']} Mod)"
+            else:
+                msg = f"🎲 {participant['name']} confirmó su tirada: {participant['total']} ({participant['roll']} + {participant['modifier']} Iniciativa)"
+                
             combat["history"].append({
                 "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
-                "message": f"🎲 {participant['name']} confirmó su tirada: {participant['total']} ({participant['roll']} + {participant['modifier']} Iniciativa)"
+                "message": msg
             })
+            
+            # Si el combate ya está activo, ordenar e insertar de forma segura sin perturbar el turno actual
+            if combat["status"] == "active":
+                active_id = None
+                if len(combat["turns"]) > 0 and combat["current_turn"] < len(combat["turns"]):
+                    active_id = combat["turns"][combat["current_turn"]]["id"]
+                
+                # Ordenar turnos descendente por total e iniciativa modificadora
+                combat["turns"].sort(key=lambda x: (x.get("total", 0), x.get("modifier", 0)), reverse=True)
+                
+                # Re-mapear el índice del participante activo
+                if active_id:
+                    for idx, p in enumerate(combat["turns"]):
+                        if p["id"] == active_id:
+                            combat["current_turn"] = idx
+                            break
             
             # Broadcast
             await self.sio.emit("combat_state_update", combat, to=f"campaign_{campaign_id}")
-            logger.info(f"Iniciativa confirmada por {participant['name']} en campaign_{campaign_id}: {participant['total']}")
+            logger.info(f"Iniciativa confirmada por {participant['name']} en campaign_{campaign_id}: {participant['total']} (Estado: {combat['status']})")
             
         except Exception as e:
             logger.error(f"Error en on_confirm_initiative: {e}")
@@ -535,18 +561,25 @@ class SocketManager:
         """
         try:
             campaign_id = data.get("campaign_id")
-            name = data.get("name")
-            modifier = int(data.get("modifier", 0))
-            quantity = int(data.get("quantity", 1))
+            monsters = data.get("monsters") # list of dicts: [{"name": ..., "modifier": ..., "quantity": ...}]
             
-            if not campaign_id or not name or sid not in self.connected_users:
+            if not monsters:
+                name = data.get("name")
+                modifier = int(data.get("modifier", 0))
+                quantity = int(data.get("quantity", 1))
+                if name:
+                    monsters = [{"name": name, "modifier": modifier, "quantity": quantity}]
+                else:
+                    monsters = []
+            
+            if not campaign_id or not monsters or sid not in self.connected_users:
                 return
             
             user_info = self.connected_users[sid]
             user_id = user_info["user_id"]
             
             # Verificar si el usuario es GM (pasar sid para usar caché)
-            logger.info(f"[ADD_MONSTER] {user_info['username']} quiere agregar '{name}' x{quantity} en {campaign_id}")
+            logger.info(f"[ADD_MONSTER] {user_info['username']} quiere agregar {len(monsters)} tipo(s) de criatura(s) en {campaign_id}")
             if not await self.is_user_gm(campaign_id, user_id, sid=sid):
                 logger.warning(f"⚠️ add_monster denegado para {user_info['username']} (rol: {user_info.get('campaign_role', 'desconocido')})")
                 await self.sio.emit("combat_error", {"message": "Solo el GM puede agregar monstruos"}, to=sid)
@@ -563,31 +596,42 @@ class SocketManager:
             import asyncio
             
             new_monsters = []
-            for i in range(quantity):
-                monster_id = f"monster_{uuid.uuid4().hex[:8]}"
-                m_name = f"{name} #{i+1}" if quantity > 1 else name
+            for item in monsters:
+                m_name = item.get("name")
+                if not m_name or not m_name.strip():
+                    continue
+                m_name = m_name.strip()
+                m_modifier = int(item.get("modifier", 0))
+                m_quantity = int(item.get("quantity", 1))
                 
-                # Lanzar iniciativa d20 para cada monstruo
-                roll = random.randint(1, 20)
-                total = roll + modifier
-                
-                monster_data = {
-                    "id": monster_id,
-                    "name": m_name,
-                    "roll": roll,
-                    "modifier": modifier,
-                    "total": total,
-                    "is_monster": True,
-                    "confirmed": False,  # Empiezan en false para mostrar la animación
-                    "is_rolling": True,   # Bandera para animación en el cliente
-                    "user_id": user_id
-                }
-                combat["turns"].append(monster_data)
-                new_monsters.append(monster_data)
+                for i in range(m_quantity):
+                    monster_id = f"monster_{uuid.uuid4().hex[:8]}"
+                    m_formatted_name = f"{m_name} #{i+1}" if m_quantity > 1 else m_name
+                    
+                    # Lanzar iniciativa d20 para cada monstruo
+                    roll = random.randint(1, 20)
+                    total = roll + m_modifier
+                    
+                    monster_data = {
+                        "id": monster_id,
+                        "name": m_formatted_name,
+                        "roll": roll,
+                        "modifier": m_modifier,
+                        "total": total,
+                        "is_monster": True,
+                        "confirmed": False,  # Empiezan en false para mostrar la animación
+                        "is_rolling": True,   # Bandera para animación en el cliente
+                        "user_id": user_id
+                    }
+                    combat["turns"].append(monster_data)
+                    new_monsters.append(monster_data)
+            
+            if not new_monsters:
+                return
                 
             # Broadcast inicial para que todos vean a los monstruos rodar sus dados simultáneamente
             await self.sio.emit("combat_state_update", combat, to=f"campaign_{campaign_id}")
-            logger.info(f"Lanzando iniciativa para {quantity} monstruo(s) '{name}' en campaign_{campaign_id}")
+            logger.info(f"Lanzando iniciativa para {len(new_monsters)} monstruo(s) en campaign_{campaign_id}")
             
             # Simular 1.2 segundos de animación
             await asyncio.sleep(1.2)
@@ -601,12 +645,13 @@ class SocketManager:
                 # Agregar al historial
                 combat["history"].append({
                     "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
-                    "message": f"👾 {m['name']} (Monstruo) obtuvo iniciativa: {m['total']} ({m['roll']} {mod_sign}{m['modifier']} Mod)"
+                    "message": f"👾 {m['name']} (Monstruo) obtuvo iniciativa: {m['total']} ({m['roll']} {mod_sign}{m['modifier']} Mod)",
+                    "is_private": True
                 })
                 
             # Broadcast final con los dados ya quietos y confirmados
             await self.sio.emit("combat_state_update", combat, to=f"campaign_{campaign_id}")
-            logger.info(f"{quantity} monstruo(s) '{name}' confirmados en campaign_{campaign_id}")
+            logger.info(f"{len(new_monsters)} monstruo(s) confirmados en campaign_{campaign_id}")
             
         except Exception as e:
             logger.error(f"Error en on_add_monster: {e}")
@@ -637,19 +682,24 @@ class SocketManager:
             # Buscar y eliminar
             original_len = len(combat["turns"])
             p_name = "Desconocido"
+            is_monster = False
             for p in combat["turns"]:
                 if p["id"] == participant_id:
                     p_name = p["name"]
+                    is_monster = p.get("is_monster", False)
                     break
             
             combat["turns"] = [p for p in combat["turns"] if p["id"] != participant_id]
             
             if len(combat["turns"]) < original_len:
                 # Agregar al historial
-                combat["history"].append({
+                history_entry = {
                     "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
                     "message": f"❌ {p_name} fue eliminado del combate por el GM."
-                })
+                }
+                if is_monster:
+                    history_entry["is_private"] = True
+                combat["history"].append(history_entry)
                 
                 # Ajustar current_turn si es necesario para evitar desbordamiento
                 if combat["current_turn"] >= len(combat["turns"]) and len(combat["turns"]) > 0:
@@ -757,10 +807,13 @@ class SocketManager:
             active_p = combat["turns"][combat["current_turn"]]
             
             # Agregar al historial
-            combat["history"].append({
+            history_entry = {
                 "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
                 "message": f"🛡️ Turno de {active_p['name']}."
-            })
+            }
+            if active_p.get("is_monster"):
+                history_entry["is_private"] = True
+            combat["history"].append(history_entry)
             
             # Broadcast
             await self.sio.emit("combat_state_update", combat, to=f"campaign_{campaign_id}")
@@ -800,10 +853,13 @@ class SocketManager:
             active_p = combat["turns"][combat["current_turn"]]
             
             # Agregar al historial
-            combat["history"].append({
+            history_entry = {
                 "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
                 "message": f"🛡️ Turno retrocedido a {active_p['name']}."
-            })
+            }
+            if active_p.get("is_monster"):
+                history_entry["is_private"] = True
+            combat["history"].append(history_entry)
             
             # Broadcast
             await self.sio.emit("combat_state_update", combat, to=f"campaign_{campaign_id}")

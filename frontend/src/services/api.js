@@ -5,7 +5,7 @@ const getApiBase = () => {
     // Railway HTTPS: no incluir puerto
     return 'https://dungeonassistanttest-production.up.railway.app/api'
   }
-  return 'http://localhost:8000/api'
+  return '/api'
 }
 
 const API_BASE = getApiBase()

@@ -7,7 +7,7 @@ const getSocketUrl = () => {
     // Railway HTTPS: no incluir puerto
     return 'https://dungeonassistanttest-production.up.railway.app'
   }
-  return 'http://localhost:8000'
+  return '/'
 }
 
 const SOCKET_URL = getSocketUrl()

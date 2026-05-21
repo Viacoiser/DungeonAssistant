@@ -3,10 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   X, Swords, Shield, Skull, Plus, Trash2, ChevronRight, 
   History, UserPlus, Check, Lock, RefreshCw, Dices, Play, Square,
-  AlertTriangle, User, Sparkles
+  AlertTriangle, User, Sparkles, Minimize2
 } from 'lucide-react'
 import { getSocket } from '../../services/socket'
 import { characterAPI, npcAPI } from '../../services/api'
+import monstersData from '../../data/encyclopedia/monsters.json'
 
 // Beautiful sub-component to render rapidly rolling dice numbers for active rolls
 function RollingBadge({ modifier }) {
@@ -29,7 +30,7 @@ function RollingBadge({ modifier }) {
   )
 }
 
-export default function LiveInitiativeTracker({ campaignId, isGM, user, combatState, onClose }) {
+export default function LiveInitiativeTracker({ campaignId, isGM, user, combatState, onClose, activeUsers = [] }) {
   const socket = getSocket()
   
   // Local states
@@ -44,11 +45,10 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
   const [hasRolled, setHasRolled] = useState(false)
   const [confirmedRoll, setConfirmedRoll] = useState(null)
   
-  // GM Monster entry states
-  const [monsterName, setMonsterName] = useState('')
-  const [monsterMod, setMonsterMod] = useState(0)
-  const [monsterQty, setMonsterQty] = useState(1)
-  const [selectedNpcId, setSelectedNpcId] = useState('')
+  // GM Monster entry states (multiple rows)
+  const [monsterRows, setMonsterRows] = useState([
+    { id: 'row_' + Date.now(), selectedNpcId: '', name: '', modifier: 0, quantity: 1 }
+  ])
   const [monsterRolling, setMonsterRolling] = useState(false) // local animation state for GM
   const [combatError, setCombatError] = useState(null)
   
@@ -239,8 +239,66 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
   }
 
   // GM Monster Actions
+  const handleAddMonsterRow = () => {
+    setMonsterRows(prev => [
+      ...prev,
+      { id: 'row_' + Date.now() + Math.random().toString(36).substr(2, 5), selectedNpcId: '', name: '', modifier: 0, quantity: 1 }
+    ])
+  }
+
+  const handleRemoveMonsterRow = (id) => {
+    if (monsterRows.length === 1) {
+      // If it's the last row, just clear it
+      setMonsterRows([{ id: 'row_' + Date.now(), selectedNpcId: '', name: '', modifier: 0, quantity: 1 }])
+    } else {
+      setMonsterRows(prev => prev.filter(row => row.id !== id))
+    }
+  }
+
+  const handleUpdateMonsterRow = (id, field, value) => {
+    setMonsterRows(prev => prev.map(row => {
+      if (row.id !== id) return row
+
+      const updatedRow = { ...row, [field]: value }
+
+      // If updating selectedNpcId, auto-fill name and modifier
+      if (field === 'selectedNpcId') {
+        if (value === '') {
+          updatedRow.name = ''
+          updatedRow.modifier = 0
+        } else if (value.startsWith('npc_')) {
+          const npcId = value.replace('npc_', '')
+          const npc = npcs.find(n => n.id === npcId)
+          if (npc) {
+            updatedRow.name = npc.name
+            const dex = npc.stats?.dexterity || 10
+            updatedRow.modifier = Math.floor((dex - 10) / 2)
+          }
+        } else if (value.startsWith('encyclopedia_')) {
+          const encId = value.replace('encyclopedia_', '')
+          const monster = (monstersData || []).find(m => m.id === encId)
+          if (monster) {
+            updatedRow.name = monster.name.split('/')[0].trim()
+            const dex = monster.dexterity || 10
+            updatedRow.modifier = Math.floor((dex - 10) / 2)
+          }
+        }
+      }
+
+      return updatedRow
+    }))
+  }
+
   const handleAddMonster = () => {
-    if (!monsterName.trim() || monsterRolling) return
+    const validMonsters = monsterRows
+      .map(row => ({
+        name: row.name.trim(),
+        modifier: parseInt(row.modifier || 0),
+        quantity: parseInt(row.quantity || 1)
+      }))
+      .filter(row => row.name !== '')
+
+    if (validMonsters.length === 0 || monsterRolling) return
     
     if (socket) {
       // Show immediate local rolling animation
@@ -249,36 +307,14 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
       
       socket.emit('add_monster', {
         campaign_id: campaignId,
-        name: monsterName.trim(),
-        modifier: parseInt(monsterMod || 0),
-        quantity: parseInt(monsterQty || 1)
+        monsters: validMonsters
       })
     }
     
-    // Clear monster entry inputs
-    setMonsterName('')
-    setMonsterMod(0)
-    setMonsterQty(1)
-    setSelectedNpcId('')
-  }
-
-  // Pre-fill monster inputs when GM selects a campaign NPC
-  const handleNpcSelect = (e) => {
-    const npcId = e.target.value
-    setSelectedNpcId(npcId)
-    if (npcId === '') {
-      setMonsterName('')
-      setMonsterMod(0)
-    } else {
-      const npc = npcs.find(n => n.id === npcId)
-      if (npc) {
-        setMonsterName(npc.name)
-        // Check if NPC has initiative modifier in stats
-        const dex = npc.stats?.dexterity || 10
-        const dexMod = Math.floor((dex - 10) / 2)
-        setMonsterMod(dexMod)
-      }
-    }
+    // Reset to a single empty row
+    setMonsterRows([
+      { id: 'row_' + Date.now(), selectedNpcId: '', name: '', modifier: 0, quantity: 1 }
+    ])
   }
 
   // Helpers
@@ -301,8 +337,12 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/75 backdrop-blur-sm overflow-hidden animate-fade-in">
+    <div 
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-end bg-black/75 backdrop-blur-sm overflow-hidden animate-fade-in"
+    >
       <motion.div 
+        onClick={(e) => e.stopPropagation()}
         initial={{ x: '100%' }}
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
@@ -328,13 +368,27 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
               </p>
             </div>
           </div>
-          <button 
-            onClick={onClose}
-            className="p-2 rounded-lg text-fantasy-gold/60 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 active:scale-95 transition-all"
-          >
-            <X size={20} />
-          </button>
         </div>
+
+        {/* Banner de control rápido para minimizar (Combate en curso / Fase de Iniciativa) */}
+        {(combatState.status === 'rolling' || combatState.status === 'active') && (
+          <div className="px-6 py-2.5 bg-fantasy-accent/10 border-b border-fantasy-accent/20 flex items-center justify-between text-xs text-fantasy-gold shadow-sm z-10">
+            <span className="flex items-center gap-1.5 font-medium">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fantasy-accent opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-fantasy-accent"></span>
+              </span>
+              {combatState.status === 'rolling' ? 'Fase de iniciativa en curso' : 'Combate en curso en segundo plano'}
+            </span>
+            <button
+              onClick={onClose}
+              className="px-3 py-1 bg-gradient-to-r from-fantasy-accent to-red-700 hover:brightness-110 text-white font-display font-semibold text-[10px] tracking-wider rounded-lg transition active:scale-95 flex items-center gap-1 shadow-md border border-fantasy-gold/30"
+            >
+              <Minimize2 size={11} />
+              MINIMIZAR COMBATE
+            </button>
+          </div>
+        )}
 
         {/* ── MAIN SCROLLABLE CONTENT ── */}
         <div className="flex-1 overflow-y-auto no-scrollbar px-6 py-6 space-y-6 z-10 relative">
@@ -391,7 +445,7 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
           )}
 
           {/* ── PLAYER ROLLING SECTION ── */}
-          {combatState.status === 'rolling' && !isGM && (
+          {((combatState.status === 'rolling' || combatState.status === 'active') && !isGM && !confirmedRoll) && (
             <div className="p-5 bg-white/3 border border-white/5 rounded-2xl space-y-5 relative">
               <h3 className="font-serif text-lg text-white font-semibold flex items-center gap-2 border-b border-white/5 pb-3">
                 <Dices size={18} className="text-fantasy-accent" />
@@ -468,7 +522,7 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
                     )}
 
                     {/* Actions: Roll / Confirm */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center flex-wrap justify-center">
                       {!hasRolled && (
                         <button
                           onClick={startRollAnimation}
@@ -480,7 +534,7 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
                       )}
 
                       {hasRolled && !confirmedRoll && (
-                        <div className="flex gap-1.5">
+                        <>
                           <button
                             onClick={startRollAnimation}
                             disabled={isRolling}
@@ -496,13 +550,15 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
                             <Check size={14} />
                             CONFIRMAR
                           </button>
-                        </div>
+                        </>
                       )}
 
                       {confirmedRoll && (
-                        <div className="text-xs font-bold text-green-400 bg-green-500/10 border border-green-500/25 px-4 py-2 rounded-xl flex items-center gap-1.5">
-                          <Lock size={12} />
-                          TIRADA BLOQUEADA
+                        <div className="flex gap-2 items-center flex-wrap justify-center w-full">
+                          <div className="text-xs font-bold text-green-400 bg-green-500/10 border border-green-500/25 px-4 py-2 rounded-xl flex items-center gap-1.5">
+                            <Lock size={12} />
+                            TIRADA BLOQUEADA
+                          </div>
                         </div>
                       )}
                     </div>
@@ -530,6 +586,35 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
                 )}
               </h3>
 
+              {/* Indicador premium de Presencia en Línea */}
+              <div className="bg-[#120d0a]/80 border border-emerald-500/20 rounded-xl p-3 shadow-inner flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-emerald-400 font-serif text-xs font-bold uppercase tracking-wider">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    Jugadores Conectados ({activeUsers.length})
+                  </div>
+                  <span className="text-[10px] text-fantasy-gold/50">En tiempo real</span>
+                </div>
+                {activeUsers.length === 0 ? (
+                  <div className="text-[10px] text-fantasy-gold/40 italic">Ningún jugador conectado actualmente.</div>
+                ) : (
+                  <div className="flex gap-2 flex-wrap">
+                    {activeUsers.map((u) => (
+                      <span 
+                        key={u.user_id} 
+                        className="px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px] font-semibold flex items-center gap-1 shadow-sm"
+                      >
+                        <User size={10} />
+                        {u.username}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {combatState.status === 'rolling' && (
                 <div className="space-y-4">
                   {/* Quick roll / Add custom monster */}
@@ -547,74 +632,115 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
                       </div>
                     )}
                     
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {/* Select NPC from campaign dropdown */}
-                      <div className="space-y-1 col-span-2 md:col-span-1">
-                        <label className="text-[10px] text-fantasy-gold/50">Cargar desde NPCs:</label>
-                        <select 
-                          value={selectedNpcId}
-                          onChange={handleNpcSelect}
-                          className="w-full bg-[#140f0c] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-fantasy-gold/45 h-[34px]"
+                    <div className="space-y-4">
+                      {monsterRows.map((row, rIndex) => (
+                        <div 
+                          key={row.id} 
+                          className="grid grid-cols-12 gap-2 pb-3 border-b border-white/5 last:border-0 last:pb-0 items-end animate-fade-in"
                         >
-                          <option value="">-- Manual --</option>
-                          {npcs.map(n => (
-                            <option key={n.id} value={n.id}>{n.name}</option>
-                          ))}
-                        </select>
-                      </div>
+                          {/* Select NPC or Encyclopedia Monster dropdown */}
+                          <div className="space-y-1 col-span-12 md:col-span-3">
+                            <label className={`text-[10px] text-fantasy-gold/50 ${rIndex > 0 ? 'md:hidden' : 'block'}`}>Cargar Criatura:</label>
+                            <select 
+                              value={row.selectedNpcId}
+                              onChange={e => handleUpdateMonsterRow(row.id, 'selectedNpcId', e.target.value)}
+                              className="w-full bg-[#140f0c] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-fantasy-gold/45 h-[34px] transition-all duration-250"
+                            >
+                              <option value="">-- Manual --</option>
+                              
+                              {npcs && npcs.length > 0 && (
+                                <optgroup label="NPCs de la Campaña">
+                                  {npcs.map(n => (
+                                    <option key={n.id} value={`npc_${n.id}`}>{n.name}</option>
+                                  ))}
+                                </optgroup>
+                              )}
+                              
+                              {monstersData && monstersData.length > 0 && (
+                                <optgroup label="Enciclopedia de Monstruos">
+                                  {[...monstersData].sort((a, b) => a.name.localeCompare(b.name)).map(m => (
+                                    <option key={m.id} value={`encyclopedia_${m.id}`}>{m.name}</option>
+                                  ))}
+                                </optgroup>
+                              )}
+                            </select>
+                          </div>
 
-                      {/* Custom Monster Name */}
-                      <div className="space-y-1 col-span-2 md:col-span-2">
-                        <label className="text-[10px] text-fantasy-gold/50">Nombre en Combate:</label>
-                        <input
-                          type="text"
-                          placeholder="Nombre (ej: Orco Boss)"
-                          value={monsterName}
-                          onChange={e => setMonsterName(e.target.value)}
-                          className="w-full bg-[#140f0c] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-fantasy-gold/45 h-[34px]"
-                        />
-                      </div>
+                          {/* Custom Monster Name */}
+                          <div className="space-y-1 col-span-12 md:col-span-4">
+                            <label className={`text-[10px] text-fantasy-gold/50 ${rIndex > 0 ? 'md:hidden' : 'block'}`}>Nombre en Combate:</label>
+                            <input
+                              type="text"
+                              placeholder="Nombre (ej: Orco Boss)"
+                              value={row.name}
+                              onChange={e => handleUpdateMonsterRow(row.id, 'name', e.target.value)}
+                              className="w-full bg-[#140f0c] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-fantasy-gold/45 h-[34px] transition-all duration-250"
+                            />
+                          </div>
 
-                      {/* Modifier */}
-                      <div className="space-y-1">
-                        <label className="text-[10px] text-fantasy-gold/50">Bono Iniciativa:</label>
-                        <input
-                          type="number"
-                          value={monsterMod}
-                          onChange={e => setMonsterMod(parseInt(e.target.value) || 0)}
-                          className="w-full bg-[#140f0c] border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white outline-none focus:border-fantasy-gold/45 h-[34px]"
-                        />
-                      </div>
+                          {/* Modifier */}
+                          <div className="space-y-1 col-span-4 md:col-span-2">
+                            <label className={`text-[10px] text-fantasy-gold/50 ${rIndex > 0 ? 'md:hidden' : 'block'} text-center md:text-left`}>Bono:</label>
+                            <input
+                              type="number"
+                              value={row.modifier}
+                              onChange={e => handleUpdateMonsterRow(row.id, 'modifier', parseInt(e.target.value) || 0)}
+                              className="w-full bg-[#140f0c] border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white outline-none focus:border-fantasy-gold/45 h-[34px] text-center transition-all duration-250"
+                            />
+                          </div>
 
-                      {/* Quantity */}
-                      <div className="space-y-1">
-                        <label className="text-[10px] text-fantasy-gold/50">Cantidad:</label>
-                        <input
-                          type="number"
-                          min="1"
-                          max="10"
-                          value={monsterQty}
-                          onChange={e => setMonsterQty(Math.max(1, parseInt(e.target.value) || 1))}
-                          className="w-full bg-[#140f0c] border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white outline-none focus:border-fantasy-gold/45 h-[34px]"
-                        />
-                      </div>
+                          {/* Quantity */}
+                          <div className="space-y-1 col-span-4 md:col-span-2">
+                            <label className={`text-[10px] text-fantasy-gold/50 ${rIndex > 0 ? 'md:hidden' : 'block'} text-center md:text-left`}>Cantidad:</label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="10"
+                              value={row.quantity}
+                              onChange={e => handleUpdateMonsterRow(row.id, 'quantity', Math.max(1, parseInt(e.target.value) || 1))}
+                              className="w-full bg-[#140f0c] border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white outline-none focus:border-fantasy-gold/45 h-[34px] text-center transition-all duration-250"
+                            />
+                          </div>
 
-                      {/* Submit */}
-                      <div className="flex items-end col-span-2 md:col-span-1">
-                        <button
-                          onClick={handleAddMonster}
-                          disabled={!monsterName.trim() || monsterRolling}
-                          className={`w-full py-1.5 border text-fantasy-gold font-display font-semibold text-xs tracking-wider rounded-lg transition active:scale-95 disabled:opacity-40 h-[34px] flex items-center justify-center gap-1.5
-                            ${monsterRolling 
-                              ? 'bg-amber-700/60 border-amber-500/50 cursor-not-allowed' 
-                              : 'bg-amber-800/40 hover:bg-amber-800/60 border-amber-600/30'
-                            }
-                          `}
-                        >
-                          <Dices size={14} className={monsterRolling ? 'animate-spin' : 'animate-pulse'} />
-                          <span>{monsterRolling ? 'RODANDO...' : 'RODAR Y AGREGAR'}</span>
-                        </button>
-                      </div>
+                          {/* Remove button */}
+                          <div className="col-span-4 md:col-span-1 flex justify-end">
+                            <button
+                              onClick={() => handleRemoveMonsterRow(row.id)}
+                              disabled={monsterRows.length === 1 && row.name === '' && row.selectedNpcId === ''}
+                              className="p-2 text-fantasy-gold/40 hover:text-red-400 hover:bg-red-500/10 rounded-lg border border-transparent hover:border-red-500/20 active:scale-95 transition-all duration-250 h-[34px] w-full md:w-[34px] flex items-center justify-center disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-transparent"
+                              title="Eliminar fila"
+                            >
+                              <Trash2 size={14} />
+                              <span className="md:hidden ml-1.5 text-[10px] font-bold">Quitar</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Controls line: Add new row & submit batch */}
+                    <div className="flex flex-col sm:flex-row gap-3 pt-3 border-t border-white/5 items-center justify-between">
+                      <button
+                        onClick={handleAddMonsterRow}
+                        className="w-full sm:w-auto px-4 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-fantasy-gold/30 text-fantasy-gold font-display font-semibold text-xs tracking-wider rounded-lg transition active:scale-95 flex items-center justify-center gap-1.5 h-[34px]"
+                      >
+                        <Plus size={14} />
+                        <span>AGREGAR OTRA CRIATURA</span>
+                      </button>
+
+                      <button
+                        onClick={handleAddMonster}
+                        disabled={monsterRows.filter(r => r.name.trim() !== '').length === 0 || monsterRolling}
+                        className={`w-full sm:w-auto px-5 py-1.5 border text-fantasy-gold font-display font-semibold text-xs tracking-wider rounded-lg transition active:scale-95 disabled:opacity-40 h-[34px] flex items-center justify-center gap-1.5
+                          ${monsterRolling 
+                            ? 'bg-amber-700/60 border-amber-500/50 cursor-not-allowed' 
+                            : 'bg-amber-800/40 hover:bg-amber-800/60 border-amber-600/30'
+                          }
+                        `}
+                      >
+                        <Dices size={14} className={monsterRolling ? 'animate-spin' : 'animate-pulse'} />
+                        <span>{monsterRolling ? 'RODANDO...' : 'RODAR Y AGREGAR TODAS'}</span>
+                      </button>
                     </div>
                   </div>
 
@@ -665,21 +791,25 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
                 <Shield size={18} className="text-fantasy-gold" />
                 Participantes
                 <span className="text-xs font-semibold px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-fantasy-gold/60">
-                  {combatState.turns?.length || 0}
+                  {isGM ? (combatState.turns?.length || 0) : (combatState.turns?.filter(t => !t.is_monster).length || 0)}
                 </span>
               </h3>
 
-              {(!combatState.turns || combatState.turns.length === 0) ? (
+              {(!combatState.turns || combatState.turns.length === 0 || (!isGM && combatState.turns.filter(t => !t.is_monster).length === 0)) ? (
                 <div className="py-6 text-center text-fantasy-gold/30 text-sm italic">
                   No hay participantes aún.
                 </div>
               ) : (
                 <div className="space-y-2">
                   <AnimatePresence initial={false}>
-                    {combatState.turns.map((p, index) => {
-                      const isActive = combatState.status === 'active' && combatState.current_turn === index
-                      const isMonster = p.is_monster
-                      const isCurrentUser = !isGM && character && p.id === character.id
+                    {combatState.turns
+                      .map((p, originalIndex) => ({ ...p, originalIndex }))
+                      .filter(p => isGM || !p.is_monster)
+                      .map((p, index) => {
+                        const isActive = combatState.status === 'active' && combatState.current_turn === p.originalIndex
+                        const isMonster = p.is_monster
+                        const isCurrentUser = !isGM && character && p.id === character.id
+                        const isOnline = !isMonster && activeUsers.some(u => u.user_id === p.player_id)
                       
                       return (
                         <motion.div
@@ -708,7 +838,7 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
 
                             {/* Participant details */}
                             <div>
-                              <div className="flex items-center gap-1.5">
+                              <div className="flex items-center gap-1.5 flex-wrap">
                                 <span className={`font-semibold text-sm ${isActive ? 'text-white font-bold' : 'text-fantasy-gold/90'}`}>
                                   {p.name}
                                 </span>
@@ -722,10 +852,24 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
                                     TÚ
                                   </span>
                                 )}
+                                {!isMonster && (
+                                  <span className={`text-[8px] font-bold px-1.5 py-0.2 rounded flex items-center gap-1
+                                    ${isOnline 
+                                      ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 animate-pulse' 
+                                      : 'bg-white/5 border border-white/10 text-fantasy-gold/40'
+                                    }
+                                  `}>
+                                    <span className={`w-1 h-1 rounded-full ${isOnline ? 'bg-emerald-400' : 'bg-fantasy-gold/30'}`} />
+                                    {isOnline ? 'En pantalla' : 'Ausente'}
+                                  </span>
+                                )}
                               </div>
                               <div className="text-[10px] text-fantasy-gold/45">
                                 {p.confirmed 
-                                  ? `Confirmado: ${p.total} (${p.roll} + ${formatModifier(p.modifier)})`
+                                  ? (isMonster && !isGM 
+                                      ? 'Confirmado (Tirada Oculta)'
+                                      : `Confirmado: ${p.total} (${p.roll} + ${formatModifier(p.modifier)})`
+                                    )
                                   : 'Tirando dados...'
                                 }
                               </div>
@@ -735,17 +879,36 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
                           <div className="flex items-center gap-3 relative z-10">
                             {/* Roll Score Badge */}
                             {p.confirmed ? (
-                              <div className={`
-                                px-3 py-1 rounded-lg font-display font-black text-sm tracking-wide shadow-inner
-                                ${isActive 
-                                  ? 'bg-fantasy-accent/20 border border-fantasy-accent/50 text-white' 
-                                  : 'bg-[#18120e] border border-white/10 text-fantasy-gold'
-                                }
-                              `}>
-                                {p.total}
-                              </div>
+                              isMonster && !isGM ? (
+                                <div className={`
+                                  px-3 py-1 rounded-lg font-display font-bold text-xs tracking-wide shadow-inner
+                                  ${isActive 
+                                    ? 'bg-fantasy-accent/10 border border-fantasy-accent/30 text-white/60' 
+                                    : 'bg-[#18120e] border border-white/5 text-fantasy-gold/40'
+                                  }
+                                `}>
+                                  Oculto
+                                </div>
+                              ) : (
+                                <div className={`
+                                  px-3 py-1 rounded-lg font-display font-black text-sm tracking-wide shadow-inner
+                                  ${isActive 
+                                    ? 'bg-fantasy-accent/20 border border-fantasy-accent/50 text-white' 
+                                    : 'bg-[#18120e] border border-white/10 text-fantasy-gold'
+                                  }
+                                `}>
+                                  {p.total}
+                                </div>
+                              )
                             ) : p.is_rolling ? (
-                              <RollingBadge modifier={p.modifier} />
+                              isMonster && !isGM ? (
+                                <div className="px-3 py-1 bg-[#18120e] border border-white/5 rounded-lg font-display text-xs text-fantasy-gold/40 flex items-center gap-1.5 animate-pulse">
+                                  <RefreshCw size={11} className="animate-spin text-fantasy-gold/40" />
+                                  <span>Rodando...</span>
+                                </div>
+                              ) : (
+                                <RollingBadge modifier={p.modifier} />
+                              )
                             ) : (
                               <div className="text-xs text-fantasy-gold/30 italic flex items-center gap-1 animate-pulse">
                                 <RefreshCw size={10} className="animate-spin" />
@@ -785,14 +948,18 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
                 {(!combatState.history || combatState.history.length === 0) ? (
                   <div className="text-fantasy-gold/25 italic text-center py-12">No hay registros de combate aún.</div>
                 ) : (
-                  combatState.history.map((h, i) => (
-                    <div key={i} className="flex gap-2 text-fantasy-gold/75 items-start leading-relaxed border-b border-white/2 pb-1.5 last:border-0">
-                      <span className="text-[10px] text-fantasy-gold/30 font-mono flex-shrink-0 pt-0.5">
-                        {new Date(h.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                      </span>
-                      <span>{h.message}</span>
-                    </div>
-                  ))
+                  combatState.history.map((h, i) => {
+                    if (h.is_private && !isGM && !h.public_message) return null;
+                    const messageToDisplay = (h.is_private && !isGM) ? h.public_message : h.message;
+                    return (
+                      <div key={i} className="flex gap-2 text-fantasy-gold/75 items-start leading-relaxed border-b border-white/2 pb-1.5 last:border-0">
+                        <span className="text-[10px] text-fantasy-gold/30 font-mono flex-shrink-0 pt-0.5">
+                          {new Date(h.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                        </span>
+                        <span>{messageToDisplay}</span>
+                      </div>
+                    )
+                  })
                 )}
                 <div ref={historyEndRef} />
               </div>
