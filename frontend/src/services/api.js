@@ -84,6 +84,12 @@ export const characterAPI = {
     api.get(`/characters/${characterId}/history`),
   updateStatus: (characterId, isAlive) =>
     api.put(`/characters/${characterId}/status`, { is_alive: isAlive }),
+  // Asignar personaje a campaña existente
+  assignCampaign: (characterId, campaignId) =>
+    api.put(`/characters/${characterId}`, { campaign_id: campaignId }),
+  // Unirse a campaña por código y vincular personaje
+  joinCampaignByCode: (characterId, inviteCode) =>
+    api.post('/campaigns/join', { invite_code: inviteCode, character_id: characterId }),
 }
 
 export const sessionAPI = {

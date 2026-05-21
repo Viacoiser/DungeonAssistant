@@ -7,7 +7,6 @@ import {
   Users,
   Settings,
   Theater,
-  Camera,
   Mic,
   User,
 } from 'lucide-react'
@@ -20,7 +19,6 @@ import {
   AssistantTab,
   MembersTab,
   SettingsTab,
-  OCRTab,
 } from '../../pages/CampaignView'
 import CharacterInspect from './CharacterInspect'
 import DiceBoxRollerResponsive from './DiceBoxRollerResponsive'
@@ -40,7 +38,6 @@ function buildTabs(isGM) {
     { id: 'dice', label: 'Dados 3D', Icon: MessageSquare },
     ...(isGM ? [{ id: 'npcs', label: 'NPCs', Icon: Theater }] : []),
     { id: 'asistente', label: 'Asistente', Icon: MessageSquare },
-    { id: 'ocr', label: 'OCR', Icon: Camera },
     { id: 'miembros', label: 'Miembros', Icon: Users },
     ...(isGM ? [{ id: 'configuracion', label: 'Configuración', Icon: Settings }] : []),
   ]
@@ -219,7 +216,6 @@ export default function CampaignDetailResponsive({ campaign: initialCampaign, us
               )}
               {activeTab === 'npcs' && <NpcsTab campaignId={campaign?.id} isGM={isGM} />}
               {activeTab === 'asistente' && <AssistantTab campaignId={campaign?.id} />}
-              {activeTab === 'ocr' && <OCRTab />}
               {activeTab === 'miembros' && <MembersTab campaignId={campaign?.id} />}
               {activeTab === 'configuracion' && (
                 <SettingsTab

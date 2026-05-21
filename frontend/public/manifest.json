@@ -1,16 +1,42 @@
 {
-  "short_name": "Assistant",
   "name": "DungeonAssistant",
+  "short_name": "DungeonAssistant",
+  "description": "Tu asistente de IA para campañas D&D 5e",
+  "theme_color": "#0d0b08",
+  "background_color": "#0d0b08",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "start_url": "/",
+  "lang": "es",
+  "categories": ["games", "entertainment"],
   "icons": [
     {
-      "src": "app-logo.png",
+      "src": "app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "app-icon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#0d0b08",
-  "background_color": "#0d0b08"
+  "screenshots": [
+    {
+      "src": "app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DungeonAssistant"
+    }
+  ]
 }

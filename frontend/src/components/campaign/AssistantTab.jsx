@@ -1,17 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, BookOpen, Send, Trash2, Edit2, History, Users, Settings, MessageSquare, Theater, Camera, Mic, Upload, Image, StopCircle, Play, User } from 'lucide-react'
-import { campaignAPI, sessionAPI, npcAPI, assistantAPI, characterAPI, dnd5eAPI } from '../../services/api'
-import { useAuthStore } from '../../store/useAuthStore'
-import LoadingSpinner from '../shared/LoadingSpinner'
-import CharacterDetail from '../shared/CharacterDetail'
-import CharacterCard from '../shared/CharacterCard'
-import DiceBoxRollerResponsive from '../shared/DiceBoxRollerResponsive'
+import { assistantAPI } from '../../services/api'
 import VoiceRecorder from '../shared/VoiceRecorder'
-import BottomNavResponsive from '../shared/BottomNavResponsive'
 import { Icon } from '../shared/CampaignIcons'
-
 
 // ============================================================================
 // Tab: Notas de Sesión (con análisis IA)
@@ -72,6 +62,7 @@ export default function AssistantTab({ campaignId }) {
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'assistant' && (
               <div className="w-8 h-8 rounded-full bg-[var(--fantasy-accent)]/30 border border-[var(--fantasy-accent)]/50 flex items-center justify-center mr-2 flex-shrink-0 mt-1 text-sm text-[var(--fantasy-gold)]">
+                🔥
               </div>
             )}
             <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === 'user'

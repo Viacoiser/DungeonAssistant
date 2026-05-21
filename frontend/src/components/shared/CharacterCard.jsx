@@ -11,6 +11,7 @@ export default function CharacterCard({ character, onSelect, index }) {
 
   return (
     <div
+      data-character-card
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={onSelect}
@@ -179,6 +180,13 @@ export default function CharacterCard({ character, onSelect, index }) {
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [data-character-card] {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+          }
         }
       `}</style>
     </div>

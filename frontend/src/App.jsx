@@ -5,6 +5,7 @@ import { useAuthStore } from './store/useAuthStore'
 import { initSocket } from './services/socket'
 import { getAuthAPI } from './services/api'
 import LoadingSpinner from './components/shared/LoadingSpinner'
+import IOSInstallPrompt from './components/shared/IOSInstallPrompt'
 
 function App() {
   const { setUser, setToken, token } = useAuthStore()
@@ -56,7 +57,12 @@ function App() {
     return <LoadingSpinner fullPage text="Cargando DungeonAssistant..." size={72} />
   }
 
-  return <RouterProvider router={router} />
+  return (
+    <>
+      <RouterProvider router={router} />
+      <IOSInstallPrompt />
+    </>
+  )
 }
 
 export default App

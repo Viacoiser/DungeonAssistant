@@ -217,27 +217,40 @@ async def get_campaign_members(campaign_id: str, current_user: dict = Depends(ge
         supabase = get_supabase()
         user_id = current_user["id"]
         
-        response = supabase.client.table("campaign_members") \
+        # Usar admin_client para poder hacer join con la tabla 'users' y evitar restricciones RLS
+        response = supabase.admin_client.table("campaign_members") \
             .select("user_id, role, joined_at, users(username, email)") \
             .eq("campaign_id", campaign_id).execute()
         
         members = []
-        user_role = "PLAYER"
+        user_role = None
         
         for item in response.data or []:
-            user_data = item.get("users")
-            if user_data:
-                members.append({
-                    "user_id": item.get("user_id"),
-                    "username": user_data.get("username", "Sin nombre"),
-                    "email": user_data.get("email"),
-                    "role": item.get("role"),
-                    "joined_at": item.get("joined_at")
-                })
-                if item.get("user_id") == user_id:
-                    user_role = item.get("role", "PLAYER")
-        
+            curr_user_id = item.get("user_id")
+            curr_role = item.get("role", "PLAYER")
+            
+            if curr_user_id == user_id:
+                user_role = curr_role
+                
+            user_data = item.get("users") or {}
+            members.append({
+                "user_id": curr_user_id,
+                "username": user_data.get("username", "Sin nombre"),
+                "email": user_data.get("email"),
+                "role": curr_role,
+                "joined_at": item.get("joined_at")
+            })
+            
+        # Si el usuario actual no es miembro de la campaña, denegar acceso
+        if user_role is None:
+            raise HTTPException(
+                status_code=403,
+                detail="No tienes permiso para ver los miembros de esta campaña"
+            )
+            
         return {"members": members, "user_role": user_role}
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error obteniendo miembros: {e}")
         return {"members": [], "user_role": "PLAYER"}

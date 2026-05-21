@@ -91,7 +91,9 @@ export default function BottomNavResponsive({ activeTab, setActiveTab }) {
   return (
     <>
       {/* ✅ Navigation Bar - Mobile Only */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-28 flex flex-col justify-end pointer-events-none z-50">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 flex flex-col justify-end pointer-events-none z-50"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
         {/* Decorative center notch */}
         <div className="relative h-16 bg-black/90 backdrop-blur-md border-t border-white/10 flex items-center justify-between px-2 z-10 pointer-events-auto shadow-[0_-10px_40px_rgba(0,0,0,0.6)]">
 

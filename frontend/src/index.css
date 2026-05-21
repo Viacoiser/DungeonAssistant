@@ -31,6 +31,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* Elimina el flash azul al tocar en Android/iOS */
+  -webkit-tap-highlight-color: transparent;
 }
 
 html, body, #root {
@@ -39,10 +41,17 @@ html, body, #root {
   background-color: var(--fantasy-bg);
   color: var(--fantasy-gold);
   -webkit-font-smoothing: antialiased;
+  /* Safe area para iPhones con notch / Dynamic Island */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 body {
   background-color: var(--fantasy-bg);
+  /* Deshabilitar el bounce scroll de iOS en el body */
+  overscroll-behavior: none;
 }
 
 /* Typography */

@@ -1,40 +1,78 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, BookOpen, Send, Trash2, Edit2, History, Users, Settings, MessageSquare, Theater, Camera, Mic, Upload, Image, StopCircle, Play, User } from 'lucide-react'
-import { campaignAPI, sessionAPI, npcAPI, assistantAPI, characterAPI, dnd5eAPI } from '../services/api'
+import { User } from 'lucide-react'
+import { campaignAPI, characterAPI } from '../services/api'
 import { useAuthStore } from '../store/useAuthStore'
 import LoadingSpinner from '../components/shared/LoadingSpinner'
-import CharacterDetail from '../components/shared/CharacterDetail'
-import CharacterCard from '../components/shared/CharacterCard'
 import DiceBoxRollerResponsive from '../components/shared/DiceBoxRollerResponsive'
-import VoiceRecorder from '../components/shared/VoiceRecorder'
 import Sidebar from '../components/dashboard/Sidebar'
+import { getSocket, joinCampaign, leaveCampaign } from '../services/socket'
+import { AnimatePresence } from 'framer-motion'
+import LiveInitiativeTracker from '../components/campaign/LiveInitiativeTracker'
 
-
-// ============================================================================
-// Tab: Notas de Sesión (con análisis IA)
-// ============================================================================
-
-// Extracted Subcomponents
+// Campaign Tabs
 import NotesTab from '../components/campaign/NotesTab'
 import NpcsTab from '../components/campaign/NpcsTab'
 import AssistantTab from '../components/campaign/AssistantTab'
 import SettingsTab from '../components/campaign/SettingsTab'
 import CharactersTab from '../components/campaign/CharactersTab'
 import MembersTab from '../components/campaign/MembersTab'
-import OCRTab from '../components/campaign/OCRTab'
 import { Icon } from '../components/shared/CampaignIcons'
+import { useSocketStore } from '../store/useSocketStore'
 
 export default function CampaignView() {
   const { campaignId } = useParams()
   const navigate = useNavigate()
   const { user } = useAuthStore()
+  const { isConnected } = useSocketStore()
   const [campaign, setCampaign] = useState(null)
   const [userRole, setUserRole] = useState(null) // 'GM' | 'PLAYER'
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('notes')
   const [playerName, setPlayerName] = useState(null) // Para mostrar el nombre del personaje del player
+  const [combatState, setCombatState] = useState({ status: 'inactive', turns: [], history: [], current_turn: 0 })
+  const [isTrackerOpen, setIsTrackerOpen] = useState(false)
+
+  // ── SOCKET SETUP ──────────────────────────────────────────────────────────
+  const joinedCampaignRef = useRef(null)
+
+  // 1. Join campaign room when connected
+  useEffect(() => {
+    if (isConnected && campaignId) {
+      console.log('🔄 Socket conectado — uniéndose a campaña:', campaignId)
+      joinCampaign(campaignId)
+      joinedCampaignRef.current = campaignId
+    }
+  }, [campaignId, isConnected])
+
+  // 2. Leave campaign room ONLY when campaignId changes or component unmounts
+  useEffect(() => {
+    return () => {
+      if (joinedCampaignRef.current) {
+        console.log('🚪 Saliendo de campaña:', joinedCampaignRef.current)
+        leaveCampaign(joinedCampaignRef.current)
+        joinedCampaignRef.current = null
+      }
+    }
+  }, [campaignId])
+
+  // 3. Register combat update listeners
+  useEffect(() => {
+    const socket = getSocket()
+    if (!socket) return
+
+    const handleCombatUpdate = (state) => {
+      console.log('⚔️ Combate actualizado:', state)
+      setCombatState(state)
+    }
+
+    socket.off('combat_state_update')
+    socket.on('combat_state_update', handleCombatUpdate)
+
+    return () => {
+      socket.off('combat_state_update', handleCombatUpdate)
+    }
+  }, [campaignId])
 
   useEffect(() => {
     const load = async () => {
@@ -84,7 +122,6 @@ export default function CampaignView() {
     { id: 'dice', label: 'Dados 3D', icon: <Icon.dice /> },
     ...(isGM ? [{ id: 'npcs', label: 'NPCs', icon: <Icon.npc /> }] : []),
     { id: 'assistant', label: 'Asistente', icon: <Icon.chat /> },
-    { id: 'ocr', label: 'OCR', icon: <Icon.ocr /> },
     { id: 'members', label: 'Miembros', icon: <Icon.users /> },
     // Settings solo para GM
     ...(isGM ? [{ id: 'settings', label: 'Configuración', icon: <Icon.settings /> }] : []),
@@ -214,11 +251,62 @@ export default function CampaignView() {
           )}
           {activeTab === 'npcs' && <NpcsTab campaignId={campaignId} isGM={isGM} />}
           {activeTab === 'assistant' && <AssistantTab campaignId={campaignId} />}
-          {activeTab === 'ocr' && <OCRTab />}
+
           {activeTab === 'members' && <MembersTab campaignId={campaignId} />}
           {activeTab === 'settings' && <SettingsTab campaign={campaign} onUpdate={setCampaign} isGM={isGM} onCampaignDeleted={() => navigate('/dashboard')} />}
         </div>
       </main>
+
+      {/* Floating Initiative Tracker Alert Bar */}
+      {combatState && combatState.status !== 'inactive' && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-bounce">
+          <button
+            onClick={() => setIsTrackerOpen(true)}
+            className="px-5 py-3 bg-gradient-to-r from-amber-700 via-fantasy-accent to-amber-700 hover:brightness-110 border border-fantasy-gold/30 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_15px_rgba(217,83,30,0.4)] text-white text-xs lg:text-sm font-semibold font-display tracking-widest flex items-center gap-3 active:scale-95 transition-all duration-300"
+          >
+            <span className="flex h-2.5 w-2.5 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+            </span>
+            <span className="flex items-center gap-2">
+              ⚔️ COMBATE EN CURSO — VER INICIATIVA EN VIVO
+            </span>
+          </button>
+        </div>
+      )}
+
+      {/* Floating Round Action Button to open Initiative Tracker */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          onClick={() => setIsTrackerOpen(true)}
+          className="w-14 h-14 rounded-full bg-[#18120e] hover:bg-[#201813] border border-fantasy-gold/30 hover:border-fantasy-gold text-fantasy-gold hover:text-white flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.6),0_0_12px_rgba(226,209,166,0.15)] active:scale-95 hover:scale-105 transition-all duration-300 relative group"
+          title="Iniciativa en Vivo"
+        >
+          {/* Glow pulse if combat is active */}
+          {combatState && combatState.status !== 'inactive' && (
+            <span className="absolute inset-0 rounded-full border-2 border-fantasy-accent animate-ping opacity-60 pointer-events-none" />
+          )}
+          <Icon.dice size={24} className={combatState && combatState.status !== 'inactive' ? 'animate-pulse text-fantasy-accent' : ''} />
+          
+          {/* Tooltip */}
+          <span className="absolute right-16 px-2.5 py-1 rounded bg-[#0d0a08] border border-fantasy-gold/15 text-[10px] uppercase font-bold tracking-widest text-fantasy-gold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none shadow-md">
+            Iniciativa en Vivo {combatState && combatState.status !== 'inactive' && '• ¡Activo!'}
+          </span>
+        </button>
+      </div>
+
+      {/* Live Initiative Tracker Drawer Overlay */}
+      <AnimatePresence>
+        {isTrackerOpen && (
+          <LiveInitiativeTracker
+            campaignId={campaignId}
+            isGM={isGM}
+            user={user}
+            combatState={combatState}
+            onClose={() => setIsTrackerOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
     </div>
   )
