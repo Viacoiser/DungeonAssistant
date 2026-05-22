@@ -129,13 +129,10 @@ FORMATO JSON:
 
 class VisionService:
     def __init__(self):
-        # Modelos confirmados y fallbacks
+        # Modelos con soporte confirmado para imagen
         self.vision_models = [
-            "gemini-2.0-flash",
-            "gemini-2.0-flash-lite",
-            "gemini-flash-latest",
             "gemini-1.5-flash",
-            "gemini-pro-latest",
+            "gemini-1.5-pro",
         ]
         self.exhausted_models = set()
         self.current_model_name = None
@@ -194,11 +191,12 @@ class VisionService:
                     
             except Exception as e:
                 error_str = str(e).lower()
-                # Rotar si es error de cuota (429) o si el modelo no se encuentra (404)
+                # Rotar si es error de cuota (429), modelo no encontrado (404), o no soporta imagen
                 is_quota = "429" in error_str or "resourceexhausted" in error_str or "quota" in error_str
                 is_not_found = "404" in error_str or "not found" in error_str or "not_found" in error_str
+                is_no_image = "does not support image" in error_str or "not support image" in error_str
                 
-                if (is_quota or is_not_found) and attempt < max_retries - 1:
+                if (is_quota or is_not_found or is_no_image) and attempt < max_retries - 1:
                     logger.warning(f"Error {error_str[:50]} para {self.current_model_name}, rotando...")
                     if self._rotate_model():
                         continue
