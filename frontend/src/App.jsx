@@ -12,6 +12,14 @@ import { AnimatePresence } from 'framer-motion'
 
 function App() {
   const { setUser, setToken, token } = useAuthStore()
+  const {
+    isTrackerOpen,
+    combatState,
+    combatCampaignId,
+    combatIsGM,
+    combatActiveUsers,
+    setIsTrackerOpen,
+  } = useSocketStore()
   const [isHydrating, setIsHydrating] = useState(true)
 
   useEffect(() => {
@@ -59,15 +67,6 @@ function App() {
   if (isHydrating) {
     return <LoadingSpinner fullPage text="Cargando DungeonAssistant..." size={72} />
   }
-
-  const {
-    isTrackerOpen,
-    combatState,
-    combatCampaignId,
-    combatIsGM,
-    combatActiveUsers,
-    setIsTrackerOpen,
-  } = useSocketStore()
 
   return (
     <>
