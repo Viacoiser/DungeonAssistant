@@ -7,10 +7,14 @@ export const useCharacterStore = create((set) => ({
   activeCharacter: null,
   characters: [],
   loading: false,
+  characterDraft: null,       // borrador para evitar pérdida al cambiar tabs
 
   setActiveCharacter: (character) => set({ activeCharacter: character }),
   setCharacters: (characters) => set({ characters }),
   setLoading: (loading) => set({ loading }),
+
+  setCharacterDraft: (draft) => set({ characterDraft: draft }),
+  clearCharacterDraft: () => set({ characterDraft: null }),
 
   updateCharacter: (updatedCharacter) =>
     set((state) => ({
@@ -26,5 +30,6 @@ export const useCharacterStore = create((set) => ({
   reset: () => set({
     activeCharacter: null,
     characters: [],
+    characterDraft: null,
   }),
 }))

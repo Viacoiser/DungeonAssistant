@@ -4,7 +4,7 @@ import LoadingSpinner from '../shared/LoadingSpinner'
 import CharacterDetail from '../shared/CharacterDetail'
 import CharacterSidebar from './characters/CharacterSidebar'
 
-export default function CharactersTab({ campaignId, isGM, user }) {
+export default function CharactersTab({ campaignId, isGM, user, onSelectCharacter }) {
   const [characters, setCharacters] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedCharacterId, setSelectedCharacterId] = useState(null)
@@ -68,6 +68,7 @@ export default function CharactersTab({ campaignId, isGM, user }) {
                 character={selectedCharacter}
                 campaignId={campaignId}
                 isGM={isGM}
+                currentUserId={user?.id}
                 onUpdate={async (updatedChar) => {
                   try {
                     // 1. Guardar en backend (Supabase via API)

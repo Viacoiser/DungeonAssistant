@@ -2,6 +2,7 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react'
 import { X, Edit2, Save, Trash2, Sword, Shield, Book, Sparkles, User as UserIcon, Camera } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
+import { useCharacterStore } from '../../store/useCharacterStore'
 import './CharacterSheet5e.css'
 import { normalizeCharacter } from '../../utils/normalizeCharacter'
 import AbilityScores     from './AbilityScores'
@@ -20,7 +21,7 @@ import equipmentData from '../../data/encyclopedia/equipment.json'
 import traitsData from '../../data/encyclopedia/traits.json'
 
 /* ── Header bar ────────────────────────────────────────────── */
-function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, onSave, onCancel, onEdit, isSaving, onScanOCR, ocrFields, isCreating, onCreateSubmit }) {
+function SheetHeader({ character, onClose, isGM, canEdit, mode, isEditing, onToggleEdit, onSave, onCancel, onEdit, isSaving, onScanOCR, ocrFields, isCreating, onCreateSubmit }) {
   const classDisplay = [
     character.class_,
     character.subclass,
@@ -241,12 +242,12 @@ function SheetHeader({ character, onClose, isGM, mode, isEditing, onToggleEdit, 
               <span className="cs-btn__text">{isSaving ? 'Guardando...' : 'Guardar'}</span>
             </button>
           </>
-        ) : (
+        ) : canEdit ? (
           <button className="cs-btn cs-btn--edit" onClick={onToggleEdit} title="Editar personaje">
             <Edit2 size={18} />
             <span className="cs-btn__text">Editar</span>
           </button>
-        )}
+        ) : null}
         
         {!isEditing && mode !== 'create' && (
           <button className="cs-close" onClick={onClose} title="Cerrar">
@@ -265,6 +266,7 @@ export default function CharacterSheet5e({
   onClose,
   onUpdate,   // kept for future interactivity phase
   isGM,
+  currentUserId,
   mode = 'modal',
   // create-mode props
   onSubmit,   // (characterData) => Promise — called when creating a new character
@@ -276,7 +278,14 @@ export default function CharacterSheet5e({
   const [activeTab, setActiveTab] = useState('stats')
   const isCreateMode = mode === 'create'
   const initialCharacter = useMemo(() => normalizeCharacter(rawCharacter), [rawCharacter])
-  const [character, setCharacter] = useState(initialCharacter)
+  const { characterDraft, setCharacterDraft, clearCharacterDraft } = useCharacterStore()
+  const [character, setCharacter] = useState(() => {
+    if (!isCreateMode && characterDraft && characterDraft.id === rawCharacter?.id) {
+      return characterDraft
+    }
+    return initialCharacter
+  })
+  const canEdit = isCreateMode || isGM || character.player_id === currentUserId
   const [isEditing, setIsEditing] = useState(isCreateMode) // always editing in create mode
   const [isSaving, setIsSaving] = useState(false)
   const [isCreating, setIsCreating] = useState(false)
@@ -296,13 +305,18 @@ export default function CharacterSheet5e({
   }, [rawCharacter, isEditing, isCreateMode])
 
   const handleEdit = useCallback((changes) => {
-    setCharacter(prev => ({ ...prev, ...changes }))
-  }, [])
+    setCharacter(prev => {
+      const updated = { ...prev, ...changes }
+      if (!isCreateMode) setCharacterDraft(updated)
+      return updated
+    })
+  }, [isCreateMode, setCharacterDraft])
 
   const handleCancel = useCallback(() => {
     setCharacter(normalizeCharacter(rawCharacter))
     setIsEditing(false)
-  }, [rawCharacter])
+    clearCharacterDraft()
+  }, [rawCharacter, clearCharacterDraft])
 
   const handleSave = async () => {
     if (onUpdate) {
@@ -310,6 +324,7 @@ export default function CharacterSheet5e({
       try {
         await onUpdate(character)
         setIsEditing(false)
+        clearCharacterDraft()
       } catch (e) {
         console.error('Error al guardar:', e)
         alert('Error al guardar los cambios. Por favor revisa la consola.')
@@ -318,6 +333,7 @@ export default function CharacterSheet5e({
       }
     } else {
       setIsEditing(false)
+      clearCharacterDraft()
     }
   }
 
@@ -403,6 +419,7 @@ export default function CharacterSheet5e({
         character={character} 
         onClose={onClose} 
         isGM={isGM} 
+        canEdit={canEdit}
         mode={mode} 
         isEditing={isEditing}
         onToggleEdit={() => setIsEditing(!isEditing)}

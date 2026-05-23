@@ -10,6 +10,7 @@ import {
   Mic,
 } from 'lucide-react'
 import { campaignAPI } from '../../services/api'
+import { useAuthStore } from '../../store/useAuthStore'
 import {
   NotesTab,
   NpcsTab,
@@ -43,6 +44,7 @@ function buildTabs(isGM) {
 
 // ── Componente principal ─────────────────────────────────────────────────────
 export default function CampaignDetail({ campaign: initialCampaign, userRole, onBack }) {
+  const { user } = useAuthStore()
   const [activeTab, setActiveTab] = useState('notas')
   const [campaign, setCampaign] = useState(initialCampaign)
   const [viewingCharacter, setViewingCharacter] = useState(null)
@@ -214,7 +216,7 @@ export default function CampaignDetail({ campaign: initialCampaign, userRole, on
               height: '100%',
             }}>
               {activeTab === 'notas' && <NotesTab campaignId={campaign?.id} />}
-              {activeTab === 'personajes' && <CharactersTab campaignId={campaign?.id} onSelectCharacter={setViewingCharacter} />}
+              {activeTab === 'personajes' && <CharactersTab campaignId={campaign?.id} isGM={isGM} user={user} onSelectCharacter={setViewingCharacter} />}
               {activeTab === 'dice' && (
                 <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <DiceBoxRoller />

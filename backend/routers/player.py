@@ -50,6 +50,14 @@ async def create_character(
                     detail="No tienes permiso para crear personajes en esta campaña"
                 )
         
+        # Validar campos obligatorios
+        if not data.name or not data.name.strip():
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El nombre del personaje es obligatorio")
+        if not data.race or not data.race.strip():
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="La raza del personaje es obligatoria")
+        if not data.class_ or not data.class_.strip():
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="La clase del personaje es obligatoria")
+
         # Generar ID del personaje
         character_id = str(uuid.uuid4())
         
@@ -316,7 +324,7 @@ async def update_character(
         is_gm = False
         
         if character.get("campaign_id"):
-            member_res = supabase.client.table("campaign_members").select("role").eq("campaign_id", character["campaign_id"]).eq("user_id", current_user["id"]).execute()
+            member_res = supabase.admin_client.table("campaign_members").select("role").eq("campaign_id", character["campaign_id"]).eq("user_id", current_user["id"]).execute()
             if member_res.data and member_res.data[0]["role"] == "GM":
                 is_gm = True
         
