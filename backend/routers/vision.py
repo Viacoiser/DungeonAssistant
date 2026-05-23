@@ -131,6 +131,8 @@ class VisionService:
     def __init__(self):
         # Modelos con soporte confirmado para imagen
         self.vision_models = [
+            "gemini-2.0-flash",
+            "gemini-2.0-flash-lite",
             "gemini-1.5-flash",
             "gemini-1.5-pro",
         ]
