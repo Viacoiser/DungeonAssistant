@@ -133,8 +133,13 @@ class VisionService:
         self.vision_models = [
             "gemini-2.0-flash",
             "gemini-2.0-flash-lite",
+            "gemini-2.0-flash-exp",
+            "models/gemini-2.0-flash",
+            "models/gemini-2.0-flash-lite",
             "gemini-1.5-flash",
             "gemini-1.5-pro",
+            "models/gemini-1.5-flash",
+            "models/gemini-1.5-pro",
         ]
         self.exhausted_models = set()
         self.current_model_name = None
