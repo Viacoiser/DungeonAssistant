@@ -6,7 +6,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image, ImageEnhance, ImageFilter, PngImagePlugin, JpegImagePlugin, GifImagePlugin
 import io
 
 logger = logging.getLogger(__name__)
@@ -131,15 +131,15 @@ class VisionService:
     def __init__(self):
         # Modelos con soporte confirmado para imagen
         self.vision_models = [
+            "gemini-3.5-flash",
+            "gemini-2.5-flash",
+            "gemini-2.5-flash-lite",
             "gemini-2.0-flash",
             "gemini-2.0-flash-lite",
-            "gemini-2.0-flash-exp",
-            "models/gemini-2.0-flash",
-            "models/gemini-2.0-flash-lite",
+            "gemini-flash-latest",
+            "gemini-flash-lite-latest",
             "gemini-1.5-flash",
             "gemini-1.5-pro",
-            "models/gemini-1.5-flash",
-            "models/gemini-1.5-pro",
         ]
         self.exhausted_models = set()
         self.current_model_name = None
