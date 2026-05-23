@@ -1,7 +1,3 @@
-"""
-Router para gestión de personajes y jugadores
-"""
-
 import logging
 from fastapi import APIRouter, HTTPException, status, Depends, Body
 from datetime import datetime
@@ -20,16 +16,7 @@ async def create_character(
     data: CharacterCreate,
     current_user: dict = Depends(get_current_user)
 ):
-    """
-    Crear nuevo personaje (independiente o en una campaña específica)
-    
-    Args:
-        data: Datos del personaje (CharacterCreate)
-        current_user: Usuario autenticado
-        
-    Returns:
-        Datos del personaje creado
-    """
+    """Crear nuevo personaje (independiente o en una campaña específica)"""
     try:
         supabase = get_supabase()
         
@@ -67,7 +54,6 @@ async def create_character(
             "campaign_id": data.campaign_id,
             "player_id": current_user["id"],
 
-            # ── Identificación ───────────────────────────────────────────────────
             "name": data.name,
             "race": data.race,
             "class": data.class_,
@@ -77,10 +63,8 @@ async def create_character(
             "experience_points": data.experience_points,
             "player_name": data.player_name or "",
 
-            # ── Stats base ───────────────────────────────────────────────────────
             "stats": data.stats.dict() if hasattr(data.stats, "dict") else data.stats,
 
-            # ── Combate ──────────────────────────────────────────────────────────
             "hp_max": data.hp_max,
             "hp_current": data.hp_current,
             "hp_temporary": data.hp_temporary,
@@ -93,40 +77,31 @@ async def create_character(
             "passive_perception": data.passive_perception,
             "inspiration": data.inspiration,
 
-            # ── Tiradas de salvación y habilidades ───────────────────────────────
             "saving_throws": data.saving_throws,
             "skills": data.skills,
 
-            # ── Death saves ──────────────────────────────────────────────────────
             "death_saves": data.death_saves,
 
-            # ── Ataques ──────────────────────────────────────────────────────────
             "attacks": data.attacks,
 
-            # ── Equipo e inventario ──────────────────────────────────────────────
             "equipment": data.equipment,
             "currency": data.currency,
             "treasure": data.treasure or "",
 
-            # ── Spellcasting ─────────────────────────────────────────────────────
             "spellcasting": data.spellcasting,
 
-            # ── Personalidad ─────────────────────────────────────────────────────
             "personality_traits": data.personality_traits,
             "ideals": data.ideals,
             "bonds": data.bonds,
             "flaws": data.flaws,
 
-            # ── Rasgos ───────────────────────────────────────────────────────────
             "features_traits": data.features_traits,
             "other_proficiencies": data.other_proficiencies,
             "additional_features": data.additional_features,
 
-            # ── Trasfondo ────────────────────────────────────────────────────────
             "backstory": data.backstory,
             "allies_organizations": data.allies_organizations,
 
-            # ── Apariencia ───────────────────────────────────────────────────────
             "age": data.age or "",
             "height": data.height or "",
             "weight": data.weight or "",
@@ -135,7 +110,6 @@ async def create_character(
             "hair": data.hair or "",
             "appearance": data.appearance or "",
 
-            # ── Imagen / estado ──────────────────────────────────────────────────
             "image_url": data.image_url,
             "is_alive": True,
             "created_at": datetime.utcnow().isoformat(),
@@ -156,14 +130,14 @@ async def create_character(
                     detail="Error al crear el personaje en la base de datos"
                 )
         except Exception as db_error:
-            logger.error(f"❌ Database error inserting character: {str(db_error)}")
+            logger.error(f"Database error inserting character: {str(db_error)}")
             logger.error(f"Character data attempted: {character_data}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error de base de datos: {str(db_error)}"
             )
         
-        logger.info(f"✅ Character created: {character_id} for user {current_user['id']}")
+        logger.info(f"Character created: {character_id} for user {current_user['id']}")
         
         return {
             "id": character_id,
@@ -179,7 +153,7 @@ async def create_character(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Error creating character: {e}")
+        logger.error(f"Error creating character: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al crear el personaje"
@@ -191,16 +165,7 @@ async def list_characters(
     campaign_id: str = None,
     current_user: dict = Depends(get_current_user)
 ):
-    """
-    Listar personajes (de una campaña o todos los del usuario)
-    
-    Args:
-        campaign_id: ID de la campaña (opcional)
-        current_user: Usuario autenticado
-        
-    Returns:
-        Lista de personajes
-    """
+    """Listar personajes (de una campaña o todos los del usuario)"""
     try:
         supabase = get_supabase()
         
@@ -230,7 +195,7 @@ async def list_characters(
         # Obtener personajes
         characters = query.execute()
         
-        logger.info(f"✅ Retrieved {len(characters.data)} characters")
+        logger.info(f"Retrieved {len(characters.data)} characters")
         
         return {
             "characters": characters.data or [],
@@ -240,7 +205,7 @@ async def list_characters(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Error listing characters: {e}")
+        logger.error(f"Error listing characters: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al obtener personajes"
@@ -291,7 +256,7 @@ async def get_character(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Error getting character: {e}")
+        logger.error(f"Error getting character: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al obtener personaje"
@@ -360,7 +325,7 @@ async def update_character(
                 "id", character_id
             ).execute()
         except Exception as db_err:
-            logger.error(f"❌ Database error updating character {character_id}: {str(db_err)}")
+            logger.error(f"Database error updating character {character_id}: {str(db_err)}")
             # Log full data to see what might be wrong (be careful with sensitive data in production, but this is dev)
             logger.debug(f"Payload attempted: {update_data}")
             raise HTTPException(
@@ -369,19 +334,19 @@ async def update_character(
             )
         
         if not result.data:
-            logger.error(f"❌ Supabase returned no data after update for {character_id}")
+            logger.error(f"Supabase returned no data after update for {character_id}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Error al actualizar personaje: no se recibieron datos de vuelta"
             )
         
-        logger.info(f"✅ Character updated: {character_id} by {current_user['id']}")
+        logger.info(f"Character updated: {character_id} by {current_user['id']}")
         return {"message": "Personaje actualizado exitosamente", "data": result.data[0]}
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Unhandled error updating character: {str(e)}", exc_info=True)
+        logger.error(f"Unhandled error updating character: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno al actualizar personaje: {str(e)}"
@@ -394,10 +359,7 @@ async def update_character_status(
     data: CharacterStatusUpdate,
     current_user: dict = Depends(get_current_user)
 ):
-    """
-    Actualizar status del personaje (vivo/muerto) y crear registro en histórico
-    Solo GM puede hacer esto
-    """
+    """Actualizar status del personaje (vivo/muerto). Solo GM."""
     try:
         supabase = get_supabase()
         
@@ -470,7 +432,7 @@ async def update_character_status(
             history_entry
         ).execute()
         
-        logger.info(f"✅ Character status updated: {character_id} - {change_type}")
+        logger.info(f"Character status updated: {character_id} - {change_type}")
         
         return {
             "message": f"Personaje {'marcado como muerto' if not new_status else 'revivido'}",
@@ -480,7 +442,7 @@ async def update_character_status(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Error updating character status: {e}")
+        logger.error(f"Error updating character status: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al actualizar estado del personaje"
@@ -543,7 +505,7 @@ async def get_character_history(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Error getting character history: {e}")
+        logger.error(f"Error getting character history: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al obtener histórico"
@@ -556,10 +518,7 @@ async def assign_character_to_campaign(
     campaign_id: str = Body(..., embed=True),
     current_user: dict = Depends(get_current_user)
 ):
-    """
-    Asignar un personaje existente a una campaña
-    (El usuario debe ser miembro de la campaña)
-    """
+    """Asignar un personaje existente a una campaña"""
     try:
         supabase = get_supabase()
         
@@ -619,7 +578,7 @@ async def assign_character_to_campaign(
                 detail="Error al asignar el personaje a la campaña"
             )
         
-        logger.info(f"✅ Character {character_id} assigned to campaign {campaign_id}")
+        logger.info(f"Character {character_id} assigned to campaign {campaign_id}")
         
         return {
             "message": "Personaje asignado a la campaña exitosamente",
@@ -630,7 +589,7 @@ async def assign_character_to_campaign(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Error assigning character to campaign: {e}")
+        logger.error(f"Error assigning character to campaign: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al asignar personaje a campaña"
@@ -643,14 +602,7 @@ async def join_campaign_by_code(
     invite_code: str = Body(..., embed=True),
     current_user: dict = Depends(get_current_user)
 ):
-    """
-    Unir un personaje a una campaña usando código de invitación
-    
-    Args:
-        character_id: ID del personaje
-        invite_code: Código de invitación de la campaña
-        current_user: Usuario autenticado
-    """
+    """Unir un personaje a una campaña usando código de invitación"""
     try:
         supabase = get_supabase()
         
@@ -735,7 +687,7 @@ async def join_campaign_by_code(
             }
             supabase.client.table("campaign_members").insert(member_data).execute()
         
-        logger.info(f"✅ Character {character_id} joined campaign {campaign_id} via code {invite_code}")
+        logger.info(f"Character {character_id} joined campaign {campaign_id} via code {invite_code}")
         
         return {
             "message": "¡Personaje unido a la campaña exitosamente!",
@@ -747,7 +699,7 @@ async def join_campaign_by_code(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Error joining campaign by code: {e}", exc_info=True)
+        logger.error(f"Error joining campaign by code: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error: {str(e)}"

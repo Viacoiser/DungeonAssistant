@@ -9,7 +9,7 @@ import { getSocket } from '../../services/socket'
 import { characterAPI, npcAPI } from '../../services/api'
 import monstersData from '../../data/encyclopedia/monsters.json'
 
-// Beautiful sub-component to render rapidly rolling dice numbers for active rolls
+// Rapid rolling dice animation for active rolls
 function RollingBadge({ modifier }) {
   const [num, setNum] = useState(10)
   
@@ -33,31 +33,25 @@ function RollingBadge({ modifier }) {
 export default function LiveInitiativeTracker({ campaignId, isGM, user, combatState, onClose, activeUsers = [] }) {
   const socket = getSocket()
   
-  // Local states
   const [character, setCharacter] = useState(null)
   const [npcs, setNpcs] = useState([])
   const [loadingChar, setLoadingChar] = useState(false)
   
-  // Rolling phase states (Player/GM)
   const [isRolling, setIsRolling] = useState(false)
   const [rollValue, setRollValue] = useState(null)
   const [tempTotal, setTempTotal] = useState(null)
   const [hasRolled, setHasRolled] = useState(false)
   const [confirmedRoll, setConfirmedRoll] = useState(null)
   
-  // GM Monster entry states (multiple rows)
   const [monsterRows, setMonsterRows] = useState([
     { id: 'row_' + Date.now(), selectedNpcId: '', name: '', modifier: 0, quantity: 1 }
   ])
   const [monsterRolling, setMonsterRolling] = useState(false) // local animation state for GM
   const [combatError, setCombatError] = useState(null)
   
-  // Visual rolling effect
   const [rollingNumber, setRollingNumber] = useState(20)
   const rollIntervalRef = useRef(null)
 
-  // Load player character (if PLAYER) and campaign NPCs (if GM)
-  // NOTE: This runs only on mount / when campaign/user changes — NOT on every combat turn update
   useEffect(() => {
     const loadData = async () => {
       if (!isGM && user) {
@@ -88,7 +82,6 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
     loadData()
   }, [campaignId, isGM, user])
 
-  // Listen for combat_error events from backend
   useEffect(() => {
     if (!socket) return
     const handleError = (data) => {
@@ -100,15 +93,12 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
     return () => socket.off('combat_error', handleError)
   }, [socket])
 
-  // When combat state updates, clear local monster rolling state
   useEffect(() => {
     if (monsterRolling) {
-      // Server broadcast received — animation shown on server side now
       setMonsterRolling(false)
     }
   }, [combatState.turns?.length])
 
-  // Monitor updates to combat turns to sync lock states
   useEffect(() => {
     if (character && combatState.turns) {
       const myTurn = combatState.turns.find(t => t.id === character.id)
@@ -120,7 +110,6 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
           setConfirmedRoll(myTurn.total)
         }
       } else {
-        // Reset local states if character is no longer in active combat turns list
         setRollValue(null)
         setTempTotal(null)
         setHasRolled(false)
@@ -301,7 +290,6 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
     if (validMonsters.length === 0 || monsterRolling) return
     
     if (socket) {
-      // Show immediate local rolling animation
       setMonsterRolling(true)
       setCombatError(null)
       
@@ -311,13 +299,11 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
       })
     }
     
-    // Reset to a single empty row
     setMonsterRows([
       { id: 'row_' + Date.now(), selectedNpcId: '', name: '', modifier: 0, quantity: 1 }
     ])
   }
 
-  // Helpers
   const formatModifier = (val) => {
     const num = parseInt(val)
     if (isNaN(num)) return '+0'
@@ -353,7 +339,6 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
         <div className="absolute top-0 right-0 w-80 h-80 bg-fantasy-accent/5 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-900/5 rounded-full blur-[100px] pointer-events-none" />
 
-        {/* ── HEADER ── */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-fantasy-gold/15 bg-black/40 z-10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-fantasy-accent/15 border border-fantasy-accent/30 flex items-center justify-center text-fantasy-accent shadow-[0_0_12px_rgba(217,83,30,0.2)]">
@@ -362,9 +347,9 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
             <div>
               <h2 className="font-serif font-bold text-xl text-white tracking-wide">Iniciativa en Vivo</h2>
               <p className="text-xs text-fantasy-gold/60 uppercase tracking-widest">
-                {combatState.status === 'rolling' && '⚔️ Fase de Tiradas'}
-                {combatState.status === 'active' && '⚔️ Combate Activo'}
-                {combatState.status === 'inactive' && '⚔️ Sala de Combate'}
+                {combatState.status === 'rolling' && 'Fase de Tiradas'}
+                {combatState.status === 'active' && 'Combate Activo'}
+                {combatState.status === 'inactive' && 'Sala de Combate'}
               </p>
             </div>
           </div>
@@ -397,7 +382,6 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
           </div>
         )}
 
-        {/* ── MAIN SCROLLABLE CONTENT ── */}
         <div className="flex-1 overflow-y-auto no-scrollbar px-6 py-6 space-y-6 z-10 relative">
           
           {/* GM Setup (Combat inactive) */}
@@ -427,7 +411,6 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
             </div>
           )}
 
-          {/* ── PLAYER ACTIVE TURN BANNER ── */}
           {combatState.status === 'active' && isMyTurn() && (
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
@@ -451,7 +434,6 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
             </motion.div>
           )}
 
-          {/* ── PLAYER ROLLING SECTION ── */}
           {((combatState.status === 'rolling' || combatState.status === 'active') && !isGM && !confirmedRoll) && (
             <div className="p-5 bg-white/3 border border-white/5 rounded-2xl space-y-5 relative">
               <h3 className="font-serif text-lg text-white font-semibold flex items-center gap-2 border-b border-white/5 pb-3">
@@ -575,7 +557,6 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
             </div>
           )}
 
-          {/* ── GM COMBAT DASHBOARD PANEL ── */}
           {isGM && (
             <div className="p-5 bg-white/3 border border-white/5 rounded-2xl space-y-4">
               <h3 className="font-serif text-lg text-white font-semibold flex items-center justify-between border-b border-white/5 pb-3">
@@ -791,7 +772,6 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
             </div>
           )}
 
-          {/* ── COMBATANTS INITIATIVE QUEUE ── */}
           {combatState.status !== 'inactive' && (
             <div className="space-y-3.5">
               <h3 className="font-serif text-lg text-white font-semibold flex items-center gap-2 border-b border-white/5 pb-2.5">
@@ -943,7 +923,6 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
             </div>
           )}
 
-          {/* ── BATTLE LOG / HISTORIAL ── */}
           {combatState.status !== 'inactive' && (
             <div className="space-y-2.5">
               <h3 className="font-serif text-lg text-white font-semibold flex items-center gap-2 border-b border-white/5 pb-2">

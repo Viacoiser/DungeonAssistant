@@ -103,10 +103,7 @@ class StatsModel(BaseModel):
     charisma: int = Field(default=10, ge=1, le=30)
 
 
-# ── Defaults JSONB ─────────────────────────────────────────────────────────────
-
 def default_saving_throws() -> Dict[str, Any]:
-    """Estructura canónica de saving throws D&D 5e"""
     return {
         stat: {"proficient": False}
         for stat in ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"]
@@ -114,7 +111,6 @@ def default_saving_throws() -> Dict[str, Any]:
 
 
 def default_skills() -> Dict[str, Any]:
-    """Estructura canónica de las 18 habilidades D&D 5e"""
     return {
         skill: {"proficient": False, "expertise": False}
         for skill in [
@@ -128,7 +124,6 @@ def default_skills() -> Dict[str, Any]:
 
 
 def default_attacks() -> List[Dict[str, Any]]:
-    """3 filas vacías de ataques (hoja oficial D&D 5e)"""
     return [
         {"name": "", "attack_bonus": "+0", "damage": "", "damage_type": ""}
         for _ in range(3)
@@ -140,7 +135,6 @@ def default_death_saves() -> Dict[str, Any]:
 
 
 def default_spellcasting() -> Dict[str, Any]:
-    """Estructura completa de spellcasting D&D 5e"""
     return {
         "class": "",
         "ability": "",
@@ -155,7 +149,6 @@ def default_spellcasting() -> Dict[str, Any]:
 
 
 def default_currency() -> Dict[str, int]:
-    """Monedas D&D 5e: CP / SP / EP / GP / PP"""
     return {"cp": 0, "sp": 0, "ep": 0, "gp": 0, "pp": 0}
 
 
@@ -164,9 +157,6 @@ def default_allies_organizations() -> Dict[str, Any]:
 
 
 class CharacterCreate(BaseModel):
-    """Crear personaje — cubre todos los campos de la hoja oficial D&D 5e"""
-
-    # ── Identificación ──────────────────────────────────────────────────────────
     campaign_id: Optional[str] = None
     name: str = Field(..., min_length=1, max_length=100)
     race: str = Field(..., min_length=1)
@@ -178,10 +168,8 @@ class CharacterCreate(BaseModel):
     experience_points: int = Field(default=0, ge=0)
     player_name: Optional[str] = None          # Nombre del jugador (no el personaje)
 
-    # ── Estadísticas base ───────────────────────────────────────────────────────
     stats: StatsModel = Field(default_factory=StatsModel)
 
-    # ── Combate ─────────────────────────────────────────────────────────────────
     hp_max: int = Field(..., ge=1)
     hp_current: int = Field(..., ge=0)
     hp_temporary: int = Field(default=0, ge=0)           # Temp HP
@@ -194,40 +182,31 @@ class CharacterCreate(BaseModel):
     passive_perception: int = Field(default=10)
     inspiration: bool = Field(default=False)
 
-    # ── Tiradas de salvación y habilidades (JSONB estructurado) ─────────────────
     saving_throws: Dict[str, Any] = Field(default_factory=default_saving_throws)
     skills: Dict[str, Any] = Field(default_factory=default_skills)
 
-    # ── Death Saves ─────────────────────────────────────────────────────────────
     death_saves: Dict[str, Any] = Field(default_factory=default_death_saves)
 
-    # ── Ataques ─────────────────────────────────────────────────────────────────
     attacks: List[Dict[str, Any]] = Field(default_factory=default_attacks)
 
-    # ── Equipo e inventario ──────────────────────────────────────────────────────
     equipment: str = Field(default="")
     currency: Dict[str, Any] = Field(default_factory=default_currency)
     treasure: Optional[str] = None
 
-    # ── Spellcasting ─────────────────────────────────────────────────────────────
     spellcasting: Dict[str, Any] = Field(default_factory=default_spellcasting)
 
-    # ── Personalidad ─────────────────────────────────────────────────────────────
     personality_traits: str = Field(default="")
     ideals: str = Field(default="")
     bonds: str = Field(default="")
     flaws: str = Field(default="")
 
-    # ── Rasgos y características ──────────────────────────────────────────────────
     features_traits: str = Field(default="")
     other_proficiencies: str = Field(default="")   # Idiomas, herramientas, etc.
     additional_features: str = Field(default="")   # Rasgos adicionales (pág 2)
 
-    # ── Trasfondo ────────────────────────────────────────────────────────────────
     backstory: str = Field(default="")
     allies_organizations: Dict[str, Any] = Field(default_factory=default_allies_organizations)
 
-    # ── Apariencia física ────────────────────────────────────────────────────────
     age: Optional[str] = None
     height: Optional[str] = None
     weight: Optional[str] = None
@@ -236,7 +215,6 @@ class CharacterCreate(BaseModel):
     hair: Optional[str] = None
     appearance: Optional[str] = None              # Descripción libre de apariencia
 
-    # ── Imagen ───────────────────────────────────────────────────────────────────
     image_url: Optional[str] = None
 
     class Config:
@@ -270,9 +248,6 @@ class CharacterStatusUpdate(BaseModel):
 
 
 class CharacterUpdate(BaseModel):
-    """Actualizar datos del personaje — cubre todos los campos editables"""
-
-    # ── Identificación ──────────────────────────────────────────────────────────
     name: Optional[str] = None
     race: Optional[str] = None
     class_: Optional[str] = Field(None, alias="class")
@@ -284,10 +259,8 @@ class CharacterUpdate(BaseModel):
     player_name: Optional[str] = None
     campaign_id: Optional[str] = None
 
-    # ── Stats base ───────────────────────────────────────────────────────────────
     stats: Optional[StatsModel] = None
 
-    # ── Combate ──────────────────────────────────────────────────────────────────
     hp_max: Optional[int] = Field(None, ge=1)
     hp_current: Optional[int] = Field(None, ge=0)
     hp_temporary: Optional[int] = Field(None, ge=0)
@@ -300,40 +273,31 @@ class CharacterUpdate(BaseModel):
     passive_perception: Optional[int] = None
     inspiration: Optional[bool] = None
 
-    # ── Tiradas de salvación y habilidades ────────────────────────────────────────
     saving_throws: Optional[Dict[str, Any]] = None
     skills: Optional[Dict[str, Any]] = None
 
-    # ── Death Saves ───────────────────────────────────────────────────────────────
     death_saves: Optional[Dict[str, Any]] = None
 
-    # ── Ataques ───────────────────────────────────────────────────────────────────
     attacks: Optional[List[Dict[str, Any]]] = None
 
-    # ── Equipo e inventario ───────────────────────────────────────────────────────
     equipment: Optional[str] = None
     currency: Optional[Dict[str, Any]] = None
     treasure: Optional[str] = None
 
-    # ── Spellcasting ──────────────────────────────────────────────────────────────
     spellcasting: Optional[Dict[str, Any]] = None
 
-    # ── Personalidad ──────────────────────────────────────────────────────────────
     personality_traits: Optional[str] = None
     ideals: Optional[str] = None
     bonds: Optional[str] = None
     flaws: Optional[str] = None
 
-    # ── Rasgos ────────────────────────────────────────────────────────────────────
     features_traits: Optional[str] = None
     other_proficiencies: Optional[str] = None
     additional_features: Optional[str] = None
 
-    # ── Trasfondo ─────────────────────────────────────────────────────────────────
     backstory: Optional[str] = None
     allies_organizations: Optional[Dict[str, Any]] = None
 
-    # ── Apariencia física ─────────────────────────────────────────────────────────
     age: Optional[str] = None
     height: Optional[str] = None
     weight: Optional[str] = None
@@ -342,7 +306,6 @@ class CharacterUpdate(BaseModel):
     hair: Optional[str] = None
     appearance: Optional[str] = None
 
-    # ── Estado / imagen ───────────────────────────────────────────────────────────
     is_alive: Optional[bool] = None
     image_url: Optional[str] = None
 

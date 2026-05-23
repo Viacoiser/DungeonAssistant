@@ -7,17 +7,14 @@ from services.supabase import get_supabase
 logger = logging.getLogger(__name__)
 
 def extract_token_safely(environ: dict) -> Optional[str]:
-    """
-    Extraer token JWT con múltiples estrategias
-    """
-    logger.debug(f"🔍 Extractando token. environ keys: {list(environ.keys())}")
+    logger.debug(f"Extractando token. environ keys: {list(environ.keys())}")
     
     # Estrategia 1: Desde auth (ASGI socket.io client)
     auth = environ.get('auth', {}) or environ.get('aio.http_auth', {})
     if auth and isinstance(auth, dict):
         token = auth.get('token')
         if token:
-            logger.info("✓ Token desde 'auth'")
+            logger.info("Token desde 'auth'")
             return token
     
     # Estrategia 2: Desde headers HTTP
@@ -30,7 +27,7 @@ def extract_token_safely(environ: dict) -> Optional[str]:
                 auth_value = value.decode()
                 if auth_value.startswith('Bearer '):
                     token = auth_value[7:]
-                    logger.info("✓ Token desde header Authorization")
+                    logger.info("Token desde header Authorization")
                     return token
         except Exception as e:
             logger.warning(f"Error procesando header: {e}")
@@ -46,18 +43,15 @@ def extract_token_safely(environ: dict) -> Optional[str]:
             params = urllib.parse.parse_qs(query_string)
             if 'token' in params:
                 token = params['token'][0]
-                logger.info(f"✓ Token desde query string: {token[:20]}...")
+                logger.info(f"Token desde query string: {token[:20]}...")
                 return token
     except Exception as e:
         logger.warning(f"Error procesando query string: {e}")
     
-    logger.warning("✗ No se encontró token")
+    logger.warning("No se encontró token")
     return None
 
 class SocketManager:
-    """
-    Manager centralizado para la lógica de Socket.io
-    """
     def __init__(self):
         # Leer orígenes permitidos desde variable de entorno
         env_origins = os.getenv('ALLOWED_ORIGINS', '')
@@ -103,10 +97,6 @@ class SocketManager:
         self.sio.on('end_combat', self.on_end_combat)
 
     async def on_connect(self, sid: str, environ: dict, auth: Optional[dict] = None):
-        """
-        Manejar conexión y validar JWT
-        Permite múltiples conexiones simultáneas de usuarios diferentes
-        """
         try:
             # Extraer token con múltiples estrategias
             token = extract_token_safely(environ)
@@ -114,7 +104,7 @@ class SocketManager:
                 token = auth.get('token')
             
             if not token:
-                logger.warning(f"❌ Conexión rechazada (sin token): {sid}")
+                logger.warning(f"Conexión rechazada (sin token): {sid}")
                 return False
 
             # Validar token con Supabase
@@ -122,7 +112,7 @@ class SocketManager:
             user = supabase.get_user_by_token(token)
             
             if not user:
-                logger.warning(f"❌ Conexión rechazada (token inválido): {sid}")
+                logger.warning(f"Conexión rechazada (token inválido): {sid}")
                 return False
 
             # Guardar info del usuario - permitir múltiples sockets por usuario
@@ -140,18 +130,15 @@ class SocketManager:
             
             # Log con más detalle
             active_connections = sum(1 for u in self.connected_users.values() if u.get("user_id") == user_id)
-            logger.info(f"✅ Socket conectado: {username} ({sid}) - Conexiones activas: {active_connections}")
+            logger.info(f"Socket conectado: {username} ({sid}) - Conexiones activas: {active_connections}")
             
             await self.sio.emit("authenticated", {"status": "ok"}, to=sid)
             
         except Exception as e:
-            logger.error(f"❌ Error en on_connect: {e}")
+            logger.error(f"Error en on_connect: {e}")
             return False
 
     async def on_disconnect(self, sid: str):
-        """
-        Limpiar estado al desconectar
-        """
         if sid in self.connected_users:
             user_info = self.connected_users.pop(sid)
             campaign_id = user_info.get("campaign_id")
@@ -162,9 +149,6 @@ class SocketManager:
             logger.info(f"Socket desconectado: {user_info.get('username')} ({sid})")
 
     async def on_join_campaign(self, sid: str, data: dict):
-        """
-        Unir usuario a una sala de campaña
-        """
         try:
             campaign_id = data.get("campaign_id")
             if not campaign_id:
@@ -219,10 +203,6 @@ class SocketManager:
             logger.error(f"Error en on_join_campaign: {e}")
 
     async def _cache_user_role(self, sid: str, campaign_id: str, user_info: dict):
-        """
-        Cachea el rol del usuario en background para no bloquear on_join_campaign.
-        Usa run_in_executor para que la llamada síncrona a Supabase no bloquee asyncio.
-        """
         import asyncio
         try:
             supabase = get_supabase()
@@ -244,22 +224,19 @@ class SocketManager:
 
             if role_res.data:
                 user_info["campaign_role"] = role_res.data[0].get("role", "PLAYER")
-                logger.info(f"✅ Rol cacheado para {user_info['username']} en {campaign_id}: {user_info['campaign_role']}")
+                logger.info(f"Rol cacheado para {user_info['username']} en {campaign_id}: {user_info['campaign_role']}")
             else:
                 user_info["campaign_role"] = "PLAYER"
-                logger.warning(f"⚠️ No se encontró rol para {user_info['username']} en {campaign_id}")
+                logger.warning(f"No se encontró rol para {user_info['username']} en {campaign_id}")
         except Exception as role_err:
             user_info["campaign_role"] = "PLAYER"
-            logger.error(f"❌ Error cacheando rol: {role_err}")
+            logger.error(f"Error cacheando rol: {role_err}")
         finally:
             user_info["campaign_role_loading"] = False
 
 
 
     async def on_leave_campaign(self, sid: str, data: dict):
-        """
-        Abandonar sala de campaña
-        """
         try:
             campaign_id = data.get("campaign_id")
             if not campaign_id:
@@ -295,9 +272,6 @@ class SocketManager:
             logger.error(f"Error en on_leave_campaign: {e}")
 
     async def on_broadcast_message(self, sid: str, data: dict):
-        """
-        Enviar un mensaje a todos en la campaña
-        """
         try:
             campaign_id = data.get("campaign_id")
             message = data.get("message")
@@ -323,16 +297,12 @@ class SocketManager:
             logger.error(f"Error en on_broadcast_message: {e}")
 
     async def on_get_active_users(self, sid: str, data: dict):
-        """
-        Retornar lista de usuarios activos en una campaña
-        """
         campaign_id = data.get("campaign_id")
         if campaign_id:
             users = self._get_active_users_list(campaign_id)
             await self.sio.emit("active_users", {"users": users}, to=sid)
 
     def _get_active_users_list(self, campaign_id: str):
-        """Helper para obtener lista serializable de usuarios"""
         active_users = []
         for user_sid in self.campaign_rooms.get(campaign_id, []):
             if user_sid in self.connected_users:
@@ -345,11 +315,6 @@ class SocketManager:
         return active_users
 
     async def is_user_gm(self, campaign_id: str, user_id: str, sid: str = None) -> bool:
-        """
-        Verificar si el usuario es GM en la campaña.
-        Primero consulta el caché en memoria (cargado al hacer join),
-        luego hace fallback a la DB si no está cacheado.
-        """
         import asyncio
         
         # 1. Verificar caché en memoria (cargado en on_join_campaign)
@@ -395,9 +360,6 @@ class SocketManager:
         return False
 
     async def on_start_combat(self, sid: str, data: dict):
-        """
-        GM inicia combate
-        """
         try:
             campaign_id = data.get("campaign_id")
             if not campaign_id or sid not in self.connected_users:
@@ -410,7 +372,7 @@ class SocketManager:
             
             # Verificar si el usuario es GM (pasar sid para usar caché)
             if not await self.is_user_gm(campaign_id, user_id, sid=sid):
-                logger.warning(f"⚠️ Intento no autorizado de start_combat por {user_info['username']} (rol: {user_info.get('campaign_role', 'desconocido')})")
+                logger.warning(f"Intento no autorizado de start_combat por {user_info['username']} (rol: {user_info.get('campaign_role', 'desconocido')})")
                 await self.sio.emit("combat_error", {"message": "No tienes permiso para iniciar el combate"}, to=sid)
                 return
 
@@ -420,7 +382,7 @@ class SocketManager:
                 "turns": [],
                 "history": [{
                     "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
-                    "message": "⚔️ El GM inició la fase de iniciativa."
+                    "message": "El GM inició la fase de iniciativa."
                 }],
                 "current_turn": 0
             }
@@ -433,9 +395,6 @@ class SocketManager:
             logger.error(f"Error en on_start_combat: {e}")
 
     async def on_submit_initiative(self, sid: str, data: dict):
-        """
-        Jugador o GM envía tirada tentativa de iniciativa
-        """
         try:
             campaign_id = data.get("campaign_id")
             participant_id = data.get("participant_id")  # character_id o monster_uuid
@@ -491,9 +450,6 @@ class SocketManager:
             logger.error(f"Error en on_submit_initiative: {e}")
 
     async def on_confirm_initiative(self, sid: str, data: dict):
-        """
-        Jugador confirma su tirada final de iniciativa
-        """
         try:
             campaign_id = data.get("campaign_id")
             participant_id = data.get("participant_id")
@@ -523,9 +479,9 @@ class SocketManager:
             
             # Agregar al historial
             if combat["status"] == "active":
-                msg = f"🎲 {participant['name']} se unió al combate en curso con iniciativa: {participant['total']} ({participant['roll']} + {participant['modifier']} Mod)"
+                msg = f"{participant['name']} se unió al combate en curso con iniciativa: {participant['total']} ({participant['roll']} + {participant['modifier']} Mod)"
             else:
-                msg = f"🎲 {participant['name']} confirmó su tirada: {participant['total']} ({participant['roll']} + {participant['modifier']} Iniciativa)"
+                msg = f"{participant['name']} confirmó su tirada: {participant['total']} ({participant['roll']} + {participant['modifier']} Iniciativa)"
                 
             combat["history"].append({
                 "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
@@ -556,9 +512,6 @@ class SocketManager:
             logger.error(f"Error en on_confirm_initiative: {e}")
 
     async def on_add_monster(self, sid: str, data: dict):
-        """
-        GM agrega monstruo(s) a la iniciativa y lanza sus dados simultáneamente
-        """
         try:
             campaign_id = data.get("campaign_id")
             monsters = data.get("monsters") # list of dicts: [{"name": ..., "modifier": ..., "quantity": ...}]
@@ -581,7 +534,7 @@ class SocketManager:
             # Verificar si el usuario es GM (pasar sid para usar caché)
             logger.info(f"[ADD_MONSTER] {user_info['username']} quiere agregar {len(monsters)} tipo(s) de criatura(s) en {campaign_id}")
             if not await self.is_user_gm(campaign_id, user_id, sid=sid):
-                logger.warning(f"⚠️ add_monster denegado para {user_info['username']} (rol: {user_info.get('campaign_role', 'desconocido')})")
+                logger.warning(f"add_monster denegado para {user_info['username']} (rol: {user_info.get('campaign_role', 'desconocido')})")
                 await self.sio.emit("combat_error", {"message": "Solo el GM puede agregar monstruos"}, to=sid)
                 return
                 
@@ -645,7 +598,7 @@ class SocketManager:
                 # Agregar al historial
                 combat["history"].append({
                     "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
-                    "message": f"👾 {m['name']} (Monstruo) obtuvo iniciativa: {m['total']} ({m['roll']} {mod_sign}{m['modifier']} Mod)",
+                    "message": f"{m['name']} (Monstruo) obtuvo iniciativa: {m['total']} ({m['roll']} {mod_sign}{m['modifier']} Mod)",
                     "is_private": True
                 })
                 
@@ -657,9 +610,6 @@ class SocketManager:
             logger.error(f"Error en on_add_monster: {e}")
 
     async def on_delete_participant(self, sid: str, data: dict):
-        """
-        GM elimina un participante del combate (jugador o monstruo)
-        """
         try:
             campaign_id = data.get("campaign_id")
             participant_id = data.get("participant_id")
@@ -695,7 +645,7 @@ class SocketManager:
                 # Agregar al historial
                 history_entry = {
                     "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
-                    "message": f"❌ {p_name} fue eliminado del combate por el GM."
+                    "message": f"{p_name} fue eliminado del combate por el GM."
                 }
                 if is_monster:
                     history_entry["is_private"] = True
@@ -713,9 +663,6 @@ class SocketManager:
             logger.error(f"Error en on_delete_participant: {e}")
 
     async def on_finish_rolling_phase(self, sid: str, data: dict):
-        """
-        GM finaliza la fase de tiradas y comienza el combate
-        """
         try:
             campaign_id = data.get("campaign_id")
             
@@ -729,17 +676,17 @@ class SocketManager:
             
             # Verificar si el usuario es GM
             if not await self.is_user_gm(campaign_id, user_id, sid=sid):
-                logger.warning(f"⚠️ finish_rolling denegado para {user_info['username']}")
+                logger.warning(f"finish_rolling denegado para {user_info['username']}")
                 await self.sio.emit("combat_error", {"message": "Solo el GM puede comenzar el combate"}, to=sid)
                 return
                 
             if campaign_id not in self.active_combats:
-                logger.warning(f"⚠️ No hay combate activo en {campaign_id}")
+                logger.warning(f"No hay combate activo en {campaign_id}")
                 return
             
             combat = self.active_combats[campaign_id]
             if combat["status"] != "rolling":
-                logger.warning(f"⚠️ Combate no está en fase rolling: {combat['status']}")
+                logger.warning(f"Combate no está en fase rolling: {combat['status']}")
                 return
             
             # Validar que haya al menos un participante
@@ -747,7 +694,7 @@ class SocketManager:
                 # Agregar una alerta en el historial si intentan empezar vacío
                 combat["history"].append({
                     "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
-                    "message": "⚠️ No se puede comenzar el combate sin participantes."
+                    "message": "No se puede comenzar el combate sin participantes."
                 })
                 await self.sio.emit("combat_state_update", combat, to=f"campaign_{campaign_id}")
                 return
@@ -766,7 +713,7 @@ class SocketManager:
             # Agregar al historial
             combat["history"].append({
                 "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
-                "message": "⚔️ ¡El combate ha comenzado! Orden de iniciativa establecido."
+                "message": "El combate ha comenzado. Orden de iniciativa establecido."
             })
             
             # Broadcast
@@ -777,9 +724,6 @@ class SocketManager:
             logger.error(f"Error en on_finish_rolling_phase: {e}")
 
     async def on_next_turn(self, sid: str, data: dict):
-        """
-        GM avanza al siguiente turno
-        """
         try:
             campaign_id = data.get("campaign_id")
             
@@ -809,7 +753,7 @@ class SocketManager:
             # Agregar al historial
             history_entry = {
                 "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
-                "message": f"🛡️ Turno de {active_p['name']}."
+                "message": f"Turno de {active_p['name']}."
             }
             if active_p.get("is_monster"):
                 history_entry["is_private"] = True
@@ -823,9 +767,6 @@ class SocketManager:
             logger.error(f"Error en on_next_turn: {e}")
 
     async def on_prev_turn(self, sid: str, data: dict):
-        """
-        GM retrocede al turno anterior
-        """
         try:
             campaign_id = data.get("campaign_id")
             
@@ -855,7 +796,7 @@ class SocketManager:
             # Agregar al historial
             history_entry = {
                 "timestamp": __import__("datetime").datetime.utcnow().isoformat(),
-                "message": f"🛡️ Turno retrocedido a {active_p['name']}."
+                "message": f"Turno retrocedido a {active_p['name']}."
             }
             if active_p.get("is_monster"):
                 history_entry["is_private"] = True
@@ -869,9 +810,6 @@ class SocketManager:
             logger.error(f"Error en on_prev_turn: {e}")
 
     async def on_end_combat(self, sid: str, data: dict):
-        """
-        GM finaliza y limpia el combate
-        """
         try:
             campaign_id = data.get("campaign_id")
             

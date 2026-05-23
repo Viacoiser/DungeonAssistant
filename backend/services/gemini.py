@@ -112,7 +112,7 @@ class GeminiService:
                 self.model = genai.GenerativeModel(model_name)
                 self.vision_model = self.model
                 self.model_name = model_name
-                logger.info(f"✓ Gemini Service initialized with {model_name}")
+                logger.info(f"Gemini Service initialized with {model_name}")
                 return True
             except Exception as e:
                 logger.debug(f"  Model {model_name} not available: {e}")
@@ -121,7 +121,7 @@ class GeminiService:
 
     def _rotate_model_on_exhaustion(self):
         """Cambiar al siguiente modelo disponible."""
-        logger.warning(f"⚠️ Rotating model from {self.model_name}...")
+        logger.warning(f"Rotating model from {self.model_name}...")
         self.exhausted_models.add(self.model_name)
         return self._initialize_first_working_model()
 
@@ -141,7 +141,7 @@ class GeminiService:
         )
         
         if is_retryable:
-            logger.warning(f"⚠️ Retryable error on {operation}: {error_str[:100]}")
+            logger.warning(f"Retryable error on {operation}: {error_str[:100]}")
             return self._rotate_model_on_exhaustion()
         
         return False
@@ -235,22 +235,22 @@ class GeminiService:
                     detected_items = data.get("detected_items", [])
                     detected_npcs = data.get("detected_npcs", [])
                     
-                    logger.info(f"✓ Parsed JSON: {len(detected_items)} items, {len(detected_npcs)} NPCs")
+                    logger.info(f"Parsed JSON: {len(detected_items)} items, {len(detected_npcs)} NPCs")
                 else:
-                    logger.warning("❌ No JSON found in response")
+                    logger.warning("No JSON found in response")
             except json.JSONDecodeError as e:
-                logger.error(f"❌ JSON parse error: {e}")
+                logger.error(f"JSON parse error: {e}")
                 logger.debug(f"Full response text: {response_text}")
 
             if detected_items:
                 for item in detected_items:
-                    logger.info(f"  ✓ Item detected: {item.get('name', '?')} (qty: {item.get('quantity', 1)})")
+                    logger.info(f"  Item detected: {item.get('name', '?')} (qty: {item.get('quantity', 1)})")
             
             if detected_npcs:
                 for npc in detected_npcs:
-                    logger.info(f"  ✓ NPC detected: {npc.get('name', '?')}")
+                    logger.info(f"  NPC detected: {npc.get('name', '?')}")
 
-            logger.info(f"✓ Analysis complete: {len(detected_items)} items, {len(detected_npcs)} NPCs")
+            logger.info(f"Analysis complete: {len(detected_items)} items, {len(detected_npcs)} NPCs")
             return {
                 "detected_items": detected_items,
                 "detected_npcs": detected_npcs
@@ -261,18 +261,18 @@ class GeminiService:
             
             # Detectar error de cuota agotada
             if "429" in error_str or "ResourceExhausted" in str(type(e)) or "quota" in error_str.lower():
-                logger.warning(f"⚠️ Quota exceeded on analyze_session_note: {error_str[:100]}")
+                logger.warning(f"Quota exceeded on analyze_session_note: {error_str[:100]}")
                 
                 # Intentar rotar a otro modelo
                 if self._rotate_model_on_exhaustion():
-                    logger.info("🔄 Retrying analyze_session_note with new model...")
+                    logger.info("Retrying analyze_session_note with new model...")
                     # Recursively retry con el nuevo modelo
                     return await self.analyze_session_note(note_content, context)
                 else:
-                    logger.error("❌ All models exhausted, cannot retry")
+                    logger.error("All models exhausted, cannot retry")
                     return {"detected_items": [], "detected_npcs": []}
             
-            logger.error(f"❌ Error en analyze_session_note: {e}", exc_info=True)
+            logger.error(f"Error en analyze_session_note: {e}", exc_info=True)
             return {"detected_items": [], "detected_npcs": []}
 
     # ========================================================================
@@ -470,10 +470,10 @@ class GeminiService:
                             context_text += f"- {item.get('entity_name')} (item)\n"
                         context_text += "\n"
                     
-                    logger.info(f"✓ RAG context: {rag_entities_total} total ({rag_npcs_count} NPCs, {rag_items_count} items)")
+                    logger.info(f"RAG context: {rag_entities_total} total ({rag_npcs_count} NPCs, {rag_items_count} items)")
                 
                 except Exception as e:
-                    logger.debug(f"⚠ RAG no disponible (usando contexto tradicional): {str(e)[:50]}")
+                    logger.debug(f"RAG no disponible (usando contexto tradicional): {str(e)[:50]}")
             
             # Registrar qué contexto se usó
             logger.info(f"  Context used: Characters={len(characters_context)}, NPCs={len(npcs_context)}, Notes={len(recent_notes)}, Lore={'yes' if lore_summary else 'no'}, RAG={rag_entities_total}")
@@ -508,7 +508,7 @@ Responde en español, de forma concisa (máximo 3 párrafos):"""
             
             response_time = time.time() - start_time
             
-            logger.info(f"✓ Chat response generated ({response_time:.2f}s)")
+            logger.info(f"Chat response generated ({response_time:.2f}s)")
             
             # ================================================================
             # RESPONDER CON METADATA
@@ -522,7 +522,7 @@ Responde en español, de forma concisa (máximo 3 párrafos):"""
         
         except Exception as e:
             if self._handle_quota_error(e, "chat_assistant"):
-                logger.info("🔄 Retrying chat_assistant with new model...")
+                logger.info("Retrying chat_assistant with new model...")
                 return await self.chat_assistant(context, question)
             
             logger.error(f"Error en chat_assistant: {e}", exc_info=True)
@@ -648,7 +648,7 @@ Responde en español, de forma concisa (máximo 3 párrafos):"""
             
             # Detectar error de cuota agotada
             if self._handle_quota_error(e, "generate_npc"):
-                logger.info("🔄 Retrying generate_npc with new model...")
+                logger.info("Retrying generate_npc with new model...")
                 # Recursively retry con el nuevo modelo
                 return await self.generate_npc(context, prompt)
             

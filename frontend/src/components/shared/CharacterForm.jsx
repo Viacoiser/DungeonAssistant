@@ -11,8 +11,6 @@ import {
   getProficiencyBonus,
 } from '../../utils/normalizeCharacter'
 
-// ── Helpers de defaults JSONB ──────────────────────────────────────────────────
-
 function makeSavingThrows() {
   return Object.fromEntries(
     ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
@@ -58,7 +56,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
   const { calculateBaseStats, calculateMaxHP } = useDnd5eAPI()
 
   const [formData, setFormData] = useState({
-    // ── Identificación ─────────────────────────────────────────────────────────
     name: initialData?.name || '',
     race: initialData?.race || '',
     class_: initialData?.class_ || '',
@@ -69,7 +66,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
     experience_points: initialData?.experience_points || 0,
     player_name: initialData?.player_name || '',
 
-    // ── Stats ──────────────────────────────────────────────────────────────────
     stats: {
       strength: initialData?.stats?.strength || 10,
       dexterity: initialData?.stats?.dexterity || 10,
@@ -79,7 +75,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
       charisma: initialData?.stats?.charisma || 10,
     },
 
-    // ── Combate ────────────────────────────────────────────────────────────────
     hp_max: initialData?.hp_max || 10,
     hp_current: initialData?.hp_current || initialData?.hp_max || 10,
     hp_temporary: initialData?.hp_temporary || 0,
@@ -92,40 +87,31 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
     passive_perception: initialData?.passive_perception || 10,
     inspiration: initialData?.inspiration || false,
 
-    // ── Tiradas de salvación y habilidades ─────────────────────────────────────
     saving_throws: initialData?.saving_throws || makeSavingThrows(),
     skills: initialData?.skills || makeSkills(),
 
-    // ── Death saves ────────────────────────────────────────────────────────────
     death_saves: initialData?.death_saves || { successes: 0, failures: 0 },
 
-    // ── Ataques ────────────────────────────────────────────────────────────────
     attacks: initialData?.attacks || makeAttacks(),
 
-    // ── Equipo e inventario ────────────────────────────────────────────────────
     equipment: initialData?.equipment || '',
     currency: initialData?.currency || { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
     treasure: initialData?.treasure || '',
 
-    // ── Spellcasting ───────────────────────────────────────────────────────────
     spellcasting: initialData?.spellcasting || makeSpellcasting(),
 
-    // ── Personalidad ───────────────────────────────────────────────────────────
     personality_traits: initialData?.personality_traits || '',
     ideals: initialData?.ideals || '',
     bonds: initialData?.bonds || '',
     flaws: initialData?.flaws || '',
 
-    // ── Rasgos y características ────────────────────────────────────────────────
     features_traits: initialData?.features_traits || '',
     other_proficiencies: initialData?.other_proficiencies || '',
     additional_features: initialData?.additional_features || '',
 
-    // ── Trasfondo ──────────────────────────────────────────────────────────────
     backstory: initialData?.backstory || '',
     allies_organizations: initialData?.allies_organizations || { text: '', symbol: '' },
 
-    // ── Apariencia física ──────────────────────────────────────────────────────
     age: initialData?.age || '',
     height: initialData?.height || '',
     weight: initialData?.weight || '',
@@ -134,7 +120,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
     hair: initialData?.hair || '',
     appearance: initialData?.appearance || '',
 
-    // ── Imagen ────────────────────────────────────────────────────────────────
     image_url: initialData?.image_url || null,
   })
 
@@ -146,7 +131,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
   const [showCamera, setShowCamera] = useState(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)
 
-  // ── Encyclopedia-based pickers (from Cajas branch) ──────────────────────────
   const equipmentCategories = [...new Set(equipmentData.map(item => item.equipment_type || item.equipment_category?.name || 'other'))].sort()
   const traitCategories = ['all', 'races', 'classes', 'backgrounds', 'proficiencies']
   const spellLevels = ['all', 'cantrip', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -158,7 +142,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
   const [encSearchTerm, setEncSearchTerm] = useState('')
   const fileInputRef = React.useRef(null)
 
-  // ── Fuzzy matching para selects ──────────────────────────────────────────────
   // Convierte texto OCR como "Elf", "half elf", "CHAOTIC GOOD" al index del dropdown
   const findBestMatch = (ocrText, options) => {
     if (!ocrText || !options?.length) return ''
@@ -204,14 +187,13 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
     return '' // No match found
   }
 
-  // ── useEffect: aplicar initialData con fuzzy matching en selects ──────────────
+  // Aplica initialData con fuzzy matching en selects
   useEffect(() => {
     if (!initialData) return
     
     setFormData(prev => {
       const updated = { ...prev }
       
-      // Fuzzy match para selects de lista
       if (initialData.race) {
         updated.race = findBestMatch(initialData.race, races) || initialData.race
       }
@@ -225,7 +207,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         updated.alignment = findBestMatch(initialData.alignment, alignments) || initialData.alignment
       }
       
-      // Campos directos (ya aplicados en useState, pero este effect cubre el caso de scan posterior)
       if (initialData.name) updated.name = initialData.name
       if (initialData.subclass) updated.subclass = initialData.subclass
       if (initialData.level) updated.level = initialData.level
@@ -243,7 +224,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         }
       }
       
-      // Combate
       if (initialData.hp_max) { updated.hp_max = initialData.hp_max; updated.hp_current = initialData.hp_current || initialData.hp_max }
       if (initialData.hp_temporary) updated.hp_temporary = initialData.hp_temporary
       if (initialData.armor_class) updated.armor_class = initialData.armor_class
@@ -254,7 +234,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
       if (initialData.passive_perception) updated.passive_perception = initialData.passive_perception
       if (initialData.inspiration !== undefined) updated.inspiration = initialData.inspiration
       
-      // JSONB estructurados
       if (initialData.saving_throws) updated.saving_throws = initialData.saving_throws
       if (initialData.skills) updated.skills = initialData.skills
       if (initialData.attacks) updated.attacks = initialData.attacks
@@ -262,7 +241,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
       if (initialData.currency) updated.currency = initialData.currency
       if (initialData.spellcasting) updated.spellcasting = initialData.spellcasting
       
-      // Personalidad y rasgos
       if (initialData.personality_traits) updated.personality_traits = initialData.personality_traits
       if (initialData.ideals) updated.ideals = initialData.ideals
       if (initialData.bonds) updated.bonds = initialData.bonds
@@ -271,7 +249,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
       if (initialData.other_proficiencies) updated.other_proficiencies = initialData.other_proficiencies
       if (initialData.backstory) updated.backstory = initialData.backstory
       
-      // Apariencia
       if (initialData.age) updated.age = initialData.age
       if (initialData.height) updated.height = initialData.height
       if (initialData.weight) updated.weight = initialData.weight
@@ -283,7 +260,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
     })
   }, [initialData, races, classes, backgrounds, alignments])
 
-  // Get unique categories
   const categories = [...new Set(commonItems.map(item => item.category))].sort()
 
   const handleChange = (e) => {
@@ -296,13 +272,11 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         [name]: parsedValue
       }
 
-      // Si cambió la raza, actualizar stats base
       if (name === 'race' && value) {
         const baseStats = calculateBaseStats(value)
         updated.stats = baseStats
       }
 
-      // Si cambió la clase o el nivel, recalcular HP y prof bonus
       if ((name === 'class_' || name === 'level') && updated.class_) {
         const className = name === 'class_' ? value : updated.class_
         const level = name === 'level' ? parsedValue : updated.level
@@ -318,7 +292,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
       return updated
     })
     
-    // Limpiar error para este campo cuando el usuario empieza a editar
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }))
     }
@@ -337,7 +310,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         }
       }
 
-      // Si cambió CON, recalcular HP
       if (stat === 'constitution') {
         const maxHP = calculateMaxHP(prev.class_, prev.level, clampedValue)
         updated.hp_max = maxHP
@@ -374,7 +346,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
   const handleImageSelect = (e) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validar tamaño
       if (file.size > 5 * 1024 * 1024) {
         setErrors(prev => ({ ...prev, image: 'La imagen no debe superar 5MB' }))
         return
@@ -399,14 +370,12 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
   }
 
   const handleCharacterDataExtracted = (extractedData) => {
-    // Si el padre quiere manejar el flujo OCR (para mostrar el modal de revisión), delegar
     if (onOcrExtracted) {
       onOcrExtracted(extractedData)
       setShowCamera(false)
       return
     }
 
-    // Flujo interno: construir spellcasting anidado desde campos planos
     const spellcasting = (extractedData.spellcasting_class || extractedData.cantrips?.length || extractedData.spells?.length)
       ? {
           class: extractedData.spellcasting_class || '',
@@ -423,11 +392,9 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
 
     const merged = { ...extractedData, spellcasting }
 
-    // Actualizar el formulario con TODOS los datos escaneados de una vez
     setFormData(prev => {
       const updated = { ...prev }
       
-      // Identificación — con fuzzy matching para selects
       if (merged.character_name) updated.name = merged.character_name
       if (merged.race) updated.race = findBestMatch(merged.race, races) || merged.race
       if (merged.class) updated.class_ = findBestMatch(merged.class, classes) || merged.class
@@ -438,7 +405,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
       if (merged.experience_points) updated.experience_points = merged.experience_points
       if (merged.player_name) updated.player_name = merged.player_name
       
-      // Stats
       if (merged.stats) {
         updated.stats = {
           strength: merged.stats.strength || prev.stats.strength,
@@ -450,7 +416,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         }
       }
       
-      // Combate
       if (merged.armor_class) updated.armor_class = merged.armor_class
       if (merged.hp_max) {
         updated.hp_max = merged.hp_max
@@ -464,31 +429,24 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
       if (merged.passive_perception) updated.passive_perception = merged.passive_perception
       if (merged.inspiration !== undefined) updated.inspiration = merged.inspiration
       
-      // Saving throws y skills (estructurados)
       if (merged.saving_throws) updated.saving_throws = merged.saving_throws
       if (merged.skills) updated.skills = merged.skills
       
-      // Ataques
       if (merged.attacks) updated.attacks = merged.attacks
       
-      // Equipo
       if (merged.equipment) updated.equipment = merged.equipment
       if (merged.currency) updated.currency = merged.currency
       
-      // Personalidad
       if (merged.personality_traits) updated.personality_traits = merged.personality_traits
       if (merged.ideals) updated.ideals = merged.ideals
       if (merged.bonds) updated.bonds = merged.bonds
       if (merged.flaws) updated.flaws = merged.flaws
       
-      // Rasgos
       if (merged.features_traits) updated.features_traits = merged.features_traits
       if (merged.other_proficiencies) updated.other_proficiencies = merged.other_proficiencies
       
-      // Spellcasting (ya resuelto arriba)
       if (merged.spellcasting) updated.spellcasting = merged.spellcasting
       
-      // Apariencia
       if (merged.age) updated.age = merged.age
       if (merged.height) updated.height = merged.height
       if (merged.weight) updated.weight = merged.weight
@@ -500,7 +458,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
       return updated
     })
     
-    // Cerrar la cámara
     setShowCamera(false)
   }
 
@@ -509,9 +466,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
     setSubmitAttempted(true)
     
     if (validateForm()) {
-      // Preparar datos para enviar al backend — todos los campos del contrato
       const submitData = {
-        // ── Identificación ────────────────────────────────────────────────────
         campaign_id:       campaignId || formData.campaign_id,
         name:              formData.name,
         class:             formData.class_,   // BD usa "class", no "class_"
@@ -522,10 +477,8 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         experience_points: formData.experience_points,
         player_name:       formData.player_name,
 
-        // ── Stats ─────────────────────────────────────────────────────────────
         stats: formData.stats,
 
-        // ── Combate ───────────────────────────────────────────────────────────
         hp_max:            formData.hp_max,
         hp_current:        formData.hp_current,
         hp_temporary:      formData.hp_temporary,
@@ -538,7 +491,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         passive_perception:formData.passive_perception,
         inspiration:       formData.inspiration,
 
-        // ── JSONB estructurados ────────────────────────────────────────────────
         saving_throws:     formData.saving_throws,
         skills:            formData.skills,
         death_saves:       formData.death_saves,
@@ -552,30 +504,25 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         currency:          formData.currency,
         allies_organizations: formData.allies_organizations,
 
-        // ── Equipo ────────────────────────────────────────────────────────────
         // Si seleccionó ítems del picker, serializarlos; si no, el texto del campo
         equipment: startingEquipment.length > 0
           ? JSON.stringify(startingEquipment)
           : formData.equipment,
         treasure: formData.treasure,
 
-        // ── Personalidad ──────────────────────────────────────────────────────
         personality_traits: formData.personality_traits,
         ideals:             formData.ideals,
         bonds:              formData.bonds,
         flaws:              formData.flaws,
 
-        // ── Rasgos ────────────────────────────────────────────────────────────
         features_traits: startingTraits.length > 0
           ? JSON.stringify(startingTraits.map(t => ({ name: t.name, id: t.id })))
           : formData.features_traits,
         other_proficiencies: formData.other_proficiencies,
         additional_features: formData.additional_features,
 
-        // ── Trasfondo ─────────────────────────────────────────────────────────
         backstory: formData.backstory,
 
-        // ── Apariencia ────────────────────────────────────────────────────────
         age:        formData.age,
         height:     formData.height,
         weight:     formData.weight,
@@ -584,7 +531,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         hair:       formData.hair,
         appearance: formData.appearance,
 
-        // ── Imagen ────────────────────────────────────────────────────────────
         image_url: formData.image_url,
       }
       onSubmit(submitData)
@@ -593,7 +539,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
 
 
   const handleAddEquipment = (item) => {
-    // Check if already added (by name for encyclopedia items)
     if (!startingEquipment.find(i => i.name === item.name)) {
       const newItem = {
         id: item.id || Date.now().toString(),
@@ -620,7 +565,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
     }
   }
 
-  // ── Traits functions (from Cajas branch) ─────────────────────────────────────
   const handleAddTrait = (trait) => {
     if (!startingTraits.find(t => t.id === trait.id)) {
       setStartingTraits([...startingTraits, {
@@ -635,7 +579,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
     setStartingTraits(startingTraits.filter(t => t.id !== traitId))
   }
 
-  // ── Spells functions (from Cajas branch) ─────────────────────────────────────
   const handleAddSpell = (spell) => {
     if (!startingSpells.find(s => s.id === spell.id)) {
       setStartingSpells([...startingSpells, {
@@ -650,7 +593,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
     setStartingSpells(startingSpells.filter(s => s.id !== spellId))
   }
 
-  // ── Encyclopedia-based filters ───────────────────────────────────────────────
   const filteredEncEquipment = encSearchTerm 
     ? equipmentData.filter(item => 
         item.name.toLowerCase().includes(encSearchTerm.toLowerCase())
@@ -684,7 +626,6 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
     return matches
   }).sort((a, b) => a.name.localeCompare(b.name))
 
-  // Legacy filter for commonItems (kept for backwards compatibility)
   const filteredItems = searchTerm 
     ? commonItems.filter(item => 
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -825,9 +766,8 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
 
       {/* Image Section */}
       <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-yellow-600 mb-6">🖼️ Imagen del Personaje</h2>
+        <h2 className="text-xl font-bold text-yellow-600 mb-6">Imagen del Personaje</h2>
 
-      {/* OCR Re-scan Banner — shown when OCR data has been applied */}
       {ocrFields.size > 0 && (
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem',
@@ -836,7 +776,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
           marginBottom: '0.5rem',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#fcd34d' }}>
-            <span>📷</span>
+            <Camera size={14} />
             <span style={{ fontWeight: 600 }}>{ocrFields.size} campos pre-rellenados por OCR</span>
             <span style={{ color: 'rgba(255,200,50,0.6)', fontSize: '0.78rem' }}>— Los campos con borde ámbar fueron detectados automáticamente</span>
           </div>
@@ -911,7 +851,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
             className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             <Camera size={18} />
-            📸 Escanear
+            Escanear
           </button>
         </div>
 
@@ -1211,7 +1151,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
 
       {/* Spellcasting Section */}
       <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-yellow-600 mb-6">✨ Hechicería (Spellcasting)</h2>
+        <h2 className="text-xl font-bold text-yellow-600 mb-6">Hechicería (Spellcasting)</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {/* Spellcasting Class */}
@@ -1287,7 +1227,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         {/* Cantrips */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            🔮 Cantrips
+            Cantrips
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
             {(formData.spellcasting?.cantrips || []).map((cantrip, idx) => (
@@ -1359,7 +1299,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         {/* Spells */}
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            📜 Hechizos
+            Hechizos
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
             {(formData.spellcasting?.spells || []).map((spell, idx) => (
@@ -1436,7 +1376,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
 
       {/* Starting Equipment Section */}
       <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-yellow-600 mb-6">⚔️ Inventario Inicial</h2>
+        <h2 className="text-xl font-bold text-yellow-600 mb-6">Inventario Inicial</h2>
 
         {/* Search Bar */}
         <div className="mb-6">
@@ -1539,13 +1479,9 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════
-           ENCYCLOPEDIA PICKERS (merged from Cajas branch)
-           ═══════════════════════════════════════════════════════════════════ */}
-
       {/* Encyclopedia Equipment Section */}
       <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-yellow-600 mb-6">📦 Equipo (Enciclopedia D&D 5e)</h2>
+        <h2 className="text-xl font-bold text-yellow-600 mb-6">Equipo (Enciclopedia D&D 5e)</h2>
 
         {/* Search Bar */}
         <div className="mb-6">
@@ -1608,7 +1544,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
 
       {/* Starting Traits Section */}
       <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-yellow-600 mb-6">✨ Rasgos Iniciales</h2>
+        <h2 className="text-xl font-bold text-yellow-600 mb-6">Rasgos Iniciales</h2>
 
         {/* Search Bar */}
         <div className="mb-6">
@@ -1703,7 +1639,7 @@ export default function CharacterForm({ campaignId, onSubmit, loading, initialDa
 
       {/* Starting Spells Section */}
       <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-yellow-600 mb-6">🔮 Hechizos Iniciales</h2>
+        <h2 className="text-xl font-bold text-yellow-600 mb-6">Hechizos Iniciales</h2>
 
         {/* Search Bar */}
         <div className="mb-6">

@@ -71,8 +71,7 @@ export default function Dashboard() {
   // Búsqueda
   const [searchQuery, setSearchQuery] = useState('')
 
-  // ── Campaña seleccionada (navegación interna) ─────────────────────────────
-  const [enteringCampaign, setEnteringCampaign] = useState(null) // id loading
+  const [enteringCampaign, setEnteringCampaign] = useState(null)
 
   // Detalle de personaje - Split View (characters en sidebar + sheet a la derecha)
   const [inspectingCharacter, setInspectingCharacter] = useState(null)
@@ -213,7 +212,6 @@ export default function Dashboard() {
 
   const isGM = (campaign) => campaign.user_role === 'GM'
 
-  // Handle insert character to campaign
   const handleInsertCharacterToCampaign = async (e) => {
     e.preventDefault()
     if (!insertCharacterForm.characterId) {
@@ -265,7 +263,6 @@ export default function Dashboard() {
       const response = await characterAPI.list()
       setCharacters(response.data?.characters || [])
 
-      // Reset and close modal
       setInsertCharacterForm({ characterId: '', campaignId: '', useCode: false, campaignCode: '' })
       setShowInsertCharacterModal(false)
     } catch (err) {
@@ -276,13 +273,11 @@ export default function Dashboard() {
     }
   }
 
-  // ── Abrir campaña como navegación interna ────────────────────────────────
   const handleEnterCampaign = (campaign) => {
     setEnteringCampaign(campaign.id)
     navigate(`/campaign/${campaign.id}`)
   }
 
-  // Quick stats
   const gmCount = campaigns.filter(c => c.user_role === 'GM').length
   const playerCount = campaigns.filter(c => c.user_role !== 'GM').length
 
@@ -300,7 +295,6 @@ export default function Dashboard() {
 
   return (
     <div className="h-screen flex flex-col md:flex-row bg-fantasy-bg font-sans overflow-hidden">
-      {/* ── Desktop Sidebar (lg+) ── */}
       {!isMobile && (
         <DesktopSidebar
           activeTab={activeTab}
@@ -312,7 +306,6 @@ export default function Dashboard() {
         />
       )}
 
-      {/* ── Mobile/Tablet Bottom Nav ── */}
       {isMobile && (
         <BottomNavResponsive
           activeTab={activeTab}
@@ -327,7 +320,6 @@ export default function Dashboard() {
       {/* Main content - responsive */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
         
-        {/* ── GLOBAL HEADER ── */}
         <header style={{
           position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -387,7 +379,6 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {/* ── Content Wrapper ── */}
         <div className="flex-1 flex flex-col min-h-0 relative" style={{ paddingTop: '44px' }}>
           {/* Global Background image overlay */}
           <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.08, pointerEvents: 'none' }}>
@@ -411,7 +402,6 @@ export default function Dashboard() {
           <div style={{ flex: 1, display: 'flex', flexDirection: 'row', minHeight: 0, position: 'relative' }}>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0, position: 'relative' }}>
 
-              {/* ── Main ── */}
               <main style={{ flex: 1, padding: inspectingCharacter ? 0 : '44px 0.75rem 3rem', overflowY: 'auto', position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column' }} className="lg:pb-8 pb-24">
                 {inspectingCharacter ? (
                   <CharacterInspectSplitView
@@ -424,7 +414,6 @@ export default function Dashboard() {
                 ) : (
                   <div style={{ maxWidth: ['campaigns', 'characters'].includes(activeTab) ? 960 : '100%', margin: ['campaigns', 'characters'].includes(activeTab) ? '0 auto' : '0', width: '100%' }} className="px-2 md:px-6 lg:px-8">
 
-                    {/* ── Contenido por Tab ── */}
                     {activeTab !== 'campaigns' ? (
                       <SidebarTabContent
                         tab={activeTab}
@@ -545,7 +534,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ── Modal: Crear campaña ── */}
         {showCreateModal && (
           <DashboardModal onClose={() => setShowCreateModal(false)} title="Nueva Campaña">
             <form onSubmit={handleCreateCampaign}>
@@ -591,7 +579,6 @@ export default function Dashboard() {
           </DashboardModal>
         )}
 
-        {/* ── Modal: Unirse con código ── */}
         {showJoinModal && (
           <DashboardModal onClose={() => setShowJoinModal(false)} title="Unirse a Campaña">
             <p style={{ color: 'rgba(226,209,166,0.55)', marginBottom: '1.25rem', lineHeight: 1.6, fontSize: '0.9rem' }}>
@@ -618,7 +605,7 @@ export default function Dashboard() {
               )}
               {joinSuccess && (
                 <div style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)', borderRadius: 10, padding: '0.75rem 1rem', marginTop: '0.75rem' }}>
-                  <p style={{ color: '#86efac', margin: 0, fontSize: '0.875rem' }}>✅ {joinSuccess}</p>
+                  <p style={{ color: '#86efac', margin: 0, fontSize: '0.875rem' }}>{joinSuccess}</p>
                 </div>
               )}
 
@@ -636,7 +623,6 @@ export default function Dashboard() {
             </form>
           </DashboardModal>
         )}
-        {/* ── Modal: Insertar Personaje a Campaña ── */}
         {showInsertCharacterModal && (
           <DashboardModal onClose={() => setShowInsertCharacterModal(false)} title="Insertar Personaje en Campaña">
             {insertCharacterError && (
@@ -647,7 +633,7 @@ export default function Dashboard() {
 
             {characters.length === 0 && (
               <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, padding: '0.75rem', marginBottom: '1rem', color: '#93c5fd', fontSize: '0.875rem' }}>
-                ℹ️ Primero crea un personaje antes que puedas insertarlo en una campaña
+                Primero crea un personaje antes que puedas insertarlo en una campaña
               </div>
             )}
 
@@ -778,7 +764,6 @@ export default function Dashboard() {
             )}
           </DashboardModal>
         )}
-        {/* ── Modal: Crear Personaje ── */}
         {showCreateCharacterModal && (
           <DashboardModal onClose={() => setShowCreateCharacterModal(false)} title="Crear Personaje">
             {createCharacterError && (
@@ -790,7 +775,6 @@ export default function Dashboard() {
           </DashboardModal>
         )}
 
-        {/* ── Modal: Detalle de Personaje ── */}
         {/* Now handled via split-view layout - see return statement */}
         </div>
       </div>

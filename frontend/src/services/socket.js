@@ -20,12 +20,12 @@ export const initSocket = () => {
   const token = useAuthStore.getState().token
   
   if (!token) {
-    console.warn('⚠️ No se puede inicializar socket sin token')
+    console.warn('No se puede inicializar socket sin token')
     return null
   }
 
   useSocketStore.setState({ isConnecting: true })
-  console.log('⏳ Conectando socket...')
+  console.log('Conectando socket...')
 
   socket = io(SOCKET_URL, {
     auth: { token },
@@ -38,35 +38,35 @@ export const initSocket = () => {
   })
 
   socket.on('connect', () => {
-    console.log('✅ Socket conectado:', socket.id)
+    console.log('Socket conectado:', socket.id)
     useSocketStore.setState({ isConnected: true, isConnecting: false })
   })
 
   socket.on('disconnect', (reason) => {
-    console.log('❌ Socket desconectado:', reason)
+    console.log('Socket desconectado:', reason)
     useSocketStore.setState({ isConnected: false, isConnecting: false })
   })
 
   socket.on('authenticated', (data) => {
-    console.log('🔐 Socket autenticado correctamente')
+    console.log('Socket autenticado correctamente')
   })
 
   socket.on('error', (error) => {
-    console.error('❌ Socket error:', error)
+    console.error('Socket error:', error)
     useSocketStore.setState({ isConnecting: false })
   })
 
   socket.on('connect_error', (error) => {
-    console.error('❌ Error de conexión:', error)
+    console.error('Error de conexión:', error)
     useSocketStore.setState({ isConnecting: false })
   })
 
   socket.on('user_joined', (data) => {
-    console.log('👤 Usuario unido:', data.username)
+    console.log('Usuario unido:', data.username)
   })
 
   socket.on('message', (data) => {
-    console.log('📩 Nuevo mensaje:', data)
+    console.log('Nuevo mensaje:', data)
   })
 
   useSocketStore.setState({ socket })

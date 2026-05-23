@@ -20,7 +20,6 @@ import spellsData from '../../data/encyclopedia/spells.json'
 import equipmentData from '../../data/encyclopedia/equipment.json'
 import traitsData from '../../data/encyclopedia/traits.json'
 
-/* ── Header bar ────────────────────────────────────────────── */
 function SheetHeader({ character, onClose, isGM, canEdit, mode, isEditing, onToggleEdit, onSave, onCancel, onEdit, isSaving, onScanOCR, ocrFields, isCreating, onCreateSubmit }) {
   const classDisplay = [
     character.class_,
@@ -203,7 +202,7 @@ function SheetHeader({ character, onClose, isGM, canEdit, mode, isEditing, onTog
               >
                 <Camera size={16} />
                 <span className="cs-btn__text">
-                  {ocrFields?.size > 0 ? `✅ ${ocrFields.size} campos` : 'Escanear Hoja'}
+                  {ocrFields?.size > 0 ? `${ocrFields.size} campos` : 'Escanear Hoja'}
                 </span>
               </button>
             )}
@@ -259,7 +258,6 @@ function SheetHeader({ character, onClose, isGM, canEdit, mode, isEditing, onTog
   )
 }
 
-/* ── Main CharacterSheet5e ──────────────────────────────────── */
 export default function CharacterSheet5e({
   character: rawCharacter,
   campaignId,
@@ -297,7 +295,6 @@ export default function CharacterSheet5e({
     { id: 'spells', label: 'Hechizos', icon: <Book size={16} /> },
   ]
 
-  // Update local state when prop changes (but only if not editing)
   useEffect(() => {
     if (!isEditing || isCreateMode) {
       setCharacter(normalizeCharacter(rawCharacter))
@@ -468,7 +465,6 @@ export default function CharacterSheet5e({
                 className="cs-grid"
               >
 
-                {/* ── COL LEFT: Stats / Saves / Skills ── */}
                 {(!isMobile || activeTab === 'stats') && (
                   <div className="cs-col">
                     <AbilityScores character={character} isEditing={isEditing} onEdit={handleEdit} />
@@ -477,7 +473,6 @@ export default function CharacterSheet5e({
                   </div>
                 )}
 
-                {/* ── COL CENTER: Combat / Attacks / Equipment ── */}
                 {(!isMobile || activeTab === 'combat') && (
                   <div className="cs-col">
                     <div className="cs-section">
@@ -492,7 +487,6 @@ export default function CharacterSheet5e({
                   </div>
                 )}
 
-                {/* ── COL RIGHT: Personality / Features / Backstory ── */}
                 {(!isMobile || activeTab === 'features') && (
                   <div className="cs-col">
                     <PersonalityPanel character={character} isEditing={isEditing} onEdit={handleEdit} />
