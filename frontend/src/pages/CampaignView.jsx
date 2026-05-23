@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { User, Swords, Maximize2, X, Sparkles, Play, Dices, RefreshCw, Check, Lock, Shield, AlertTriangle } from 'lucide-react'
 import { campaignAPI, characterAPI } from '../services/api'
@@ -7,8 +7,6 @@ import LoadingSpinner from '../components/shared/LoadingSpinner'
 import DiceBoxRollerResponsive from '../components/shared/DiceBoxRollerResponsive'
 import Sidebar from '../components/dashboard/Sidebar'
 import { getSocket, joinCampaign, leaveCampaign } from '../services/socket'
-import { AnimatePresence } from 'framer-motion'
-import LiveInitiativeTracker from '../components/campaign/LiveInitiativeTracker'
 
 // Campaign Tabs
 import NotesTab from '../components/campaign/NotesTab'
@@ -24,14 +22,29 @@ export default function CampaignView() {
   const { campaignId } = useParams()
   const navigate = useNavigate()
   const { user } = useAuthStore()
-  const { isConnected } = useSocketStore()
+  const {
+    isConnected,
+    combatState: globalCombatState,
+    isTrackerOpen: globalIsTrackerOpen,
+    combatCampaignId: globalCombatCampaignId,
+    combatActiveUsers: globalActiveUsers,
+    setCombatState: setGlobalCombatState,
+    setCombatCampaignId,
+    setCombatIsGM,
+    setCombatActiveUsers,
+    resetCombat,
+  } = useSocketStore()
   const [campaign, setCampaign] = useState(null)
   const [userRole, setUserRole] = useState(null) // 'GM' | 'PLAYER'
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('notes')
   const [playerName, setPlayerName] = useState(null) // Para mostrar el nombre del personaje del player
-  const [combatState, setCombatState] = useState({ status: 'inactive', turns: [], history: [], current_turn: 0 })
-  const [isTrackerOpen, setIsTrackerOpen] = useState(false)
+  const [combatState, setLocalCombatState] = useState(
+    globalCombatCampaignId === campaignId ? globalCombatState : { status: 'inactive', turns: [], history: [], current_turn: 0, campaign_id: campaignId }
+  )
+  const [isTrackerOpen, setLocalTrackerOpen] = useState(
+    globalIsTrackerOpen && globalCombatCampaignId === campaignId
+  )
   const [isMiniTrackerHidden, setIsMiniTrackerHidden] = useState(false)
 
   // Estados adicionales para la tirada de iniciativa desde el Mini-Tracker
@@ -42,6 +55,59 @@ export default function CampaignView() {
   const [miniTempTotal, setMiniTempTotal] = useState(null)
   const [miniRollValue, setMiniRollValue] = useState(null)
   const [activeUsers, setActiveUsers] = useState([])
+  const [miniPos, setMiniPos] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const dragStart = useRef({ x: 0, y: 0, posX: 0, posY: 0 })
+
+  const handleDragStart = useCallback((e) => {
+    const clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX
+    const clientY = e.type.startsWith('touch') ? e.touches[0].clientY : e.clientY
+    dragStart.current = { x: clientX, y: clientY, posX: miniPos.x, posY: miniPos.y }
+    setIsDragging(true)
+  }, [miniPos])
+
+  const handleDragMove = useCallback((e) => {
+    if (!isDragging) return
+    const clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX
+    const clientY = e.type.startsWith('touch') ? e.touches[0].clientY : e.clientY
+    setMiniPos({
+      x: dragStart.current.posX + (clientX - dragStart.current.x),
+      y: dragStart.current.posY + (clientY - dragStart.current.y),
+    })
+  }, [isDragging])
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false)
+  }, [])
+
+  // Sincronizar el rol GM con store global
+  useEffect(() => {
+    if (userRole) {
+      setCombatIsGM(userRole === 'GM')
+    }
+  }, [userRole, setCombatIsGM])
+
+  // Sincronizar tracker state con store global (persiste entre páginas)
+  const syncTrackerOpen = useCallback((open) => {
+    setLocalTrackerOpen(open)
+    useSocketStore.getState().setIsTrackerOpen?.(open)
+    if (open && campaignId) {
+      useSocketStore.getState().setCombatCampaignId(campaignId)
+    }
+  }, [campaignId])
+
+  const syncCombatState = useCallback((state) => {
+    setLocalCombatState(state)
+    useSocketStore.getState().setCombatState(state)
+    if (campaignId) {
+      useSocketStore.getState().setCombatCampaignId(campaignId)
+    }
+  }, [campaignId])
+
+  const syncActiveUsers = useCallback((users) => {
+    setActiveUsers(users)
+    useSocketStore.getState().setCombatActiveUsers(users)
+  }, [])
 
   const formatModifier = (val) => {
     const num = parseInt(val)
@@ -79,26 +145,29 @@ export default function CampaignView() {
 
     const handleCombatUpdate = (state) => {
       console.log('⚔️ Combate actualizado:', state)
-      setCombatState(state)
+      syncCombatState(state)
     }
 
     const handleJoinedCampaign = (data) => {
       if (data && data.active_users) {
-        setActiveUsers(data.active_users)
+        syncActiveUsers(data.active_users)
       }
     }
 
     const handleUserJoined = (data) => {
       if (data && data.active_users) {
-        setActiveUsers(data.active_users)
+        syncActiveUsers(data.active_users)
       }
     }
 
     const handleUserLeft = (data) => {
       if (data && data.active_users) {
-        setActiveUsers(data.active_users)
+        syncActiveUsers(data.active_users)
       } else if (data && data.user_id) {
         setActiveUsers(prev => prev.filter(u => u.user_id !== data.user_id))
+        useSocketStore.getState().setCombatActiveUsers(
+          useSocketStore.getState().combatActiveUsers.filter(u => u.user_id !== data.user_id)
+        )
       }
     }
 
@@ -182,7 +251,7 @@ export default function CampaignView() {
     prevCombatStatusRef.current = curr
     
     if (prev === 'inactive' && (curr === 'rolling' || curr === 'active')) {
-      setIsTrackerOpen(true)
+      syncTrackerOpen(true)
     }
   }, [combatState?.status])
 
@@ -417,17 +486,36 @@ export default function CampaignView() {
 
       {/* Mini Tracker de Iniciativa Flotante (Minimizado) */}
       {combatState && combatState.status !== 'inactive' && !isTrackerOpen && !isMiniTrackerHidden && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-sm px-4">
-          <div className="bg-[#0d0a08]/95 backdrop-blur-md border border-fantasy-gold/20 rounded-2xl p-3 shadow-[0_10px_35px_rgba(0,0,0,0.85)] flex flex-col gap-2.5 transition-all duration-300">
+        <div
+          className={`fixed z-40 w-full max-w-sm px-4 ${isDragging ? 'cursor-grabbing' : ''}`}
+          style={{
+            left: `calc(50% + ${miniPos.x}px)`,
+            top: `calc(100vh - 180px + ${miniPos.y}px)`,
+            transform: 'translateX(-50%)',
+          }}
+          onMouseMove={handleDragMove}
+          onTouchMove={handleDragMove}
+          onMouseUp={handleDragEnd}
+          onTouchEnd={handleDragEnd}
+          onMouseLeave={handleDragEnd}
+        >
+          <div
+            className="bg-[#0d0a08]/95 backdrop-blur-md border border-fantasy-gold/20 rounded-2xl p-3 shadow-[0_10px_35px_rgba(0,0,0,0.85)] flex flex-col gap-2.5 transition-all duration-300"
+            style={isDragging ? { transition: 'none' } : {}}
+          >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/5 pb-1.5">
+            <div
+              className="flex items-center justify-between border-b border-white/5 pb-1.5 cursor-grab active:cursor-grabbing select-none"
+              onMouseDown={handleDragStart}
+              onTouchStart={handleDragStart}
+            >
               <span className="font-serif text-[10px] font-bold text-fantasy-gold/75 tracking-wider uppercase flex items-center gap-1.5">
                 <Swords size={12} className="text-fantasy-accent" />
                 Iniciativa Activa
               </span>
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => setIsTrackerOpen(true)}
+                  onClick={() => syncTrackerOpen(true)}
                   className="p-1 hover:bg-white/5 rounded text-fantasy-gold/60 hover:text-white transition"
                   title="Maximizar Combate"
                 >
@@ -540,7 +628,7 @@ export default function CampaignView() {
                     </div>
                   </div>
                   <button 
-                    onClick={() => setIsTrackerOpen(true)}
+                    onClick={() => syncTrackerOpen(true)}
                     className="px-2.5 py-1 bg-fantasy-accent hover:brightness-110 text-white font-display font-semibold text-[10px] tracking-wider rounded-lg transition active:scale-95"
                   >
                     ABRIR
@@ -561,7 +649,7 @@ export default function CampaignView() {
                     </div>
                   </div>
                   <button 
-                    onClick={() => setIsTrackerOpen(true)}
+                    onClick={() => syncTrackerOpen(true)}
                     className="px-2 py-0.5 bg-white/5 hover:bg-white/10 border border-white/10 text-fantasy-gold font-display font-semibold text-[9px] tracking-wider rounded transition active:scale-95"
                   >
                     VER
@@ -600,7 +688,7 @@ export default function CampaignView() {
       {/* Floating Round Action Button to open Initiative Tracker */}
       <div className="fixed bottom-6 right-6 z-40">
         <button
-          onClick={() => setIsTrackerOpen(true)}
+          onClick={() => syncTrackerOpen(true)}
           className="w-14 h-14 rounded-full bg-[#18120e] hover:bg-[#201813] border border-fantasy-gold/30 hover:border-fantasy-gold text-fantasy-gold hover:text-white flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.6),0_0_12px_rgba(226,209,166,0.15)] active:scale-95 hover:scale-105 transition-all duration-300 relative group"
           title="Iniciativa en Vivo"
         >
@@ -617,19 +705,7 @@ export default function CampaignView() {
         </button>
       </div>
 
-      {/* Live Initiative Tracker Drawer Overlay */}
-      <AnimatePresence>
-        {isTrackerOpen && (
-          <LiveInitiativeTracker
-            campaignId={campaignId}
-            isGM={isGM}
-            user={user}
-            combatState={combatState}
-            activeUsers={activeUsers}
-            onClose={() => setIsTrackerOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+      {/* Live Initiative Tracker renderizado globalmente en App.jsx */}
     </div>
     </div>
   )

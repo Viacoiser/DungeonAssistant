@@ -59,110 +59,125 @@ export default function IOSInstallPrompt() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          initial={{ y: 120, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 120, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={handleDismiss}
           style={{
-            position: 'fixed',
-            bottom: 'calc(env(safe-area-inset-bottom) + 80px)',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 'calc(100% - 2rem)',
-            maxWidth: '420px',
-            zIndex: 9999,
-            // Glassmorphism oscuro acorde al estilo de la app
-            background: 'linear-gradient(135deg, rgba(13,11,8,0.96) 0%, rgba(30,18,10,0.98) 100%)',
-            border: '1px solid rgba(217,83,30,0.35)',
-            borderRadius: '16px',
-            boxShadow: '0 0 0 1px rgba(217,83,30,0.1), 0 8px 40px rgba(0,0,0,0.7), 0 0 30px rgba(217,83,30,0.12)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            padding: '1rem 1.1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.75rem',
+            position: 'fixed', inset: 0, zIndex: 9999,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
           }}
         >
-          {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-              {/* App icon mini */}
-              <div style={{
-                width: '42px', height: '42px', borderRadius: '10px', overflow: 'hidden', flexShrink: 0,
-                border: '1px solid rgba(217,83,30,0.4)',
-                boxShadow: '0 0 12px rgba(217,83,30,0.25)',
-              }}>
-                <img src="/app-icon.png" alt="DungeonAssistant" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              <div>
-                <p style={{
-                  fontFamily: "'Cinzel', serif",
-                  fontWeight: 700,
-                  fontSize: '0.85rem',
-                  color: '#e2d1a6',
-                  letterSpacing: '0.05em',
-                  lineHeight: 1.2,
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: 'calc(100% - 2rem)',
+              maxWidth: '420px',
+              background: 'linear-gradient(135deg, rgba(13,11,8,0.98) 0%, rgba(30,18,10,0.99) 100%)',
+              border: '1px solid rgba(217,83,30,0.35)',
+              borderRadius: '20px',
+              boxShadow: '0 0 0 1px rgba(217,83,30,0.1), 0 8px 60px rgba(0,0,0,0.8), 0 0 40px rgba(217,83,30,0.15)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              padding: '1.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <div style={{
+                  width: '48px', height: '48px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0,
+                  border: '1px solid rgba(217,83,30,0.4)',
+                  boxShadow: '0 0 16px rgba(217,83,30,0.3)',
                 }}>
-                  Instala DungeonAssistant
-                </p>
-                <p style={{ fontSize: '0.7rem', color: 'rgba(226,209,166,0.5)', marginTop: '0.1rem' }}>
-                  Acceso rápido desde tu pantalla de inicio
-                </p>
+                  <img src="/app-icon.png" alt="DungeonAssistant" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div>
+                  <p style={{
+                    fontFamily: "'Cinzel', serif",
+                    fontWeight: 700,
+                    fontSize: '1rem',
+                    color: '#e2d1a6',
+                    letterSpacing: '0.05em',
+                    lineHeight: 1.2,
+                  }}>
+                    Instala DungeonAssistant
+                  </p>
+                  <p style={{ fontSize: '0.75rem', color: 'rgba(226,209,166,0.5)', marginTop: '0.15rem' }}>
+                    Acceso rápido desde tu pantalla de inicio
+                  </p>
+                </div>
               </div>
+              <button
+                onClick={handleDismiss}
+                aria-label="Cerrar"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '8px',
+                  width: '32px', height: '32px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: 'rgba(226,209,166,0.5)',
+                  flexShrink: 0,
+                }}
+              >
+                <X size={16} />
+              </button>
             </div>
 
-            {/* Close button */}
+            {/* Divider */}
+            <div style={{ height: '1px', background: 'rgba(217,83,30,0.15)' }} />
+
+            {/* Instructions */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              <Step number={1} icon={<Share size={14} />} color="#d9531e">
+                Toca el botón{' '}
+                <span style={{ fontWeight: 700, color: '#e2d1a6' }}>Compartir</span>
+                {' '}
+                <Share size={12} style={{ display: 'inline', verticalAlign: 'middle', color: '#d9531e' }} />
+                {' '}en Safari
+              </Step>
+              <Step number={2} icon={<Plus size={14} />} color="#c8a84b">
+                Selecciona{' '}
+                <span style={{ fontWeight: 700, color: '#e2d1a6' }}>"Añadir a pantalla de inicio"</span>
+              </Step>
+              <Step number={3} icon={<span style={{ fontSize: '12px' }}>⚔️</span>} color="#7c6b3a">
+                ¡Listo! La app abrirá sin barra de Safari
+              </Step>
+            </div>
+
+            {/* Cerrar button */}
             <button
               onClick={handleDismiss}
-              aria-label="Cerrar"
               style={{
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '8px',
-                width: '28px', height: '28px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '100%', padding: '0.7rem',
+                background: 'linear-gradient(135deg, rgba(217,83,30,0.2), rgba(180,60,20,0.2))',
+                border: '1px solid rgba(217,83,30,0.3)',
+                borderRadius: '12px',
+                color: '#e2d1a6',
+                fontFamily: "'Cinzel', serif",
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                letterSpacing: '0.1em',
                 cursor: 'pointer',
-                color: 'rgba(226,209,166,0.5)',
-                flexShrink: 0,
+                textTransform: 'uppercase',
               }}
             >
-              <X size={14} />
+              Cerrar
             </button>
-          </div>
-
-          {/* Divider */}
-          <div style={{ height: '1px', background: 'rgba(217,83,30,0.15)' }} />
-
-          {/* Instructions */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
-            <Step number={1} icon={<Share size={14} />} color="#d9531e">
-              Toca el botón{' '}
-              <span style={{ fontWeight: 700, color: '#e2d1a6' }}>Compartir</span>
-              {' '}
-              <Share size={12} style={{ display: 'inline', verticalAlign: 'middle', color: '#d9531e' }} />
-              {' '}en Safari
-            </Step>
-            <Step number={2} icon={<Plus size={14} />} color="#c8a84b">
-              Selecciona{' '}
-              <span style={{ fontWeight: 700, color: '#e2d1a6' }}>"Añadir a pantalla de inicio"</span>
-            </Step>
-            <Step number={3} icon={<span style={{ fontSize: '12px' }}>⚔️</span>} color="#7c6b3a">
-              ¡Listo! La app abrirá sin barra de Safari
-            </Step>
-          </div>
-
-          {/* Arrow pointing down to navbar */}
-          <div style={{
-            position: 'absolute',
-            bottom: '-8px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 0, height: 0,
-            borderLeft: '8px solid transparent',
-            borderRight: '8px solid transparent',
-            borderTop: '8px solid rgba(217,83,30,0.35)',
-          }} />
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

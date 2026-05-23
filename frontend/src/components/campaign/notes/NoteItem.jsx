@@ -12,7 +12,8 @@ export default function NoteItem({
   setEditNoteText,
   handleCancelEditNote,
   handleUpdateNote,
-  updatingNote
+  updatingNote,
+  isAnalyzing,
 }) {
   return (
     <div className="bg-white/5 rounded-xl p-4 pt-12 border border-white/5 group relative hover:border-white/10 transition-colors">
@@ -72,6 +73,19 @@ export default function NoteItem({
             <div className="mt-2 flex items-center gap-2 text-[10px] text-fantasy-accent font-bold uppercase tracking-widest animate-pulse">
               <div className="w-2 h-2 rounded-full bg-fantasy-accent" />
               Sincronizando...
+            </div>
+          )}
+
+          {isAnalyzing && (
+            <div className="mt-2 flex items-center gap-2 text-[10px] text-amber-400 font-bold uppercase tracking-widest">
+              <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              Analizando...
+            </div>
+          )}
+          {!isAnalyzing && !note.is_optimistic && (note.detected_items?.length > 0 || note.detected_npcs?.length > 0) && (
+            <div className="mt-2 flex items-center gap-2 text-[10px] text-emerald-400 font-bold uppercase tracking-widest">
+              <div className="w-2 h-2 rounded-full bg-emerald-400" />
+              Analizado
             </div>
           )}
 

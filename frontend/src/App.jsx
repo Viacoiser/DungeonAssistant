@@ -2,10 +2,13 @@ import { RouterProvider } from 'react-router-dom'
 import router from './routes'
 import { useEffect, useState } from 'react'
 import { useAuthStore } from './store/useAuthStore'
+import { useSocketStore } from './store/useSocketStore'
 import { initSocket } from './services/socket'
 import { getAuthAPI } from './services/api'
 import LoadingSpinner from './components/shared/LoadingSpinner'
 import IOSInstallPrompt from './components/shared/IOSInstallPrompt'
+import LiveInitiativeTracker from './components/campaign/LiveInitiativeTracker'
+import { AnimatePresence } from 'framer-motion'
 
 function App() {
   const { setUser, setToken, token } = useAuthStore()
@@ -57,10 +60,31 @@ function App() {
     return <LoadingSpinner fullPage text="Cargando DungeonAssistant..." size={72} />
   }
 
+  const {
+    isTrackerOpen,
+    combatState,
+    combatCampaignId,
+    combatIsGM,
+    combatActiveUsers,
+    setIsTrackerOpen,
+  } = useSocketStore()
+
   return (
     <>
       <RouterProvider router={router} />
       <IOSInstallPrompt />
+      <AnimatePresence>
+        {isTrackerOpen && combatCampaignId && (
+          <LiveInitiativeTracker
+            campaignId={combatCampaignId}
+            isGM={combatIsGM}
+            user={useAuthStore.getState().user}
+            combatState={combatState}
+            activeUsers={combatActiveUsers}
+            onClose={() => setIsTrackerOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   )
 }

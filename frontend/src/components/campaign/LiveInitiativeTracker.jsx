@@ -368,6 +368,13 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
               </p>
             </div>
           </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-fantasy-gold/50 hover:text-white hover:bg-white/5 rounded-lg transition z-20"
+            title="Cerrar"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         {/* Banner de control rápido para minimizar (Combate en curso / Fase de Iniciativa) */}

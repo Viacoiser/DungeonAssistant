@@ -47,6 +47,11 @@ export default function NotesTab({ campaignId }) {
   // Estado para cambiar privacidad de nota
   const [togglingNoteId, setTogglingNoteId] = useState(null)
 
+  // Polling de análisis de notas
+  const [pendingAnalysis, setPendingAnalysis] = useState(new Set())
+  const pendingRef = useRef(pendingAnalysis)
+  pendingRef.current = pendingAnalysis
+
   // Estados para autocompletado D&D5e
   const [autocomplete, setAutocomplete] = useState([])
   const [showAutocomplete, setShowAutocomplete] = useState(false)
@@ -134,6 +139,11 @@ export default function NotesTab({ campaignId }) {
       // 2. Replace optimistic note with real one
       setNotes(prev => prev.map(n => n.id === tempId ? data.note : n))
       
+      // 3. Marcar como pendiente de análisis si no tiene items/NPCs detectados
+      if (data.note && data.status === 'pending_analysis') {
+        setPendingAnalysis(prev => new Set(prev).add(data.note.id))
+      }
+      
       if (data.analysis) {
         setAnalysis(data.analysis)
       }
@@ -154,6 +164,30 @@ export default function NotesTab({ campaignId }) {
   }
 
 
+
+  // Polling: cuando hay notas pendientes de análisis, refrescar cada 3s
+  useEffect(() => {
+    if (pendingAnalysis.size === 0 || !activeSession) return
+    const interval = setInterval(async () => {
+      try {
+        const res = await sessionAPI.getNotes(activeSession.id)
+        const freshNotes = res.data?.notes || []
+        setNotes(freshNotes)
+        // Verificar si las notas pendientes ya tienen análisis
+        const stillPending = freshNotes
+          .filter(n => pendingRef.current.has(n.id))
+          .filter(n => !n.detected_items?.length && !n.detected_npcs?.length)
+          .map(n => n.id)
+        if (stillPending.length === 0) {
+          clearInterval(interval)
+        }
+        setPendingAnalysis(new Set(stillPending))
+      } catch {
+        // ignore polling errors
+      }
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [activeSession, pendingAnalysis.size])
 
   const handleStartEditNote = (note) => {
     setEditingNoteId(note.id)
@@ -368,6 +402,7 @@ export default function NotesTab({ campaignId }) {
                         handleCancelEditNote={handleCancelEditNote}
                         handleUpdateNote={handleUpdateNote}
                         updatingNote={updatingNote}
+                        isAnalyzing={pendingAnalysis.has(note.id)}
                       />
                     ))
                   )}
