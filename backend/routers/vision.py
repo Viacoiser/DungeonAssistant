@@ -184,15 +184,28 @@ class VisionService:
                 )
                 
                 if response.text:
+                    text = response.text.strip()
                     try:
-                        return json.loads(response.text)
+                        return json.loads(text)
                     except json.JSONDecodeError:
-                        text = response.text
+                        # 1. Intentar limpiar bloques markdown
                         if "```json" in text:
                             text = text.split("```json")[1].split("```")[0].strip()
                         elif "```" in text:
                             text = text.split("```")[1].split("```")[0].strip()
-                        return json.loads(text)
+                        
+                        try:
+                            return json.loads(text)
+                        except json.JSONDecodeError:
+                            # 2. Extraer buscando el primer '{' y el último '}'
+                            json_start = text.find('{')
+                            json_end = text.rfind('}') + 1
+                            if json_start >= 0 and json_end > json_start:
+                                try:
+                                    return json.loads(text[json_start:json_end])
+                                except json.JSONDecodeError as inner_e:
+                                    logger.error(f"Fallo al decodificar substring JSON de vision: {inner_e}")
+                            raise
                 
                 raise ValueError("Respuesta vacía del modelo")
                     
