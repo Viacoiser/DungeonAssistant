@@ -793,10 +793,10 @@ export default function LiveInitiativeTracker({ campaignId, isGM, user, combatSt
                       .map((p, originalIndex) => ({ ...p, originalIndex }))
                       .filter(p => isGM || !p.is_monster)
                       .map((p, index) => {
-                        const isActive = combatState.status === 'active' && combatState.current_turn === p.originalIndex
-                        const isMonster = p.is_monster
-                        const isCurrentUser = !isGM && character && p.id === character.id
-                        const isOnline = !isMonster && activeUsers.some(u => u.user_id === p.player_id)
+                         const isActive = combatState.status === 'active' && combatState.current_turn === p.originalIndex
+                         const isMonster = p.is_monster
+                         const isCurrentUser = !isGM && character && p.id === character.id
+                         const isOnline = !isMonster && activeUsers.some(u => u.user_id === (p.user_id || p.player_id))
                       
                       return (
                         <motion.div
