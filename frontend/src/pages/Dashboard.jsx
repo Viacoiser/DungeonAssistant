@@ -8,14 +8,7 @@ import BottomNavResponsive from '../components/shared/BottomNavResponsive'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import LoadingSpinner from '../components/shared/LoadingSpinner'
 import CharacterForm from '../components/shared/CharacterForm'
-import CharacterInspect from '../components/shared/CharacterInspect'
-import DiceBoxRollerResponsive from '../components/shared/DiceBoxRollerResponsive'
-import CharacterCard from '../components/shared/CharacterCard'
-import TraitsReference from '../components/shared/TraitsReference'
-import EquipmentReference from '../components/shared/EquipmentReference'
-import MonstersReference from '../components/shared/MonstersReference'
-import SpellsReference from '../components/shared/SpellsReference'
-import SettingsPanel from '../components/shared/SettingsPanel'
+
 import useEncyclopediaStore from '../store/useEncyclopediaStore'
 
 import { labelStyle, inputStyle, btnStyles } from '../styles/dashboardStyles'
@@ -26,15 +19,7 @@ import CharacterInspectSplitView from '../components/dashboard/CharacterInspectS
 import SidebarTabContent from '../components/dashboard/SidebarTabContent'
 import {
   Search,
-  Crown,
-  User,
   Plus,
-  Users,
-  Clock,
-  ChevronRight,
-  ChevronLeft,
-  Filter,
-  BarChart2,
   LogOut,
   Key,
 } from 'lucide-react'

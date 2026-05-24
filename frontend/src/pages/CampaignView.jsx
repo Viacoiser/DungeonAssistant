@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { User, Swords, Maximize2, X, Sparkles, Play, Dices, RefreshCw, Check, Lock, Shield, AlertTriangle } from 'lucide-react'
+import { User, Swords, Maximize2, X, Sparkles, Play, Dices, Check } from 'lucide-react'
 import { campaignAPI, characterAPI } from '../services/api'
 import { useAuthStore } from '../store/useAuthStore'
 import LoadingSpinner from '../components/shared/LoadingSpinner'
