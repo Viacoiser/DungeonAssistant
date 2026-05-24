@@ -274,10 +274,3 @@ export function getPassivePerception(character) {
   return 10 + getSkillValue(character, 'perception')
 }
 
-/** Spell Save DC: 8 + profBonus + spellcasting ability mod */
-export function getSpellSaveDC(character) {
-  const ability = character.spellcasting?.ability
-  if (!ability) return 8 + getProficiencyBonus(character.level ?? 1)
-  const score = character.stats?.[ability.toLowerCase()] ?? 10
-  return 8 + getProficiencyBonus(character.level ?? 1) + getAbilityModifier(score)
-}
