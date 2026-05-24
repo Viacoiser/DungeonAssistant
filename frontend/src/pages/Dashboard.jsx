@@ -7,7 +7,6 @@ import BottomNavResponsive from '../components/shared/BottomNavResponsive'
 
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import LoadingSpinner from '../components/shared/LoadingSpinner'
-import CharacterForm from '../components/shared/CharacterForm'
 
 import useEncyclopediaStore from '../store/useEncyclopediaStore'
 
@@ -41,7 +40,6 @@ export default function Dashboard() {
   const [creating, setCreating] = useState(false)
 
   // Modal: Crear personaje
-  const [showCreateCharacterModal, setShowCreateCharacterModal] = useState(false)
   const [isCreatingCharacter, setIsCreatingCharacter] = useState(false) // Nueva vista interna
   const [creatingCharacter, setCreatingCharacter] = useState(false)
   const [createCharacterError, setCreateCharacterError] = useState('')
@@ -184,7 +182,6 @@ export default function Dashboard() {
 
       await characterAPI.create(formData)
       setIsCreatingCharacter(false)
-      setShowCreateCharacterModal(false)
       loadCharacters()
     } catch (err) {
       console.error('Error creando personaje:', err)
@@ -757,16 +754,7 @@ export default function Dashboard() {
             )}
           </DashboardModal>
         )}
-        {showCreateCharacterModal && (
-          <DashboardModal onClose={() => setShowCreateCharacterModal(false)} title="Crear Personaje">
-            {createCharacterError && (
-              <div style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '0.75rem', color: '#fca5a5', marginBottom: '1rem' }}>
-                {createCharacterError}
-              </div>
-            )}
-            <CharacterForm onSubmit={handleCreateCharacterSubmit} loading={creatingCharacter} />
-          </DashboardModal>
-        )}
+
 
         {/* Now handled via split-view layout - see return statement */}
         </div>

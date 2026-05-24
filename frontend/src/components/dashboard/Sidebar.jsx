@@ -11,7 +11,6 @@ import {
   BookOpen,
   SmilePlus,
   Sword,
-  Dice6,
   Skull,
   Sparkles,
   BarChart2,
