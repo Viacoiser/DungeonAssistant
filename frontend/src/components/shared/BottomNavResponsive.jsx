@@ -1,16 +1,12 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '../../store/useAuthStore'
 import {
   Castle,
   Users,
   BookOpen,
   Settings,
   Sparkles,
-  Dice6,
   Dices,
-  BarChart2,
   SmilePlus,
   Sword,
   Skull,

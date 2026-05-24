@@ -17,7 +17,6 @@ export default function AssistantTab({ campaignId }) {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [voiceError, setVoiceError] = useState('')
-  const [voiceTranscribed, setVoiceTranscribed] = useState('') // Guardar texto transcrito para revisar
   const bottomRef = useRef(null)
 
   useEffect(() => {
@@ -95,7 +94,6 @@ export default function AssistantTab({ campaignId }) {
         <VoiceRecorder
           onTranscribed={(text) => {
             setInput(text) // Guardar en input para que se pueda revisar
-            setVoiceTranscribed(text)
             setVoiceError('')
           }}
           onError={(error) => {

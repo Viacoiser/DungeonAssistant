@@ -26,7 +26,6 @@ const isPrefixOf = (parent, child) => {
  */
 export function useSpeechRecognition({ onTranscribed, onError } = {}) {
   const [recording, setRecording] = useState(false);
-  const [transcribing, setTranscribing] = useState(false);
   const [transcribedText, setTranscribedText] = useState('');
   const [interimText, setInterimText] = useState('');
   const [micStatus, setMicStatus] = useState('checking'); // 'checking', 'ok', 'denied', 'error'
@@ -169,7 +168,6 @@ export function useSpeechRecognition({ onTranscribed, onError } = {}) {
 
     recognition.onend = () => {
       setRecording(false);
-      setTranscribing(false);
       
       const combined = [latestFinalRef.current, latestInterimRef.current].filter(Boolean).join(' ');
       if (combined) {
@@ -235,12 +233,10 @@ export function useSpeechRecognition({ onTranscribed, onError } = {}) {
     latestFinalRef.current = '';
     latestInterimRef.current = '';
     setRecording(false);
-    setTranscribing(false);
   };
 
   return {
     recording,
-    transcribing,
     transcribedText,
     setTranscribedText,
     interimText,

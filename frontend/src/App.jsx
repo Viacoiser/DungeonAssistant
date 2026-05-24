@@ -11,7 +11,7 @@ import LiveInitiativeTracker from './components/campaign/LiveInitiativeTracker'
 import { AnimatePresence } from 'framer-motion'
 
 function App() {
-  const { setUser, setToken, token } = useAuthStore()
+  const { setUser, setToken } = useAuthStore()
   const {
     isTrackerOpen,
     combatState,

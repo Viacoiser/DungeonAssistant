@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Share, Plus } from 'lucide-react'
+import { X, Share } from 'lucide-react'
 
 /**
  * IOSInstallPrompt
@@ -142,18 +142,18 @@ export default function IOSInstallPrompt() {
 
             {/* Instructions */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-              <Step number={1} icon={<Share size={14} />} color="#d9531e">
+              <Step number={1} color="#d9531e">
                 Toca el botón{' '}
                 <span style={{ fontWeight: 700, color: '#e2d1a6' }}>Compartir</span>
                 {' '}
                 <Share size={12} style={{ display: 'inline', verticalAlign: 'middle', color: '#d9531e' }} />
                 {' '}en Safari
               </Step>
-              <Step number={2} icon={<Plus size={14} />} color="#c8a84b">
+              <Step number={2} color="#c8a84b">
                 Selecciona{' '}
                 <span style={{ fontWeight: 700, color: '#e2d1a6' }}>"Añadir a pantalla de inicio"</span>
               </Step>
-              <Step number={3} icon={<span style={{ fontSize: '12px' }}>⚔️</span>} color="#7c6b3a">
+              <Step number={3} color="#7c6b3a">
                 ¡Listo! La app abrirá sin barra de Safari
               </Step>
             </div>
@@ -184,7 +184,7 @@ export default function IOSInstallPrompt() {
   )
 }
 
-function Step({ number, icon, color, children }) {
+function Step({ number, color, children }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
       <div style={{

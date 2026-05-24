@@ -1,14 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, BookOpen, Send, Trash2, Edit2, History, Users, Settings, MessageSquare, Theater, Camera, Mic, Upload, Image, StopCircle, Play, User } from 'lucide-react'
-import { campaignAPI, sessionAPI, npcAPI, assistantAPI, characterAPI, dnd5eAPI } from '../../services/api'
-import { useAuthStore } from '../../store/useAuthStore'
+import React, { useState, useEffect } from 'react'
+import { campaignAPI } from '../../services/api'
 import LoadingSpinner from '../shared/LoadingSpinner'
-import CharacterDetail from '../shared/CharacterDetail'
-import CharacterCard from '../shared/CharacterCard'
-import DiceBoxRollerResponsive from '../shared/DiceBoxRollerResponsive'
-import BottomNavResponsive from '../shared/BottomNavResponsive'
 import { Icon } from '../shared/CampaignIcons'
 
 
