@@ -7,7 +7,6 @@ import os
 import json
 import asyncio
 import google.generativeai as genai
-from google.generativeai.types import FunctionDeclaration, Tool
 from dotenv import load_dotenv
 
 # Cargar variables de entorno
@@ -15,62 +14,6 @@ load_dotenv()
 
 
 logger = logging.getLogger(__name__)
-
-# ============================================================================
-# FUNCTION DECLARATIONS para Function Calling
-# ============================================================================
-
-add_item_fn = FunctionDeclaration(
-    name="add_item_to_inventory",
-    description="Agrega un item al inventario cuando se detecta en una nota de sesion",
-    parameters={
-        "type": "object",
-        "properties": {
-            "item_name": {
-                "type": "string",
-                "description": "Nombre del item encontrado"
-            },
-            "quantity": {
-                "type": "integer",
-                "description": "Cantidad del item (por defecto 1)"
-            },
-            "is_magical": {
-                "type": "boolean",
-                "description": "Si el item es magico o encantado"
-            },
-            "description": {
-                "type": "string",
-                "description": "Descripcion breve del item"
-            }
-        },
-        "required": ["item_name", "quantity", "is_magical"]
-    }
-)
-
-register_npc_fn = FunctionDeclaration(
-    name="register_npc",
-    description="Registra un NPC cuando aparece por primera vez en una nota de sesion",
-    parameters={
-        "type": "object",
-        "properties": {
-            "name": {
-                "type": "string",
-                "description": "Nombre del NPC"
-            },
-            "description": {
-                "type": "string",
-                "description": "Descripcion breve del NPC"
-            },
-            "relationship": {
-                "type": "string",
-                "description": "Relacion con el grupo: aliado, enemigo, neutral, desconocido"
-            }
-        },
-        "required": ["name", "description", "relationship"]
-    }
-)
-
-session_tools = Tool(function_declarations=[add_item_fn, register_npc_fn])
 
 
 class GeminiService:
@@ -703,42 +646,6 @@ Responde en español, de forma concisa (máximo 3 párrafos):"""
             logger.error(f"Error en generate_session_summary: {e}")
             return "No se pudo generar el resumen automaticamente."
 
-    # ========================================================================
-    # OCR: Hoja de personaje
-    # ========================================================================
-
-    async def generate_npc_trait(self, context_str: str) -> str:
-        """Genera un rasgo de personalidad distintivo y aleatorio para un NPC."""
-        prompt = (
-            f"Basado en este NPC:\n{context_str}\n\n"
-            "Genera UN ÚNICO rasgo distintivo, manía, hábito o característica física muy breve para rolearlo de inmediato. "
-            "Ejemplos: Habla muy rápido, Huele fuertemente a lavanda, Tiene un tic en el ojo izquierdo. "
-            "No uses comillas. Solo la frase."
-        )
-        def _call():
-            if self.model_name == "UNAVAILABLE":
-                return type('obj', (object,), {
-                    'text': "Rasgo no disponible"
-                })()
-            return self.model.generate_content(prompt)
-        try:
-            response = await asyncio.to_thread(_call)
-            return response.text.strip().replace('\"', '')
-        except Exception as e:
-            logger.error(f"Error generando rasgo: {e}")
-            return "Tiene un tic nervioso"
-
-    async def ocr_character_sheet(self, image_url: str) -> dict:
-        """OCR de hoja de personaje D&D 5e con Gemini Vision"""
-        logger.info("Procesando OCR de imagen...")
-        return {
-            "character_name": None,
-            "race": None,
-            "class": None,
-            "stats": None,
-            "low_confidence_fields": [],
-            "unreadable_fields": [],
-        }
 
 
 def get_gemini_service() -> GeminiService:

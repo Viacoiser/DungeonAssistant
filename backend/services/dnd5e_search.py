@@ -3,12 +3,7 @@ Servicio de búsqueda D&D5e con Fuzzy Matching
 Busca items, hechizos, clases, razas, etc. localmente sin usar Gemini
 """
 
-import json
-import os
 import logging
-from pathlib import Path
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
 
 from services.supabase import get_supabase
 
