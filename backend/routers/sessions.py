@@ -205,7 +205,7 @@ async def _analyze_and_update_note_task(
         searcher = get_dnd5e_searcher()
         
         # 1. Obtener contexto (Necesitamos campaign_id)
-        session_res = supabase.client.table("sessions") \
+        session_res = supabase.admin_client.table("sessions") \
             .select("campaign_id") \
             .eq("id", session_id) \
             .single() \
@@ -221,7 +221,7 @@ async def _analyze_and_update_note_task(
             loop = asyncio.get_event_loop()
             return await loop.run_in_executor(
                 None,
-                lambda: supabase.client.table("campaigns")
+                lambda: supabase.admin_client.table("campaigns")
                     .select("name, lore_summary")
                     .eq("id", campaign_id)
                     .single()
@@ -232,7 +232,7 @@ async def _analyze_and_update_note_task(
             loop = asyncio.get_event_loop()
             return await loop.run_in_executor(
                 None,
-                lambda: supabase.client.table("characters")
+                lambda: supabase.admin_client.table("characters")
                     .select("id, name, race, class, level, background")
                     .eq("campaign_id", campaign_id)
                     .eq("player_id", user_id)
@@ -243,7 +243,7 @@ async def _analyze_and_update_note_task(
             loop = asyncio.get_event_loop()
             return await loop.run_in_executor(
                 None,
-                lambda: supabase.client.table("characters")
+                lambda: supabase.admin_client.table("characters")
                     .select("name, race, class")
                     .eq("campaign_id", campaign_id)
                     .neq("player_id", user_id)
@@ -288,7 +288,7 @@ async def _analyze_and_update_note_task(
         final_npcs = gemini_npcs if gemini_npcs else local_npcs
         
         # 6. Actualizar nota en Supabase
-        supabase.client.table("session_notes").update({
+        supabase.admin_client.table("session_notes").update({
             "detected_items": final_items,
             "detected_npcs": final_npcs
         }).eq("id", note_id).execute()
@@ -310,7 +310,7 @@ def _populate_rag_logic(campaign_id, final_items, final_npcs):
         for item in final_items:
             try:
                 item_name = item.get("name") or item.get("item_name", "Unknown Item") if isinstance(item, dict) else str(item)
-                result = supabase.client.table("rag_entities").select("id, mention_count").match({
+                result = supabase.admin_client.table("rag_entities").select("id, mention_count").match({
                     "campaign_id": campaign_id,
                     "entity_type": "ITEM",
                     "entity_name": item_name
@@ -319,23 +319,24 @@ def _populate_rag_logic(campaign_id, final_items, final_npcs):
                 if result.data:
                     entity_id = result.data[0]["id"]
                     current_count = result.data[0]["mention_count"]
-                    supabase.client.table("rag_entities").update({
+                    supabase.admin_client.table("rag_entities").update({
                         "mention_count": current_count + 1
                     }).eq("id", entity_id).execute()
                 else:
-                    supabase.client.table("rag_entities").insert({
+                    supabase.admin_client.table("rag_entities").insert({
                         "campaign_id": campaign_id,
                         "entity_type": "ITEM",
                         "entity_name": item_name,
                         "mention_count": 1
                     }).execute()
-            except: pass
+            except Exception as e:
+                logger.error(f"❌ Error inserting/updating RAG item entity {item}: {e}")
             
         # NPCs
         for npc in final_npcs:
             try:
                 npc_name = npc.get("name", "Unknown NPC") if isinstance(npc, dict) else str(npc)
-                result = supabase.client.table("rag_entities").select("id, mention_count, attributes").match({
+                result = supabase.admin_client.table("rag_entities").select("id, mention_count, attributes").match({
                     "campaign_id": campaign_id,
                     "entity_type": "NPC",
                     "entity_name": npc_name
@@ -350,7 +351,7 @@ def _populate_rag_logic(campaign_id, final_items, final_npcs):
                         if npc.get("description"): updated_attrs["description"] = npc["description"]
                         if npc.get("relationship"): updated_attrs["relationship"] = npc["relationship"]
                     
-                    supabase.client.table("rag_entities").update({
+                    supabase.admin_client.table("rag_entities").update({
                         "mention_count": current_count + 1,
                         "attributes": updated_attrs
                     }).eq("id", entity_id).execute()
@@ -359,7 +360,7 @@ def _populate_rag_logic(campaign_id, final_items, final_npcs):
                     if isinstance(npc, dict):
                         if npc.get("description"): attrs["description"] = npc["description"]
                         if npc.get("relationship"): attrs["relationship"] = npc["relationship"]
-                    supabase.client.table("rag_entities").insert({
+                    supabase.admin_client.table("rag_entities").insert({
                         "campaign_id": campaign_id,
                         "entity_type": "NPC",
                         "entity_name": npc_name,
@@ -367,9 +368,10 @@ def _populate_rag_logic(campaign_id, final_items, final_npcs):
                         "attributes": attrs,
                         "mention_count": 1
                     }).execute()
-            except: pass
+            except Exception as e:
+                logger.error(f"❌ Error inserting/updating RAG NPC entity {npc}: {e}")
     except Exception as e:
-        logger.error(f"Error in RAG logic: {e}")
+        logger.error(f"❌ Error in RAG logic: {e}")
 
 @router.post("/{session_id}/notes")
 async def add_session_note(
