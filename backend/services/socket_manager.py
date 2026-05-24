@@ -317,13 +317,15 @@ class SocketManager:
     async def is_user_gm(self, campaign_id: str, user_id: str, sid: str = None) -> bool:
         import asyncio
         
-        # 1. Verificar caché en memoria (cargado en on_join_campaign)
+        # 1. Verificar caché en memoria (solo si coincide con la campaña consultada)
         if sid and sid in self.connected_users:
-            cached_role = self.connected_users[sid].get("campaign_role")
-            if cached_role is not None:
-                is_gm = cached_role == "GM"
-                logger.debug(f"[GM CHECK] {self.connected_users[sid].get('username')} → caché={cached_role} → isGM={is_gm}")
-                return is_gm
+            cached_campaign = self.connected_users[sid].get("campaign_id")
+            if cached_campaign == campaign_id:
+                cached_role = self.connected_users[sid].get("campaign_role")
+                if cached_role is not None:
+                    is_gm = cached_role == "GM"
+                    logger.debug(f"[GM CHECK] {self.connected_users[sid].get('username')} → caché={cached_role} → isGM={is_gm}")
+                    return is_gm
         
         # 2. Fallback: consultar DB en un thread para no bloquear el event loop
         try:
@@ -351,6 +353,7 @@ class SocketManager:
                 logger.info(f"[GM CHECK] DB lookup → user_id={user_id} role={role} isGM={is_gm}")
                 # Cache the result for future calls
                 if sid and sid in self.connected_users:
+                    self.connected_users[sid]["campaign_id"] = campaign_id
                     self.connected_users[sid]["campaign_role"] = role
                 return is_gm
             else:
