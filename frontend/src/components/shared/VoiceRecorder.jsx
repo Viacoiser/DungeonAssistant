@@ -69,7 +69,9 @@ export default function VoiceRecorder({ onTranscribed, onError }) {
       let interimTranscript = '';
       let finalTranscript = '';
 
-      for (let i = event.resultIndex; i < event.results.length; i++) {
+      // Reconstruir la transcripción completa desde el inicio (i = 0)
+      // Esto evita duplicaciones infinitas provocadas por fallos en event.resultIndex en navegadores móviles
+      for (let i = 0; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
 
         if (event.results[i].isFinal) {
@@ -87,9 +89,9 @@ export default function VoiceRecorder({ onTranscribed, onError }) {
         setInterimText(interimTranscript);
       }
 
-      // Cuando hay resultado final, guardarlo
+      // Reemplazar por completo con el acumulado final de la sesión
       if (finalTranscript) {
-        setTranscribedText((prev) => (prev + ' ' + finalTranscript).trim());
+        setTranscribedText(finalTranscript);
         setInterimText('');
       }
     };
