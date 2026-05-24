@@ -8,7 +8,6 @@ import LoadingSpinner from '../shared/LoadingSpinner'
 import CharacterDetail from '../shared/CharacterDetail'
 import CharacterCard from '../shared/CharacterCard'
 import DiceBoxRollerResponsive from '../shared/DiceBoxRollerResponsive'
-import VoiceRecorder from '../shared/VoiceRecorder'
 import BottomNavResponsive from '../shared/BottomNavResponsive'
 import { Icon } from '../shared/CampaignIcons'
 
