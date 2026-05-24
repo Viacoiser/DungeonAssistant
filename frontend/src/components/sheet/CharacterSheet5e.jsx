@@ -335,8 +335,8 @@ export default function CharacterSheet5e({
   }
 
   const handleCreateSubmit = async () => {
-    if (!character.name?.trim()) {
-      alert('El nombre del personaje es requerido')
+    if (!character.name?.trim() || !character.class_?.trim() || !character.race?.trim()) {
+      alert('No está permitido crear un personaje sin que Nombre, Clase y Raza estén asignados con algún valor.')
       return
     }
     if (onSubmit) {

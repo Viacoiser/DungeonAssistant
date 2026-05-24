@@ -188,8 +188,16 @@ export default function Dashboard() {
       loadCharacters()
     } catch (err) {
       console.error('Error creando personaje:', err)
-      const errorMsg = err.response?.data?.detail || 'Error al crear el personaje'
-      setCreateCharacterError(errorMsg)
+      if (err.response?.data?.detail) {
+        const details = err.response.data.detail
+        if (Array.isArray(details)) {
+          setCreateCharacterError(details.map(d => d.msg).join(', '))
+        } else {
+          setCreateCharacterError(typeof details === 'string' ? details : 'Error al crear el personaje')
+        }
+      } else {
+        setCreateCharacterError(err.message || 'Error al crear el personaje')
+      }
     } finally {
       setCreatingCharacter(false)
     }
