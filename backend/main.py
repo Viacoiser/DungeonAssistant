@@ -17,7 +17,7 @@ import socketio
 env_file = Path(__file__).parent / '.env'
 load_dotenv(env_file, override=True)
 
-from routers import auth, campaigns, player, sessions, vision, assistant, dnd5e_search, rag
+from routers import auth, campaigns, player, sessions, vision, assistant, dnd5e_search
 from services.socket_manager import socket_manager
 
 logging.basicConfig(
@@ -71,7 +71,6 @@ fastapi_app.include_router(sessions.router, prefix="/api")
 fastapi_app.include_router(vision.router, prefix="/api")
 fastapi_app.include_router(assistant.router, prefix="/api")
 fastapi_app.include_router(dnd5e_search.router, prefix="/api")
-fastapi_app.include_router(rag.router, prefix="/api")
 
 # Envolver FastAPI con socket.io ASGIApp
 app = socketio.ASGIApp(sio, fastapi_app)
