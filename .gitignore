@@ -22,3 +22,7 @@ backend/secrets/
 backend/.env
 frontend/.env
 *.json.tmp
+
+# Vite PWA development sw directory
+dev-dist/
+frontend/dev-dist/
