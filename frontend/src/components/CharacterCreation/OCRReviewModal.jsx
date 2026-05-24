@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import {
-  Camera, RotateCcw, ArrowRight, Plus, X, CheckCircle, BookOpen
+  Camera, RotateCcw, ArrowRight, Plus, X
 } from 'lucide-react'
 
 // ─── Alignment slug normalization ──────────────────────────────────────────────
@@ -76,18 +76,7 @@ const CS_PROF = '#5a9fd4'
 
 // ─── Sub-components matching the sheet UI ──────────────────────────────────────
 
-function SectionHeader({ title }) {
-  return (
-    <div style={{
-      background: CS_SURFACE_2, borderBottom: `1px solid ${CS_BORDER_A}`,
-      padding: '0.35rem 0.75rem',
-      fontFamily: 'Cinzel, serif', fontSize: '0.6rem', fontWeight: 700,
-      letterSpacing: '0.18em', textTransform: 'uppercase', color: CS_GOLD,
-    }}>
-      {title}
-    </div>
-  )
-}
+
 
 function Section({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen)
