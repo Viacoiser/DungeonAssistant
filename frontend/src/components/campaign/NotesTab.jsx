@@ -17,7 +17,6 @@ export default function NotesTab({ campaignId }) {
   const [notes, setNotes] = useState([])
   const [noteText, setNoteText] = useState('')
   const [sending, setSending] = useState(false)
-  const [sendError, setSendError] = useState('')
   const [voiceError, setVoiceError] = useState('')
   const [analysis, setAnalysis] = useState(null)
   const [loadingSessions, setLoadingSessions] = useState(true)
@@ -85,7 +84,6 @@ export default function NotesTab({ campaignId }) {
   const selectSession = (session) => {
     setActiveSession(session)
     setAnalysis(null)
-    setSendError('')
     loadNotes(session.id)
   }
 
@@ -130,7 +128,6 @@ export default function NotesTab({ campaignId }) {
     
     setSending(true)
     setAnalysis(null)
-    setSendError('')
     
     try {
       const res = await sessionAPI.addNote(activeSession.id, content)
@@ -149,8 +146,6 @@ export default function NotesTab({ campaignId }) {
       }
     } catch (e) {
       console.error('Error agregando nota:', e)
-      const msg = e?.response?.data?.detail || 'Error al enviar la nota. Se guardó localmente en el campo de texto.'
-      setSendError(msg)
       
       // 3. Rollback optimistic update on error
       setNotes(prev => prev.filter(n => n.id !== tempId))
@@ -197,13 +192,11 @@ export default function NotesTab({ campaignId }) {
   const handleCancelEditNote = () => {
     setEditingNoteId(null)
     setEditNoteText('')
-    setSendError('')
   }
 
   const handleUpdateNote = async (noteId) => {
     if (!editNoteText.trim()) return
     setUpdatingNote(true)
-    setSendError('')
     try {
       const res = await sessionAPI.updateNote(noteId, editNoteText)
       setAnalysis(res.data.analysis)
@@ -212,7 +205,6 @@ export default function NotesTab({ campaignId }) {
       setEditNoteText('')
     } catch (e) {
       console.error('Error actualizando nota:', e)
-      setSendError(e?.response?.data?.detail || 'Error al actualizar nota.')
     } finally {
       setUpdatingNote(false)
     }
@@ -226,7 +218,6 @@ export default function NotesTab({ campaignId }) {
       setAnalysis(null)
     } catch (e) {
       console.error('Error eliminando nota:', e)
-      setSendError(e?.response?.data?.detail || 'Error al eliminar nota.')
     }
   }
 
@@ -237,10 +228,8 @@ export default function NotesTab({ campaignId }) {
       await sessionAPI.toggleNoteVisibility(note.id, newIsPublic)
       await loadNotes(activeSession.id)
       const statusMsg = newIsPublic ? 'Nota compartida públicamente' : 'Nota volvió a ser privada'
-      setSendError(null)
     } catch (e) {
       console.error('Error cambiando privacidad:', e)
-      setSendError(e?.response?.data?.detail || 'Error al cambiar privacidad de nota.')
     } finally {
       setTogglingNoteId(null)
     }

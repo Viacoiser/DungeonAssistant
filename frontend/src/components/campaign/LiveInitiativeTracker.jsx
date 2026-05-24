@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  X, Swords, Shield, Skull, Plus, Trash2, ChevronRight, 
-  History, UserPlus, Check, Lock, RefreshCw, Dices, Play, Square,
+  X, Swords, Shield, Plus, Trash2, ChevronRight, 
+  History, UserPlus, Check, Lock, RefreshCw, Dices, Play,
   AlertTriangle, User, Sparkles, Minimize2
 } from 'lucide-react'
 import { getSocket } from '../../services/socket'
