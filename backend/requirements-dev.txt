@@ -1,13 +1,5 @@
-# Development dependencies - includes voice and audio processing
+# Development dependencies
 -r requirements.txt
-
-# Audio/Voice processing (only for development, not in production)
-librosa>=0.10.0
-google-cloud-speech>=2.0.0
-pydub>=0.25.1
-scipy>=1.10.0
-numpy>=1.24.0
-scikit-learn>=1.3.0
 
 # Development tools
 pytest>=7.0.0
