@@ -1,5 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+// Normaliza el texto eliminando puntuación, espacios extra y pasando a minúsculas
+const normalizeText = (str) => {
+  return str
+    .toLowerCase()
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "") // eliminar puntuación
+    .replace(/\s+/g, " ")                       // colapsar espacios múltiples
+    .trim();
+};
+
+// Determina si 'child' es un prefijo en límite de palabra de 'parent'
+const isPrefixOf = (parent, child) => {
+  const p = normalizeText(parent);
+  const c = normalizeText(child);
+  if (p.startsWith(c)) {
+    const remainder = p.slice(c.length);
+    return remainder === '' || remainder.startsWith(' ');
+  }
+  return false;
+};
+
 export default function VoiceRecorder({ onTranscribed, onError }) {
   const [recording, setRecording] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
@@ -10,6 +30,8 @@ export default function VoiceRecorder({ onTranscribed, onError }) {
   const recognitionRef = useRef(null);
   const onTranscribedRef = useRef(onTranscribed);
   const onErrorRef = useRef(onError);
+  const latestFinalRef = useRef('');
+  const latestInterimRef = useRef('');
 
   // Keep refs updated with latest callbacks
   useEffect(() => {
@@ -66,33 +88,65 @@ export default function VoiceRecorder({ onTranscribed, onError }) {
     };
 
     recognition.onresult = (event) => {
-      let interimTranscript = '';
-      let finalTranscript = '';
+      const finalSegments = [];
+      let activeInterim = '';
 
-      // Reconstruir la transcripción completa desde el inicio (i = 0)
-      // Esto evita duplicaciones infinitas provocadas por fallos en event.resultIndex en navegadores móviles
       for (let i = 0; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
+        const isFinal = event.results[i].isFinal;
 
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript + ' ';
+        if (isFinal) {
+          if (finalSegments.length > 0) {
+            const lastIndex = finalSegments.length - 1;
+            const last = finalSegments[lastIndex];
+
+            if (isPrefixOf(transcript, last)) {
+              // El nuevo fragmento finalizado incluye/extiende el anterior (común en Chrome Mobile)
+              finalSegments[lastIndex] = transcript;
+            } else if (isPrefixOf(last, transcript)) {
+              // El fragmento ya fue cubierto por uno anterior, se ignora
+            } else {
+              // Fragmento final nuevo e independiente (típico en Desktop)
+              finalSegments.push(transcript);
+            }
+          } else {
+            finalSegments.push(transcript);
+          }
         } else {
-          interimTranscript += transcript;
+          // Fragmento intermedio (mientras habla)
+          const lastFinal = finalSegments.length > 0 ? finalSegments[finalSegments.length - 1] : '';
+
+          if (lastFinal && isPrefixOf(transcript, lastFinal)) {
+            // Es una extensión del último fragmento ya confirmado, extraemos solo lo nuevo
+            const remainder = transcript.slice(lastFinal.length).trim();
+            if (remainder) {
+              activeInterim = remainder;
+            }
+          } else if (lastFinal && isPrefixOf(lastFinal, transcript)) {
+            // Ya está cubierto en el texto final confirmado
+            activeInterim = '';
+          } else {
+            activeInterim = transcript;
+          }
         }
       }
 
-      finalTranscript = finalTranscript.trim();
-      interimTranscript = interimTranscript.trim();
+      const finalTranscript = finalSegments.join(' ').trim();
+      const interimTranscript = activeInterim.trim();
 
-      // Mostrar texto intermedio mientras se está grabando
+      latestFinalRef.current = finalTranscript;
+      latestInterimRef.current = interimTranscript;
+
+      // Mostrar texto intermedio si existe
       if (interimTranscript) {
         setInterimText(interimTranscript);
+      } else {
+        setInterimText('');
       }
 
-      // Reemplazar por completo con el acumulado final de la sesión
+      // Actualizar el texto acumulado confirmado
       if (finalTranscript) {
         setTranscribedText(finalTranscript);
-        setInterimText('');
       }
     };
 
@@ -117,6 +171,12 @@ export default function VoiceRecorder({ onTranscribed, onError }) {
     recognition.onend = () => {
       setRecording(false);
       setTranscribing(false);
+      
+      // Al finalizar la sesión, combinamos con seguridad lo último finalizado y cualquier intermedio residual
+      const combined = [latestFinalRef.current, latestInterimRef.current].filter(Boolean).join(' ');
+      if (combined) {
+        setTranscribedText(combined);
+      }
       setInterimText('');
     };
 
@@ -153,6 +213,8 @@ export default function VoiceRecorder({ onTranscribed, onError }) {
     if (recognitionRef.current) {
       setTranscribedText('');
       setInterimText('');
+      latestFinalRef.current = '';
+      latestInterimRef.current = '';
       setShowReview(false);
       setRecording(true);
       try {
@@ -191,6 +253,8 @@ export default function VoiceRecorder({ onTranscribed, onError }) {
   const resetRecorder = () => {
     setTranscribedText('');
     setInterimText('');
+    latestFinalRef.current = '';
+    latestInterimRef.current = '';
     setShowReview(false);
     setRecording(false);
     setTranscribing(false);
