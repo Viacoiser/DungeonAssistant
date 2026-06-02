@@ -3,7 +3,6 @@ DungeonAssistant Backend - FastAPI + Socket.io
 """
 
 import logging
-import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 

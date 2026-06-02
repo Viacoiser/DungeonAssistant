@@ -416,6 +416,26 @@ class GeminiService:
                             context_text += f"- {item.get('entity_name')} (item)\n"
                         context_text += "\n"
                     
+                    # Inyectar crónicas de sesiones pasadas
+                    events_rag = rag_data.get("events", [])
+                    if events_rag:
+                        context_text += "=== CRÓNICAS DE SESIONES PASADAS ===\n"
+                        for event in events_rag[:5]:
+                            title = event.get("event_title", "Sesión")
+                            summary_raw = event.get("event_summary", "")
+                            # Intentar parsear JSON estructurado
+                            try:
+                                chronicle = json.loads(summary_raw) if isinstance(summary_raw, str) else summary_raw
+                                narrative = chronicle.get("narrative_summary", summary_raw)
+                                key_events = chronicle.get("key_events", [])
+                                context_text += f"\n📜 {title}\n{narrative}\n"
+                                if key_events:
+                                    for ke in key_events[:3]:
+                                        context_text += f"  • {ke}\n"
+                            except (json.JSONDecodeError, AttributeError):
+                                context_text += f"\n📜 {title}\n{summary_raw}\n"
+                        context_text += "\n"
+                    
                     logger.info(f"RAG context: {rag_entities_total} total ({rag_npcs_count} NPCs, {rag_items_count} items)")
                 
                 except Exception as e:
@@ -611,46 +631,129 @@ Responde en español, de forma concisa (máximo 3 párrafos):"""
             }
 
     # ========================================================================
-    # Generar resumen de sesion
+    # Generar crónica por lotes de sesiones
     # ========================================================================
 
-    async def generate_session_summary(self, notes: list) -> str:
-        """Generar resumen de sesion a partir de las notas"""
-        logger.info("Generando resumen de sesion...")
+    async def generate_batch_chronicle(self, campaign_name: str, sessions_data: list) -> dict:
+        """
+        Genera una crónica estructurada para un lote de sesiones.
+        
+        sessions_data: [
+            {"session_number": 1, "title": "El Inicio", "notes": [{"content": "..."}]},
+            ...
+        ]
+        
+        Returns: dict con crónica estructurada
+        """
+        logger.info(f"Generando crónica para {len(sessions_data)} sesiones de '{campaign_name}'...")
 
-        if not notes:
-            return "Sesion sin notas registradas."
+        if not sessions_data:
+            return {
+                "chronicle_title": "Crónica vacía",
+                "key_events": [],
+                "npcs_encountered": [],
+                "items_obtained": [],
+                "locations_visited": [],
+                "decisions_made": [],
+                "narrative_summary": "No hay notas registradas para estas sesiones."
+            }
 
-        notes_text = "\n\n".join([
-            f"Nota de {n.get('author', 'jugador')}: {n.get('content', '')[:500]}"
-            for n in notes[:10]
-        ])
+        # Construir texto de notas agrupado por sesión
+        sessions_text = ""
+        session_numbers = []
+        for s in sessions_data:
+            sn = s.get("session_number", "?")
+            session_numbers.append(str(sn))
+            title = s.get("title", f"Sesión {sn}")
+            notes = s.get("notes", [])
+            sessions_text += f"\n--- SESIÓN {sn}: {title} ---\n"
+            for note in notes[:10]:
+                content = note.get("content", "")[:500]
+                sessions_text += f"• {content}\n"
+            if not notes:
+                sessions_text += "(Sin notas)\n"
+
+        range_str = f"{session_numbers[0]}-{session_numbers[-1]}" if len(session_numbers) > 1 else session_numbers[0]
 
         prompt = (
-            "Resume esta sesion de D&D en 3-5 oraciones concisas.\n"
-            "Incluye los eventos principales, decisiones importantes y cualquier item o NPC relevante.\n\n"
-            f"Notas de la sesion:\n{notes_text}\n\nResumen:"
+            f"Eres el cronista oficial de la campaña de D&D \"{campaign_name}\".\n"
+            f"Genera una crónica estructurada para las sesiones {range_str}.\n\n"
+            f"NOTAS DE LAS SESIONES:\n{sessions_text}\n\n"
+            "Responde ÚNICAMENTE con JSON válido con esta estructura exacta:\n"
+            "{\n"
+            '  "chronicle_title": "Sesiones X-Y: [título narrativo épico]",\n'
+            '  "key_events": ["evento 1", "evento 2", ...],\n'
+            '  "npcs_encountered": ["nombre NPC 1", ...],\n'
+            '  "items_obtained": ["item 1", ...],\n'
+            '  "locations_visited": ["lugar 1", ...],\n'
+            '  "decisions_made": ["decisión con consecuencia 1", ...],\n'
+            '  "narrative_summary": "3-4 oraciones narrativas conectando los eventos principales"\n'
+            "}\n\n"
+            "REGLAS:\n"
+            "- chronicle_title debe ser épico y descriptivo\n"
+            "- key_events: máximo 5 eventos más importantes\n"
+            "- npcs_encountered: solo nombres propios de NPCs\n"
+            "- items_obtained: items ganados o perdidos\n"
+            "- locations_visited: lugares mencionados\n"
+            "- decisions_made: decisiones con consecuencias futuras\n"
+            "- narrative_summary: en español, tono de crónica medieval\n"
+            "- Si un campo no tiene datos, usa array vacío []\n"
         )
 
         def _call():
             if self.model_name == "UNAVAILABLE":
                 return type('obj', (object,), {
-                    'text': "Resumen no disponible - API de Gemini no configurada."
+                    'text': json.dumps({
+                        "chronicle_title": f"Sesiones {range_str}",
+                        "key_events": [],
+                        "npcs_encountered": [],
+                        "items_obtained": [],
+                        "locations_visited": [],
+                        "decisions_made": [],
+                        "narrative_summary": "Crónica no disponible - API de Gemini no configurada."
+                    })
                 })()
             return self.model.generate_content(prompt)
 
         try:
             response = await asyncio.to_thread(_call)
-            return response.text.strip()
+            response_text = response.text.strip()
+
+            # Parsear JSON de la respuesta
+            json_start = response_text.find('{')
+            json_end = response_text.rfind('}') + 1
+            if json_start >= 0 and json_end > json_start:
+                chronicle = json.loads(response_text[json_start:json_end])
+                logger.info(f"✅ Crónica generada: {chronicle.get('chronicle_title', '?')}")
+                return chronicle
+            else:
+                logger.warning("No se encontró JSON en la respuesta de crónica")
+                return {
+                    "chronicle_title": f"Sesiones {range_str}",
+                    "key_events": [],
+                    "npcs_encountered": [],
+                    "items_obtained": [],
+                    "locations_visited": [],
+                    "decisions_made": [],
+                    "narrative_summary": response_text[:500]
+                }
+
         except Exception as e:
-            logger.error(f"Error en generate_session_summary: {e}")
-            return "No se pudo generar el resumen automaticamente."
+            if self._handle_quota_error(e, "generate_batch_chronicle"):
+                logger.info("Retrying generate_batch_chronicle with new model...")
+                return await self.generate_batch_chronicle(campaign_name, sessions_data)
 
+            logger.error(f"Error en generate_batch_chronicle: {e}")
+            return {
+                "chronicle_title": f"Sesiones {range_str}",
+                "key_events": [],
+                "npcs_encountered": [],
+                "items_obtained": [],
+                "locations_visited": [],
+                "decisions_made": [],
+                "narrative_summary": "No se pudo generar la crónica automáticamente."
+            }
 
-
-def get_gemini_service() -> GeminiService:
-    """Obtener instancia del servicio Gemini"""
-    return GeminiService()
 
 
 if __name__ == "__main__":

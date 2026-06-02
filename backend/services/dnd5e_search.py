@@ -17,10 +17,6 @@ class DND5ESearcher:
         self.supabase = get_supabase()
         logger.info("DND5ESearcher initialized using Supabase Encyclopedia")
 
-    def _ensure_loaded(self):
-        """No longer needed for DB-backed search, but kept for compatibility"""
-        pass
-
     def search(self, query: str = None, categories: list = None, level: str = None, limit: int = 5) -> list:
         """
         Búsqueda fuzzy en la tabla encyclopedia.
@@ -164,7 +160,7 @@ class DND5ESearcher:
         - Threshold alto (75%+ para items, 80%+ para spells)
         - Búsqueda prioritaria de frases sobre palabras individuales
         """
-        self._ensure_loaded()
+
         logger.info("Analyzing note for D&D5e entities (optimized)...")
 
         note_lower = note_content.lower()

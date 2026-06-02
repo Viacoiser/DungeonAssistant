@@ -15,6 +15,7 @@ import AssistantTab from '../components/campaign/AssistantTab'
 import SettingsTab from '../components/campaign/SettingsTab'
 import CharactersTab from '../components/campaign/CharactersTab'
 import MembersTab from '../components/campaign/MembersTab'
+import ChroniclesTab from '../components/campaign/ChroniclesTab'
 import { Icon } from '../components/shared/CampaignIcons'
 import { useSocketStore } from '../store/useSocketStore'
 
@@ -348,6 +349,7 @@ export default function CampaignView() {
     { id: 'characters', label: 'Personajes', icon: <Icon.users /> },
     { id: 'dice', label: 'Dados 3D', icon: <Icon.dice /> },
     ...(isGM ? [{ id: 'npcs', label: 'NPCs', icon: <Icon.npc /> }] : []),
+    { id: 'chronicles', label: 'Crónicas', icon: <Icon.chronicle /> },
     { id: 'assistant', label: 'Asistente', icon: <Icon.chat /> },
     { id: 'members', label: 'Miembros', icon: <Icon.users /> },
     // Settings solo para GM
@@ -469,7 +471,7 @@ export default function CampaignView() {
       {/* Tab Content */}
       <main className="flex-1 overflow-hidden px-0 lg:px-6 lg:py-5 pt-2 lg:pt-5 pb-24">
         <div className="w-full lg:max-w-6xl lg:mx-auto h-full">
-          {activeTab === 'notes' && <NotesTab campaignId={campaignId} />}
+          {activeTab === 'notes' && <NotesTab campaignId={campaignId} isGM={isGM} />}
           {activeTab === 'characters' && <CharactersTab campaignId={campaignId} isGM={isGM} user={user} />}
           {activeTab === 'dice' && (
             <div className="h-full overflow-hidden flex flex-col">
@@ -477,6 +479,7 @@ export default function CampaignView() {
             </div>
           )}
           {activeTab === 'npcs' && <NpcsTab campaignId={campaignId} isGM={isGM} />}
+          {activeTab === 'chronicles' && <ChroniclesTab campaignId={campaignId} />}
           {activeTab === 'assistant' && <AssistantTab campaignId={campaignId} />}
 
           {activeTab === 'members' && <MembersTab campaignId={campaignId} />}

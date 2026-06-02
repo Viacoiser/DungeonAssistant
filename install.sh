@@ -24,7 +24,7 @@ echo "⚠️  Por favor, edita backend/.env con tus credenciales de Supabase y G
 # Frontend
 echo "📦 Configurando Frontend..."
 cd ../frontend
-npm install
+pnpm install
 cp .env.example .env
 
 echo "⚠️  Por favor, edita frontend/.env con tus URLs"
@@ -34,4 +34,4 @@ echo "✅ Instalación completada"
 echo ""
 echo "🚀 Para iniciar:  "
 echo "   Backend:  cd backend && source venv/bin/activate && python -m uvicorn main:socket_app --reload"
-echo "   Frontend: cd frontend && npm run dev"
+echo "   Frontend: cd frontend && pnpm dev"

@@ -40,53 +40,57 @@ class UserResponse(BaseModel):
 # CAMPAIGN SCHEMAS
 # ============================================================================
 
-class RoleEnum(str, Enum):
-    GM = "GM"
-    PLAYER = "PLAYER"
-
-
 class CampaignCreate(BaseModel):
-    """Crear nueva campaña"""
     name: str = Field(..., min_length=3, max_length=100)
     description: Optional[str] = None
 
 
-class CampaignResponse(BaseModel):
-    """Respuesta de campaña"""
-    id: str
-    name: str
+class CampaignUpdate(BaseModel):
+    name: Optional[str] = None
     description: Optional[str] = None
     lore_summary: Optional[str] = None
-    is_active: bool
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 
 class JoinCampaignRequest(BaseModel):
-    """Solicitud para unirse a campaña"""
-    campaign_id: str
-    role: RoleEnum = Field(...)
-
-
-class JoinCampaignByCodeRequest(BaseModel):
-    """Solicitud para unirse a campaña con código de invitación"""
     invite_code: str = Field(..., min_length=6, max_length=6)
 
 
-class CampaignMemberResponse(BaseModel):
-    """Miembro de campaña"""
+class CampaignResponse(BaseModel):
     id: str
-    campaign_id: str
-    user_id: str
-    username: str
-    role: RoleEnum
-    status: str
-    joined_at: datetime
+    name: str
+    description: Optional[str] = None
+    is_active: bool
+    invitation_code: Optional[str] = None
 
     class Config:
         from_attributes = True
+
+
+# ============================================================================
+# SESSION SCHEMAS
+# ============================================================================
+
+class SessionCreate(BaseModel):
+    campaign_id: str
+    session_number: int
+    title: Optional[str] = None
+
+
+class NoteCreate(BaseModel):
+    content: str
+
+
+class NoteVisibility(BaseModel):
+    is_public: bool
+
+
+# ============================================================================
+# ASSISTANT SCHEMAS
+# ============================================================================
+
+class ChatRequest(BaseModel):
+    campaign_id: str
+    question: str
 
 
 # ============================================================================
@@ -313,268 +317,4 @@ class CharacterUpdate(BaseModel):
         populate_by_name = True
 
 
-# ============================================================================
-# NPC SCHEMAS
-# ============================================================================
 
-class NPCCreate(BaseModel):
-    """Crear NPC"""
-    campaign_id: str
-    name: str
-    race: Optional[str] = None
-    class_: Optional[str] = Field(None, alias="class")
-    personality: Optional[str] = None
-    secrets: Optional[str] = None
-    relationship_to_party: Optional[str] = None
-    faction_id: Optional[str] = None
-
-    class Config:
-        populate_by_name = True
-
-
-class NPCResponse(BaseModel):
-    """Respuesta de NPC"""
-    id: str
-    campaign_id: str
-    name: str
-    race: Optional[str] = None
-    class_: Optional[str] = Field(None, alias="class")
-    personality: Optional[str] = None
-    created_at: datetime
-
-    class Config:
-        populate_by_name = True
-        from_attributes = True
-
-
-# ============================================================================
-# SESSION SCHEMAS
-# ============================================================================
-
-class SessionCreate(BaseModel):
-    """Crear sesión"""
-    campaign_id: str
-    session_number: int = Field(..., ge=1)
-    title: Optional[str] = None
-    date: Optional[str] = None
-
-
-class SessionResponse(BaseModel):
-    """Respuesta de sesión"""
-    id: str
-    campaign_id: str
-    session_number: int
-    title: Optional[str] = None
-    is_active: bool
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-class SessionNoteCreate(BaseModel):
-    """Crear nota de sesión"""
-    session_id: str
-    content: str = Field(..., min_length=1)
-
-
-class SessionNoteResponse(BaseModel):
-    """Respuesta de nota de sesión"""
-    id: str
-    session_id: str
-    author_id: str
-    content: str
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-# ============================================================================
-# ROLE CHANGE SCHEMAS
-# ============================================================================
-
-class RoleChangeRequest(BaseModel):
-    """Solicitud de cambio de rol"""
-    campaign_id: str
-    requested_role: RoleEnum
-
-
-class ApproveRoleChange(BaseModel):
-    """Aprobar cambio de rol"""
-    approved: bool = Field(...)
-
-
-# ============================================================================
-# GEMINI SCHEMAS
-# ============================================================================
-
-class NPCGenerateRequest(BaseModel):
-    """Solicitud para generar NPC con IA"""
-    campaign_id: str
-    prompt: str = Field(..., min_length=10, max_length=500)
-
-
-class NPCGenerateResponse(BaseModel):
-    """Respuesta de generación de NPC"""
-    name: str
-    race: Optional[str] = None
-    class_: Optional[str] = Field(None, alias="class")
-    personality: str
-    secrets: Optional[str] = None
-    relationship_to_party: Optional[str] = None
-
-    class Config:
-        populate_by_name = True
-
-
-class AssistantQuestion(BaseModel):
-    """Pregunta para asistente conversacional"""
-    campaign_id: str
-    question: str = Field(..., min_length=1, max_length=1000)
-
-
-class AssistantResponse(BaseModel):
-    """Respuesta del asistente"""
-    answer: str
-    sources: Optional[List[str]] = None
-
-
-# ============================================================================
-# OCR SCHEMAS
-# ============================================================================
-
-class OCRUploadRequest(BaseModel):
-    """Solicitud de OCR de hoja"""
-    campaign_id: str
-    image_url: str
-
-
-class OCRResult(BaseModel):
-    """Resultado de OCR"""
-    character_name: Optional[str] = None
-    race: Optional[str] = None
-    class_: Optional[str] = Field(None, alias="class")
-    level: Optional[int] = None
-    stats: Optional[StatsModel] = None
-    confidence: Optional[float] = None
-    low_confidence_fields: List[str] = []
-    unreadable_fields: List[str] = []
-
-    class Config:
-        populate_by_name = True
-
-
-# ============================================================================
-# PHASE 2: SESSION NPC SCHEMAS
-# ============================================================================
-
-class SessionNPCCreate(BaseModel):
-    """Crear NPC encontrado en sesión"""
-    session_id: str
-    campaign_id: str
-    name: str
-    role: Optional[str] = "unknown"
-    confidence: Optional[int] = Field(70, ge=0, le=100)
-    mention_count: Optional[int] = 1
-    details: Optional[Dict[str, Any]] = None
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "session_id": "uuid-123",
-                "campaign_id": "uuid-456",
-                "name": "Gandalf",
-                "role": "quest-giver",
-                "confidence": 85,
-                "details": {"description": "The Wizard from the tower"}
-            }
-        }
-
-
-class SessionNPCResponse(BaseModel):
-    """Respuesta de NPC encontrado"""
-    id: str
-    session_id: str
-    campaign_id: str
-    name: str
-    role: str
-    confidence: int
-    first_mentioned: datetime
-    last_mentioned: datetime
-    mention_count: int
-    details: Dict[str, Any]
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-# ============================================================================
-# PHASE 2: SESSION QUEST SCHEMAS
-# ============================================================================
-
-class SessionQuestCreate(BaseModel):
-    """Crear misión detectada en sesión"""
-    session_id: str
-    campaign_id: str
-    title: str
-    description: Optional[str] = None
-    status: Optional[str] = "active"
-    reward: Optional[str] = None
-    giver_npc: Optional[str] = None
-    detected_in_note_id: Optional[str] = None
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "session_id": "uuid-123",
-                "campaign_id": "uuid-456",
-                "title": "Rescue the stolen artifact",
-                "description": "Find the magical amulet taken by the bandits",
-                "status": "active",
-                "reward": "1000 gold",
-                "giver_npc": "The Mayor"
-            }
-        }
-
-
-class SessionQuestResponse(BaseModel):
-    """Respuesta de misión"""
-    id: str
-    session_id: str
-    campaign_id: str
-    title: str
-    description: Optional[str] = None
-    status: str
-    reward: Optional[str] = None
-    giver_npc: Optional[str] = None
-    detected_in_note_id: Optional[str] = None
-    created_at: datetime
-    completed_at: Optional[datetime] = None
-    updated_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-# ============================================================================
-# PHASE 2: ANALYSIS UPDATE SCHEMAS
-# ============================================================================
-
-class NoteCreateWithAnalysis(BaseModel):
-    """Crear nota con análisis automático"""
-    content: str
-    session_id: str
-
-
-class AnalysisResponse(BaseModel):
-    """Respuesta de análisis"""
-    detected_items: List[Dict[str, Any]] = []
-    detected_npcs: List[Dict[str, Any]] = []
-    detected_spells: List[Dict[str, Any]] = []
-    items_count: int = 0
-    npcs_count: int = 0
-    spells_count: int = 0
-    source: str = "hybrid_parallel"
-    performance: Dict[str, Any] = {}

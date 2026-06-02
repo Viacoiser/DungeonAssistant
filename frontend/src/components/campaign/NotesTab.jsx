@@ -11,7 +11,7 @@ import NotesInput from './notes/NotesInput'
 // Tab: Notas de Sesión (con análisis IA)
 // ============================================================================
 
-export default function NotesTab({ campaignId }) {
+export default function NotesTab({ campaignId, isGM }) {
   const [sessions, setSessions] = useState([])
   const [activeSession, setActiveSession] = useState(null)
   const [notes, setNotes] = useState([])
@@ -22,6 +22,8 @@ export default function NotesTab({ campaignId }) {
   const [loadingSessions, setLoadingSessions] = useState(true)
   const [creatingSession, setCreatingSession] = useState(false)
   const [createSessionError, setCreateSessionError] = useState('')
+  const [endingSession, setEndingSession] = useState(false)
+  const [startingSession, setStartingSession] = useState(false)
 
   // Estado del modal de confirmación de eliminación
   const [deleteModal, setDeleteModal] = useState(null) // { session } | null
@@ -103,6 +105,46 @@ export default function NotesTab({ campaignId }) {
     }
   }
 
+  const handleEndSession = async () => {
+    if (!activeSession) return
+    if (!window.confirm('¿Seguro que deseas finalizar esta sesión? Esto la cerrará y evaluará si corresponde generar una crónica por lotes.')) return
+    
+    setEndingSession(true)
+    try {
+      const res = await sessionAPI.end(activeSession.id)
+      await loadSessions()
+      setActiveSession(prev => prev ? { ...prev, is_active: false } : null)
+      
+      if (res.data?.chronicle) {
+        alert(`🎉 ¡Sesión finalizada con éxito! Se ha generado una nueva Crónica: "${res.data.chronicle.chronicle_title}"`)
+      } else {
+        alert('✅ Sesión finalizada con éxito.')
+      }
+    } catch (e) {
+      console.error('Error finalizando sesión:', e)
+      alert('Error al finalizar la sesión. Inténtalo de nuevo.')
+    } finally {
+      setEndingSession(false)
+    }
+  }
+
+  const handleStartSession = async () => {
+    if (!activeSession) return
+    if (!window.confirm('¿Seguro que deseas reabrir esta sesión? Volverá a estar "En curso" para agregar o editar notas.')) return
+    
+    setStartingSession(true)
+    try {
+      await sessionAPI.start(activeSession.id)
+      await loadSessions()
+      setActiveSession(prev => prev ? { ...prev, is_active: true } : null)
+      alert('🎉 Sesión reabierta con éxito. ¡Vuelve a estar en curso!')
+    } catch (e) {
+      console.error('Error iniciando sesión:', e)
+      alert('Error al reabrir la sesión. Inténtalo de nuevo.')
+    } finally {
+      setStartingSession(false)
+    }
+  }
 
   const handleAddNote = async () => {
     if (!noteText.trim() || !activeSession) return
@@ -327,7 +369,7 @@ export default function NotesTab({ campaignId }) {
   }
 
   return (
-    <div className="flex-1 overflow-hidden relative">
+    <div className="w-full h-full overflow-hidden relative flex flex-col">
       <AnimatePresence mode="wait">
         <motion.div
           key={campaignId}
@@ -356,17 +398,61 @@ export default function NotesTab({ campaignId }) {
               </div>
             ) : (
               <div className="flex-1 flex flex-col p-4 md:p-6 min-h-0 overflow-hidden">
-                <div className="mb-4 flex items-center justify-between">
+                <div className="mb-4 flex items-center justify-between border-b border-white/5 pb-3">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-white font-semibold">
+                    <h3 className="text-white font-semibold font-serif text-lg">
                       {activeSession.title || `Sesión ${activeSession.session_number}`}
                     </h3>
-                    {activeSession.is_active && (
-                      <span className="px-2 py-0.5 text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 rounded-full font-bold uppercase">
+                    {activeSession.is_active ? (
+                      <span className="px-2.5 py-0.5 text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 rounded-full font-bold uppercase tracking-wider animate-pulse">
                         En curso
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-0.5 text-[10px] bg-white/5 text-gray-400 border border-white/10 rounded-full font-bold uppercase tracking-wider">
+                        Finalizada
                       </span>
                     )}
                   </div>
+
+                  {activeSession.is_active && isGM && (
+                    <button
+                      onClick={handleEndSession}
+                      disabled={endingSession}
+                      className="px-3.5 py-1.5 bg-red-600 hover:bg-red-500 active:scale-95 disabled:opacity-50 text-white font-display font-semibold text-xs tracking-wider rounded-xl transition duration-300 flex items-center gap-1.5 shadow-[0_0_12px_rgba(220,38,38,0.2)] border border-red-500/30 flex-shrink-0"
+                    >
+                      {endingSession ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>CERRANDO...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>🏁</span>
+                          <span>FINALIZAR SESIÓN</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+
+                  {!activeSession.is_active && isGM && (
+                    <button
+                      onClick={handleStartSession}
+                      disabled={startingSession}
+                      className="px-3.5 py-1.5 bg-green-600 hover:bg-green-500 active:scale-95 disabled:opacity-50 text-white font-display font-semibold text-xs tracking-wider rounded-xl transition duration-300 flex items-center gap-1.5 shadow-[0_0_12px_rgba(22,163,74,0.2)] border border-green-500/30 flex-shrink-0"
+                    >
+                      {startingSession ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>ABRIENDO...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>▶️</span>
+                          <span>REABRIR SESIÓN</span>
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
 
                 {/* Lista de notas */}

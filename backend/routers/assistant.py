@@ -3,9 +3,10 @@ Router para asistente conversacional RAG
 """
 
 from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
 from middleware.auth import get_current_user
 import logging
+
+from models.schemas import ChatRequest
 
 logger = logging.getLogger(__name__)
 
@@ -20,12 +21,6 @@ def get_supabase():
 def get_gemini():
     from services.gemini import GeminiService
     return GeminiService()
-
-
-class ChatRequest(BaseModel):
-    campaign_id: str
-    question: str
-
 
 @router.post("/chat")
 async def chat(
@@ -118,12 +113,3 @@ async def chat(
         logger.error(f"❌ Error en asistente: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
-@router.post("/search")
-async def search_campaign_history(
-    campaign_id: str,
-    query: str,
-    current_user: dict = Depends(get_current_user)
-):
-    """Búsqueda en historial de campaña"""
-    return {"results": []}

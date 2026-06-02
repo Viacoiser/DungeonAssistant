@@ -12,7 +12,7 @@ export default function NotesSidebar({
   openDeleteModal
 }) {
   return (
-    <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-white/5 p-4 md:p-6 flex flex-col gap-4 md:gap-6 overflow-y-auto min-h-0">
+    <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-white/5 p-4 md:p-6 flex flex-col gap-4 md:gap-6 overflow-y-auto min-h-0 max-h-40 md:max-h-none flex-shrink-0">
       <div className="flex items-center justify-between">
         <h4 className="text-[10px] uppercase tracking-widest text-fantasy-accent/60 font-bold">Sesiones</h4>
         <button

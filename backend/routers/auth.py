@@ -109,7 +109,7 @@ async def login(data: UserLogin):
 
 
 @router.post("/logout")
-async def logout(current_user: dict = None):
+async def logout(current_user: dict = Depends(get_current_user)):
     """
     Logout de usuario
     

@@ -113,6 +113,8 @@ export const sessionAPI = {
     api.patch(`/sessions/notes/${noteId}/visibility`, { is_public: isPublic }),
   delete: (sessionId) =>
     api.delete(`/sessions/${sessionId}`),
+  getChronicles: (campaignId) =>
+    api.get(`/sessions/chronicles/${campaignId}`),
 }
 
 export const npcAPI = {

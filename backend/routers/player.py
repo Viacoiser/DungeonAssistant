@@ -1,9 +1,7 @@
 import logging
 from fastapi import APIRouter, HTTPException, status, Depends, Body
-from datetime import datetime
-import uuid
 
-from models.schemas import CharacterCreate, CharacterResponse, CharacterStatusUpdate, CharacterUpdate
+from models.schemas import CharacterCreate, CharacterStatusUpdate, CharacterUpdate
 from middleware.auth import get_current_user
 from services.supabase import get_supabase
 
@@ -705,21 +703,3 @@ async def join_campaign_by_code(
             detail=f"Error: {str(e)}"
         )
 
-
-@router.post("/{character_id}/inventory")
-async def add_item_to_inventory(
-    character_id: str,
-    item_name: str,
-    quantity: int = 1,
-    current_user: dict = Depends(get_current_user)
-):
-    """Agregar ítem al inventario"""
-    # TODO: Implementar
-    return {"message": "Ítem agregado al inventario"}
-
-
-@router.get("/{character_id}/inventory")
-async def get_inventory(character_id: str):
-    """Obtener inventario del personaje"""
-    # TODO: Implementar
-    return {"inventory": []}

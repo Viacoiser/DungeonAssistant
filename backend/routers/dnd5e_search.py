@@ -8,7 +8,7 @@ from fastapi import APIRouter, Query, HTTPException
 from services.dnd5e_search import get_dnd5e_searcher
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api/dnd5e", tags=["D&D5e"])
+router = APIRouter(prefix="/dnd5e", tags=["D&D5e"])
 
 # Instancia compartida del buscador
 _searcher = None

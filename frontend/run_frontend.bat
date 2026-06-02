@@ -22,7 +22,7 @@ if not exist "node_modules" (
     echo Installing npm dependencies...
     echo This may take a few minutes...
     echo.
-    call npm install
+    call pnpm install
 )
 
 REM Iniciar dev server
@@ -33,6 +33,6 @@ echo ========================================
 echo.
 echo Frontend will be available at: http://localhost:5173
 echo.
-call npm run dev
+call pnpm dev
 
 pause

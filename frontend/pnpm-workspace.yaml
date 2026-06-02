@@ -1,0 +1,6 @@
+allowBuilds:
+  '@3d-dice/dice-box': true
+  esbuild: true
+onlyBuiltDependencies:
+  - esbuild
+  - '@3d-dice/dice-box'

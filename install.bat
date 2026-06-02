@@ -17,7 +17,7 @@ echo.
 
 echo 📦 Configurando Frontend...
 cd ..\frontend
-call npm install
+call pnpm install
 copy .env.example .env
 
 echo.
@@ -28,5 +28,5 @@ echo ✅ Instalación completada
 echo.
 echo 🚀 Para iniciar:
 echo    Backend:  cd backend && venv\Scripts\activate && python -m uvicorn main:socket_app --reload
-echo    Frontend: cd frontend && npm run dev
+echo    Frontend: cd frontend && pnpm dev
 pause

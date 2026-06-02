@@ -3,10 +3,9 @@ Router para sesiones de juego
 """
 
 from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
 from middleware.auth import get_current_user
 import logging
-import asyncio
+from models.schemas import SessionCreate, NoteCreate, NoteVisibility
 
 logger = logging.getLogger(__name__)
 
@@ -21,21 +20,6 @@ def get_supabase():
 def get_gemini():
     from services.gemini import GeminiService
     return GeminiService()
-
-
-class SessionCreate(BaseModel):
-    campaign_id: str
-    session_number: int
-    title: str = None
-
-
-class NoteCreate(BaseModel):
-    content: str
-
-
-class NoteVisibility(BaseModel):
-    is_public: bool
-
 
 # ============================================================================
 # Crear sesión
@@ -69,7 +53,7 @@ async def create_session(
             "campaign_id": data.campaign_id,
             "session_number": data.session_number,
             "title": data.title,
-            "is_active": False
+            "is_active": True
         }).execute()
 
         session = result.data[0] if result.data else None
@@ -143,7 +127,7 @@ async def start_session(
 
 
 # ============================================================================
-# Terminar sesión + generar resumen con IA
+# Terminar sesión + evaluar crónica por lotes
 # ============================================================================
 
 @router.post("/{session_id}/end")
@@ -151,38 +135,210 @@ async def end_session(
     session_id: str,
     current_user: dict = Depends(get_current_user)
 ):
-    """Terminar sesión y generar resumen automático con Gemini"""
+    """Terminar sesión. Si hay 3+ sesiones antiguas sin crónica, genera una crónica por lotes."""
     try:
         supabase = get_supabase()
-        gemini = get_gemini()
         from datetime import datetime, timezone
+        import json
 
-        # Obtener notas de la sesión
-        notes_result = supabase.admin_client.table("session_notes") \
-            .select("content, author_id") \
-            .eq("session_id", session_id) \
+        # 1. Obtener datos de la sesión actual
+        session_result = supabase.admin_client.table("sessions") \
+            .select("session_number, campaign_id, title") \
+            .eq("id", session_id) \
+            .single() \
             .execute()
 
-        notes = notes_result.data or []
+        session_data = session_result.data
+        if not session_data:
+            raise HTTPException(status_code=404, detail="Sesión no encontrada")
 
-        # Generar resumen con Gemini
-        summary = await gemini.generate_session_summary(notes)
+        session_number = session_data["session_number"]
+        campaign_id = session_data["campaign_id"]
 
-        # Marcar sesión como inactiva y guardar resumen
+        # 2. Marcar sesión como inactiva (sin resumen individual)
         supabase.admin_client.table("sessions").update({
             "is_active": False,
-            "ended_at": datetime.now(timezone.utc).isoformat(),
-            "summary": summary
+            "ended_at": datetime.now(timezone.utc).isoformat()
         }).eq("id", session_id).execute()
 
-        logger.info(f"✅ Sesión {session_id} terminada con resumen generado")
-        return {"message": "Sesión terminada", "summary": summary}
+        logger.info(f"✅ Sesión {session_id} (#{session_number}) terminada")
+
+        # 3. Evaluar si toca generar crónica por lotes
+        chronicle_generated = None
+        if session_number >= 4:
+            try:
+                chronicle_generated = await _maybe_generate_chronicle(
+                    supabase, campaign_id, session_number
+                )
+            except Exception as e:
+                logger.error(f"⚠️ Error evaluando crónica (no bloquea cierre): {e}")
+
+        response = {"message": "Sesión terminada", "session_id": session_id}
+        if chronicle_generated:
+            response["chronicle"] = chronicle_generated
+
+        return response
 
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"❌ Error terminando sesión: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+async def _maybe_generate_chronicle(supabase, campaign_id: str, current_session_number: int):
+    """
+    Evalúa si hay 3+ sesiones antiguas sin crónica y genera una si corresponde.
+    
+    Antiguas = session_number <= (current - 3)
+    Sin crónica = no tienen rag_events que las cubra
+    """
+    import json
+
+    threshold = current_session_number - 3  # Sesiones 1..threshold son "antiguas"
+
+    # Obtener todas las sesiones antiguas de la campaña
+    old_sessions_result = supabase.admin_client.table("sessions") \
+        .select("id, session_number, title") \
+        .eq("campaign_id", campaign_id) \
+        .lte("session_number", threshold) \
+        .order("session_number", desc=False) \
+        .execute()
+
+    old_sessions = old_sessions_result.data or []
+    if not old_sessions:
+        return None
+
+    # Obtener session_numbers ya cubiertos por rag_events
+    try:
+        existing_chronicles = supabase.admin_client.table("rag_events") \
+            .select("session_number") \
+            .eq("campaign_id", campaign_id) \
+            .execute()
+        covered_numbers = set()
+        for entry in (existing_chronicles.data or []):
+            sn = entry.get("session_number", 0)
+            # Cada crónica cubre 3 sesiones: sn, sn+1, sn+2
+            covered_numbers.update([sn, sn + 1, sn + 2])
+    except Exception:
+        covered_numbers = set()
+
+    # Filtrar sesiones no cubiertas
+    uncovered = [s for s in old_sessions if s["session_number"] not in covered_numbers]
+
+    if len(uncovered) < 3:
+        logger.debug(f"Solo {len(uncovered)} sesiones sin crónica, necesitamos 3. Esperando.")
+        return None
+
+    # Tomar las 3 más antiguas sin cobertura
+    batch = uncovered[:3]
+    logger.info(f"📜 Generando crónica para sesiones {[s['session_number'] for s in batch]}")
+
+    # Obtener notas de esas sesiones
+    batch_ids = [s["id"] for s in batch]
+    notes_result = supabase.admin_client.table("session_notes") \
+        .select("content, session_id") \
+        .in_("session_id", batch_ids) \
+        .order("created_at", desc=False) \
+        .execute()
+
+    # Agrupar notas por session_id
+    notes_by_session = {}
+    for note in (notes_result.data or []):
+        sid = note["session_id"]
+        if sid not in notes_by_session:
+            notes_by_session[sid] = []
+        notes_by_session[sid].append(note)
+
+    # Construir sessions_data para Gemini
+    sessions_data = []
+    for s in batch:
+        sessions_data.append({
+            "session_number": s["session_number"],
+            "title": s.get("title", f"Sesión {s['session_number']}"),
+            "notes": notes_by_session.get(s["id"], [])
+        })
+
+    # Obtener nombre de la campaña
+    campaign_result = supabase.admin_client.table("campaigns") \
+        .select("name") \
+        .eq("id", campaign_id) \
+        .single() \
+        .execute()
+    campaign_name = campaign_result.data.get("name", "la campaña") if campaign_result.data else "la campaña"
+
+    # Generar crónica con Gemini
+    gemini = get_gemini()
+    chronicle = await gemini.generate_batch_chronicle(campaign_name, sessions_data)
+
+    # Preparar datos para rag_events
+    first_session_number = batch[0]["session_number"]
+    chronicle_title = chronicle.get("chronicle_title", f"Sesiones {first_session_number}-{batch[-1]['session_number']}")
+
+    # Extraer entidades involucradas
+    involved = (
+        chronicle.get("npcs_encountered", []) +
+        chronicle.get("items_obtained", []) +
+        chronicle.get("locations_visited", [])
+    )
+
+    # Upsert en rag_events (conflict en campaign_id + session_number)
+    supabase.admin_client.table("rag_events").upsert({
+        "campaign_id": campaign_id,
+        "session_number": first_session_number,
+        "event_title": chronicle_title,
+        "event_summary": json.dumps(chronicle, ensure_ascii=False),
+        "involved_entities": involved
+    }, on_conflict="campaign_id,session_number").execute()
+
+    logger.info(f"✅ Crónica guardada en rag_events: {chronicle_title}")
+    return chronicle
+
+
+# ============================================================================
+# Obtener crónicas de una campaña (solo lectura)
+# ============================================================================
+
+@router.get("/chronicles/{campaign_id}")
+async def get_chronicles(
+    campaign_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Obtener todas las crónicas generadas para una campaña. Solo lectura."""
+    try:
+        supabase = get_supabase()
+        import json
+
+        result = supabase.admin_client.table("rag_events") \
+            .select("id, session_number, event_title, event_summary, involved_entities, created_at") \
+            .eq("campaign_id", campaign_id) \
+            .order("session_number", desc=False) \
+            .execute()
+
+        chronicles = []
+        for entry in (result.data or []):
+            # Parsear event_summary de JSON string a dict
+            summary_raw = entry.get("event_summary", "{}")
+            try:
+                summary = json.loads(summary_raw) if isinstance(summary_raw, str) else summary_raw
+            except (json.JSONDecodeError, TypeError):
+                summary = {"narrative_summary": summary_raw}
+
+            chronicles.append({
+                "id": entry["id"],
+                "session_number": entry["session_number"],
+                "event_title": entry.get("event_title", ""),
+                "chronicle": summary,
+                "involved_entities": entry.get("involved_entities", []),
+                "created_at": entry.get("created_at", "")
+            })
+
+        return chronicles
+
+    except Exception as e:
+        logger.error(f"❌ Error obteniendo crónicas: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 # ============================================================================

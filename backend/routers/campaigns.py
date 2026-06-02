@@ -4,33 +4,14 @@ Router para gestión de campañas
 
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
-from pydantic import BaseModel, Field
 from middleware.auth import get_current_user
 import logging
 import secrets
 import string
-
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/campaigns", tags=["campaigns"])
 
-class CampaignCreate(BaseModel):
-    name: str
-    description: str = None
-
-class CampaignUpdate(BaseModel):
-    name: str = None
-    description: str = None
-    lore_summary: str = None
-
-class JoinCampaignRequest(BaseModel):
-    invite_code: str = Field(..., min_length=6, max_length=6)
-
-class CampaignResponse(BaseModel):
-    id: str
-    name: str
-    description: str = None
-    is_active: bool
-    invitation_code: str = None
+from models.schemas import CampaignCreate, CampaignUpdate, JoinCampaignRequest, CampaignResponse
 
 def get_supabase():
     from services.supabase import SupabaseClient
@@ -117,9 +98,17 @@ async def get_campaign(campaign_id: str, current_user: dict = Depends(get_curren
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
 
 @router.patch("/{campaign_id}")
-async def update_campaign(campaign_id: str, data: CampaignUpdate):
+async def update_campaign(campaign_id: str, data: CampaignUpdate, current_user: dict = Depends(get_current_user)):
     try:
         supabase = get_supabase()
+        
+        # Validar que el usuario sea GM de la campaña
+        member_check = supabase.client.table("campaign_members").select("role") \
+            .eq("campaign_id", campaign_id).eq("user_id", current_user["id"]).execute()
+        
+        if not member_check.data or member_check.data[0]["role"] != "GM":
+            raise HTTPException(status_code=403, detail="Solo el GM puede editar la campaña")
+            
         update_data = {k: v for k, v in data.dict(exclude_unset=True).items() if v is not None}
             
         if not update_data:
@@ -127,6 +116,8 @@ async def update_campaign(campaign_id: str, data: CampaignUpdate):
 
         result = supabase.client.table("campaigns").update(update_data).eq("id", campaign_id).execute()
         return result.data[0] if result.data else {}
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error actualizando campaña: {e}")
         raise HTTPException(status_code=500, detail=str(e))

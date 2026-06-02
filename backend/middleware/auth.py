@@ -5,7 +5,7 @@ Middleware de autenticación con JWT
 import logging
 from typing import Optional
 from fastapi import Depends, HTTPException, Request, status
-from functools import lru_cache
+
 
 from services.supabase import get_supabase
 
@@ -54,20 +54,3 @@ async def get_current_user(request: Request):
 
     return user
 
-
-class AuthRequired:
-    """Dependency para requerir autenticación"""
-
-    def __init__(self, required: bool = True):
-        self.required = required
-
-    async def __call__(self, request: Request) -> Optional[dict]:
-        if not self.required:
-            # Intentar obtener usuario pero no fallar si no existe
-            try:
-                return await get_current_user(request)
-            except HTTPException:
-                return None
-
-        # Requerir autenticación
-        return await get_current_user(request)
