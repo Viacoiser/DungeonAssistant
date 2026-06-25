@@ -1,10 +1,29 @@
 # DungeonAssistant
 
-Ecosistema Inteligente de Gestion RPG - PWA mobile-first para campanas D&D 5e con IA
+**DungeonAssistant** es un ecosistema inteligente de gestión de juegos de rol (RPG), diseñado como una Progressive Web App (PWA) mobile-first para campañas de D&D 5e potenciada por Inteligencia Artificial. Facilita la experiencia de juego tanto para Dungeon Masters (DMs) como para jugadores mediante herramientas avanzadas de automatización, sincronización en tiempo real y generación de contenido interactivo.
 
-## Proyecto
+## Descripción del Proyecto
 
-[Ver especificacion completa](./DungeonAssistant_BuildPrompt_v2.md)
+El proyecto tiene como objetivo revolucionar la forma en que se gestionan y juegan las campañas de Dungeons & Dragons 5a Edición. Mediante una interfaz responsiva y moderna optimizada para dispositivos móviles, DungeonAssistant ofrece:
+- **Gestión de Personajes:** Creación y control interactivo de hojas de personaje con validación de reglas oficiales de D&D 5e.
+- **Generación de NPCs con IA:** Creación dinámica de personajes no jugables con trasfondos y rasgos integrados mediante la API de Google Gemini (RAG).
+- **Digitalización por OCR:** Escaneo y digitalización instantánea de hojas de personaje físicas utilizando Gemini Vision.
+- **Sincronización en Tiempo Real:** Comunicación fluida y actualizaciones instantáneas durante las sesiones de juego mediante Socket.io.
+- **Entrada por Voz:** Interacción manos libres con el asistente utilizando Web Speech API.
+
+---
+
+## Estructura del Equipo
+
+El desarrollo y gestión de **DungeonAssistant** está liderado por un equipo multidisciplinario:
+
+| Nombre | Rol |
+| :--- | :--- |
+| **Cristóbal Mira** | Product Owner |
+| **Maverick Valdes** | Arquitecto Backend |
+| **Francisco Toloza** | Fullstack Developer |
+
+---
 
 ## Estructura
 
@@ -92,31 +111,3 @@ npm run dev
 - Entrada de voz (Web Speech API)
 - Sincronizacion en tiempo real (Socket.io)
 - PWA con offline support
-
-##  Estado del Proyecto (Kanban & Roadmap)
-
-###  Fase 2: Autenticación, Campañas y Roles - [PROGRESO: 85%]
-- [x] **T-04**: Welcome Page interactiva (Login/Registro).
-- [x] **T-05**: Creación de Campañas (Nombre y Lore).
-- [x] **T-06**: Listado de campañas del usuario.
-- [x] **T-10**: Vista detalle de campaña con gestión GM.
-- [ ] ~~**T-08/09**: Cambio y transferencia de rol (GM/Player via Socket.io)~~ -> **[PENDIENTE: Requiere implementación de WebSockets]**
-
-###  Fase 3: Hoja de Personaje & Sesiones en Tiempo Real - [PROGRESO: 40%]
-*Enfoque: Gestión de NPCs terminada (Módulo complementario).*
-
-- [x] **T-12 (NPCs)**: Visualización de hoja con stats en grid y secciones colapsables (Secreto colapsable).
-- [x] **T-13/14 (NPCs)**: Edición de personaje e inventario dinámico.
-- [x] **Generador IA (Extras)**: Tirada de rasgos aleatorios integrada con Gemini.
-- [x] **Resumen automático**: Gemini genera un resumen tras cerrar sesión que actualiza el `lore_summary` de la campaña.
-- [ ] **Hoja oficial D&D 5e**: Formulario con validación total contra *dnd5eapi.co* -> **[PENDIENTE: Fase 3 Base]**
-- [ ] **Sincronización en tiempo real**: Notificación de inicio de sesión y notas compartidas -> **[PENDIENTE: Requiere Socket.io]**
-
-###  Notas y Análisis de IA
-- [x] **T-15**: Registro de notas personales por sesión.
-- [x] **T-16**: Análisis automático vía Gemini (Detección de NPCs e ítems mágicos).
-
----
-
-> [!NOTE]
-> **Nota de Desarrollo:** Las funcionalidades marcadas con ~~tachado~~ o como pendientes estructurales de la Fase 2 y 3 requieren la integración de una capa de mensajería en tiempo real (**Socket.io**). Actualmente, el sistema opera bajo un modelo de consulta directa a Base de Datos (Supabase).
